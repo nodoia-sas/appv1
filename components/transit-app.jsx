@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef, useCallback } from "react"
+import { useUser } from '@auth0/nextjs-auth0/client'
 
 // Datos simulados para la aplicación
 const ALL_LEARN_CONTENT = [
@@ -455,7 +456,13 @@ const LoginModal = ({ onClose, showNotification, setLoggedIn }) => {
 
 const App = () => {
   const [userId, setUserId] = useState("local-user-123")
-  const [loggedIn, setLoggedIn] = useState(true)
+  const [loggedIn, setLoggedIn] = useState(false)
+  const { user, error: userError, isLoading } = useUser()
+
+  useEffect(() => {
+    setLoggedIn(Boolean(user))
+    if (user && user.sub) setUserId(user.sub)
+  }, [user])
   const [userProfile, setUserProfile] = useState({
     name: "Usuario Demo",
     email: "demo@transitia.com",
@@ -2011,25 +2018,25 @@ const App = () => {
         <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-4 flex items-center justify-between rounded-t-xl shadow-md">
           <div className="relative">
             {loggedIn ? (
-              <button
+              <a
                 ref={loginButtonRef}
+                href="/api/auth/logout"
                 className="flex items-center space-x-2 px-3 py-2 rounded-full bg-blue-700 hover:bg-blue-800 transition-colors duration-200 text-sm font-semibold shadow-md"
-                onClick={() => setShowLoginDropdown((prev) => !prev)}
-                aria-label="Opciones de usuario"
+                aria-label="Cerrar sesión"
               >
                 <UserIcon className="w-5 h-5" />
-                <span>Perfil</span>
-              </button>
+                <span>Salir</span>
+              </a>
             ) : (
-              <button
+              <a
                 ref={loginButtonRef}
+                href="/api/auth/login"
                 className="flex items-center space-x-2 px-3 py-2 rounded-full bg-blue-700 hover:bg-blue-800 transition-colors duration-200 text-sm font-semibold shadow-md"
-                onClick={() => setShowLoginDropdown((prev) => !prev)}
-                aria-label="Opciones de inicio de sesión"
+                aria-label="Iniciar sesión"
               >
                 <LogInIcon className="w-5 h-5" />
                 <span>Login</span>
-              </button>
+              </a>
             )}
             {showLoginDropdown && (
               <div
@@ -2039,12 +2046,9 @@ const App = () => {
                 {loggedIn ? (
                   <>
                     <a
-                      href="#"
+                      href="/api/auth/me"
                       className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      onClick={() => {
-                        setActiveScreen("my-profile")
-                        setShowLoginDropdown(false)
-                      }}
+                      onClick={() => setShowLoginDropdown(false)}
                     >
                       <UserIcon className="w-4 h-4" />
                       <span>Mi perfil</span>
