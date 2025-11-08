@@ -2013,9 +2013,12 @@ const App = () => {
   return (
     <div className="min-h-screen bg-gray-100 font-sans flex flex-col p-4">
       <div
-        className="relative w-full max-w-md bg-white rounded-xl shadow-lg overflow-hidden flex flex-col h-screen"
+        className="relative w-full max-w-md bg-white rounded-xl shadow-lg overflow-hidden flex flex-col max-h-[calc(100vh-2rem)]"
       >
-        <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-4 flex items-center justify-between rounded-t-xl shadow-md">
+        <div
+          className="fixed top-0 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-blue-600 to-blue-800 text-white p-4 flex items-center justify-between rounded-t-xl shadow-md z-50 w-full max-w-md"
+          style={{ paddingTop: 'env(safe-area-inset-top)' }}
+        >
           <div className="relative">
             {loggedIn ? (
               <a
@@ -2159,8 +2162,20 @@ const App = () => {
             <BellIcon className="w-5 h-5" />
           </button>
         </div>
-        <div className="flex-grow overflow-y-auto pb-20">{renderContent()}</div>
-        <nav className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 rounded-b-xl shadow-inner z-10 h-20 flex items-center justify-around px-2">
+        <div
+          className="flex-grow overflow-y-auto"
+          style={{
+            paddingTop: 'calc(3.5rem + env(safe-area-inset-top))',
+            paddingBottom: 'calc(5rem + env(safe-area-inset-bottom))',
+          }}
+        >
+          {renderContent()}
+        </div>
+
+        <nav
+          className="fixed left-1/2 transform -translate-x-1/2 bottom-0 bg-white border-t border-gray-200 rounded-t-xl shadow-inner z-50 h-20 flex items-center justify-around px-2 w-full max-w-md"
+          style={{ paddingBottom: 'env(safe-area-inset-bottom)', WebkitTapHighlightColor: 'transparent' }}
+        >
           {navItems.map((item) => (
             <button
               key={item.name}
