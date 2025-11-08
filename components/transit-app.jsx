@@ -14,41 +14,11 @@ import Notifications from "./notifications"
 import News from "./news"
 import PicoYPlaca from "./pico-y-placa"
 import UnderConstruction from "./under-construction"
-import { getFavorites, hasFavorite } from "../lib/favorites-utils"
+// data-loading responsibilities moved to individual components
 
 
-// Datos simulados para la aplicación
-const ALL_LEARN_CONTENT = [
-  {
-    id: 1,
-    question: "¿Qué hacer si me detiene la policía de tránsito?",
-    answer:
-      "Mantén la calma, presenta tus documentos (licencia, SOAT, tarjeta de propiedad), responde con respeto y conoce tus derechos. Si no estás de acuerdo con la infracción, puedes solicitar que se registre tu inconformidad.",
-    normativity: "Ley 769 de 2002, Art. 131",
-  },
-  {
-    id: 2,
-    question: "¿Puedo grabar durante un procedimiento de tránsito?",
-    answer:
-      "En general es posible grabar procedimientos en vía pública; sin embargo, respeta indicaciones de seguridad y evita confrontaciones. Consulta siempre fuentes oficiales para casos específicos.",
-  },
-]
-
-// Default data sets used by the app. Restored minimal versions to avoid runtime errors
-const ALL_INFRACTIONS_DATA = [
-  { id: 1, code: "C01", description: "Conducir sin licencia de conducción", fine: "$1.296.900", points: 0, immobilization: true },
-  { id: 2, code: "C02", description: "Conducir con licencia vencida", fine: "$648.450", points: 0, immobilization: true },
-  { id: 3, code: "C14", description: "No usar cinturón de seguridad", fine: "$432.300", points: 0, immobilization: false },
-]
-
-const ALL_NEWS_ITEMS = [
-  { id: 1, title: "Actualización de normas de tránsito", summary: "Resumen breve de cambios en la normativa.", fullContent: "Detalle ampliado de la noticia.", imageUrl: "" },
-]
-
-const ALL_QUIZ_QUESTIONS = [
-  { id: 1, question: "¿Cuál es la edad mínima para conducir?", options: ["16", "18", "21"], answer: "18" },
-  { id: 2, question: "¿Qué documento es obligatorio portar?", options: ["Licencia", "Pasaporte", "Cédula"], answer: "Licencia" },
-]
+// Simulated data removed — app should obtain content from persistent storage or APIs.
+// Initial states for learn content, infractions, news and quiz questions are empty arrays.
 
 // SVGs are included directly to simulate 'lucide-react' imports.
 const BookOpenIcon = ({ className }) => (
@@ -321,7 +291,7 @@ const App = () => {
     vehicles: [],
   })
   
-  const [quizProgress, setQuizProgress] = useState({})
+  // quiz progress moved to Quiz component
 
   const [activeScreen, setActiveScreen] = useState("home")
   const [showLoginModal, setShowLoginModal] = useState(false)
@@ -329,50 +299,22 @@ const App = () => {
   const loginButtonRef = useRef(null)
   const [notification, setNotification] = useState({ message: "", visible: false, type: "" })
 
-  // Data states now using local storage
-  const [learnContent, setLearnContent] = useState(ALL_LEARN_CONTENT.map((item) => ({ ...item, saved: false })))
-  const [infractionsData, setInfractionsData] = useState(
-    ALL_INFRACTIONS_DATA.map((item) => ({ ...item, saved: false })),
-  )
-  const [registeredVehicles, setRegisteredVehicles] = useState([])
-  const [newsItems, setNewsItems] = useState(ALL_NEWS_ITEMS.map((item) => ({ ...item, expanded: false, saved: false })))
+  // Data for learn/infractions/news/vehicles/quiz are loaded by each feature component
 
-  // Quiz States
-  const [quizQuestions, setQuizQuestions] = useState([])
-  const [currentScore, setCurrentScore] = useState(0)
-  const [quizCompleted, setQuizCompleted] = useState(false)
-  const [quizStarted, setQuizStarted] = useState(false)
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
+  // Quiz state is managed inside the Quiz component
 
   // Pico y Placa States (kept minimal in parent: registeredVehicles)
 
   // Firestore Initialization & Authentication
   useEffect(() => {
-    // Initialize local data from localStorage
+    // Initialize user profile from localStorage
     const savedProfile = localStorage.getItem("transit-user-profile")
     if (savedProfile) {
       setUserProfile(JSON.parse(savedProfile))
     }
 
-    const savedVehicles = localStorage.getItem("transit-user-vehicles")
-    if (savedVehicles) {
-      setRegisteredVehicles(JSON.parse(savedVehicles))
-    }
-
-    // Documents are managed by the Documents component and lib/documents-utils.js
-
-    const favs = getFavorites()
-    if (favs && favs.length > 0) {
-      // Update content with saved status using centralized favorites util
-      setLearnContent((prev) => prev.map((item) => ({ ...item, saved: hasFavorite(favs, item.id, "learn") })))
-      setInfractionsData((prev) => prev.map((item) => ({ ...item, saved: hasFavorite(favs, item.id, "infractions") })))
-      setNewsItems((prev) => prev.map((item) => ({ ...item, saved: hasFavorite(favs, item.id, "news") })))
-    }
-
-    const savedQuizProgress = localStorage.getItem("transit-quiz-progress")
-    if (savedQuizProgress) {
-      setQuizProgress(JSON.parse(savedQuizProgress))
-    }
+    // Other domain data (vehicles, learn content, infractions, news, quiz bank)
+    // are loaded and managed by their respective components to avoid prop-drilling.
   }, [])
 
   // If the app is opened with a ?screen=... query param or hash, navigate to that screen
@@ -406,20 +348,7 @@ const App = () => {
 
   // Global search removed — related state and helpers cleaned up
 
-  const selectRandomQuizQuestions = useCallback(() => {
-    const shuffled = [...ALL_QUIZ_QUESTIONS].sort(() => 0.5 - Math.random())
-    const selected20 = shuffled.slice(0, 20).map((q) => ({ ...q, selected: null, correct: null }))
-    setQuizQuestions(selected20)
-    setCurrentScore(0)
-    setQuizCompleted(false)
-    setCurrentQuestionIndex(0)
-  }, [])
-
-  useEffect(() => {
-    if (activeScreen === "quiz" && quizStarted && quizQuestions.length === 0) {
-      selectRandomQuizQuestions()
-    }
-  }, [activeScreen, quizStarted, quizQuestions.length, selectRandomQuizQuestions])
+  // Quiz selection logic moved to Quiz component
 
   const [selectedRegulation, setSelectedRegulation] = useState(null) 
 
