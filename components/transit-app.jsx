@@ -2,6 +2,18 @@
 
 import { useState, useEffect, useRef, useCallback } from "react"
 import { useUser } from '@auth0/nextjs-auth0/client'
+import MyProfile from './my-profile'
+import Documents from './documents'
+import Quiz from "./quiz"
+import Regulations from "./regulations"
+import RegulationDetail from "./regulation-detail"
+import Glossary from "./glossary"
+import Pqr from "./pqr"
+import AiAssist from "./ai-assist"
+import Notifications from "./notifications"
+import News from "./news"
+import PicoYPlaca from "./pico-y-placa"
+
 
 // Datos simulados para la aplicación
 const ALL_LEARN_CONTENT = [
@@ -16,130 +28,7 @@ const ALL_LEARN_CONTENT = [
     id: 2,
     question: "¿Puedo grabar durante un procedimiento de tránsito?",
     answer:
-      "Sí, tienes derecho a grabar el procedimiento siempre que no interfiera con la labor del agente. Es recomendable informar que estás grabando para transparencia del proceso.",
-    normativity: "Constitución Política, Art. 15 - Derecho a la intimidad",
-  },
-  {
-    id: 3,
-    question: "¿Qué documentos debo portar siempre?",
-    answer:
-      "Licencia de conducción vigente, SOAT vigente, tarjeta de propiedad del vehículo y revisión técnico-mecánica vigente. Todos deben estar en formato físico o digital válido.",
-    normativity: "Ley 769 de 2002, Art. 21, 25",
-  },
-]
-
-const ALL_INFRACTIONS_DATA = [
-  {
-    id: 1,
-    code: "C01",
-    description: "Conducir sin licencia de conducción",
-    fine: "$1.296.900",
-    points: 0,
-    immobilization: true,
-  },
-  {
-    id: 2,
-    code: "C02",
-    description: "Conducir con licencia vencida",
-    fine: "$648.450",
-    points: 0,
-    immobilization: true,
-  },
-  {
-    id: 3,
-    code: "C14",
-    description: "No usar cinturón de seguridad",
-    fine: "$432.300",
-    points: 0,
-    immobilization: false,
-  },
-]
-
-const ALL_DOCUMENTS_DATA = [
-  {
-    id: "licencia",
-    name: "Licencia de Conducción",
-    dueDate: "2025-06-15",
-    uploaded: false,
-  },
-  {
-    id: "soat",
-    name: "SOAT",
-    dueDate: "2025-03-20",
-    uploaded: false,
-    insurerPhone: "01-8000-123456",
-  },
-  {
-    id: "propiedad",
-    name: "Tarjeta de Propiedad",
-    dueDate: "2026-01-10",
-    uploaded: false,
-  },
-  {
-    id: "tecnomecanica",
-    name: "Revisión Técnico-mecánica",
-    dueDate: "2025-04-30",
-    uploaded: false,
-  },
-]
-
-const ALL_NEWS_ITEMS = [
-  {
-    id: 1,
-    title: "Nuevas medidas de Pico y Placa en Bogotá",
-    summary: "A partir del próximo mes, se implementarán nuevas restricciones vehiculares en la capital.",
-    fullContent:
-      "La Secretaría de Movilidad de Bogotá anunció cambios en las medidas de Pico y Placa que entrarán en vigencia el próximo mes. Las nuevas restricciones buscan mejorar la calidad del aire y reducir la congestión vehicular en las principales vías de la ciudad.",
-    imageUrl: "/traffic-bogota-city.jpg",
-  },
-  {
-    id: 2,
-    title: "Campaña de seguridad vial en colegios",
-    summary: "Se inicia una nueva campaña educativa sobre normas de tránsito dirigida a estudiantes.",
-    fullContent:
-      "El Ministerio de Transporte, en alianza con instituciones educativas, lanza una campaña nacional de seguridad vial dirigida a estudiantes de primaria y secundaria. La iniciativa incluye talleres prácticos y material didáctico sobre normas de tránsito.",
-    imageUrl: "/school-traffic-safety-campaign.jpg",
-  },
-]
-
-const ALL_QUIZ_QUESTIONS = [
-  {
-    id: 1,
-    question: "¿Cuál es la velocidad máxima permitida en zona urbana?",
-    options: ["30 km/h", "50 km/h", "60 km/h", "80 km/h"],
-    answer: "50 km/h",
-    imageUrl: null,
-  },
-  {
-    id: 2,
-    question: "¿Qué significa una señal de tránsito de color rojo?",
-    options: ["Precaución", "Prohibición", "Información", "Prevención"],
-    answer: "Prohibición",
-    imageUrl: null,
-  },
-  {
-    id: 3,
-    question: "¿Es obligatorio el uso del cinturón de seguridad?",
-    options: ["Solo en carretera", "Solo en ciudad", "Siempre", "Solo de noche"],
-    answer: "Siempre",
-    imageUrl: null,
-  },
-]
-
-const ALL_GLOSSARY_TERMS = [
-  {
-    term: "SOAT",
-    explanation:
-      "Seguro Obligatorio de Accidentes de Tránsito. Seguro obligatorio que cubre gastos médicos en caso de accidentes de tránsito.",
-  },
-  {
-    term: "Pico y Placa",
-    explanation:
-      "Medida de restricción vehicular basada en el último dígito de la placa, implementada para reducir la congestión y contaminación.",
-  },
-  {
-    term: "Revisión Técnico-mecánica",
-    explanation: "Inspección obligatoria que verifica el estado mecánico y de emisiones de los vehículos.",
+      "En general es posible grabar procedimientos en vía pública; sin embargo, respeta indicaciones de seguridad y evita confrontaciones. Consulta siempre fuentes oficiales para casos específicos.",
   },
 ]
 
@@ -156,6 +45,33 @@ const COLOMBIAN_CITIES_WITH_PICO_Y_PLACA = [
   "Manizales",
   "Ibagué",
   "Villavicencio",
+]
+
+// Default data sets used by the app. Restored minimal versions to avoid runtime errors
+const ALL_INFRACTIONS_DATA = [
+  { id: 1, code: "C01", description: "Conducir sin licencia de conducción", fine: "$1.296.900", points: 0, immobilization: true },
+  { id: 2, code: "C02", description: "Conducir con licencia vencida", fine: "$648.450", points: 0, immobilization: true },
+  { id: 3, code: "C14", description: "No usar cinturón de seguridad", fine: "$432.300", points: 0, immobilization: false },
+]
+
+const ALL_DOCUMENTS_DATA = [
+  { id: "licencia", name: "Licencia de Conducción", dueDate: "2025-06-15", uploaded: false },
+  { id: "soat", name: "SOAT", dueDate: "2025-03-20", uploaded: false },
+  { id: "propiedad", name: "Tarjeta de Propiedad", dueDate: "2026-01-10", uploaded: false },
+]
+
+const ALL_NEWS_ITEMS = [
+  { id: 1, title: "Actualización de normas de tránsito", summary: "Resumen breve de cambios en la normativa.", fullContent: "Detalle ampliado de la noticia.", imageUrl: "" },
+]
+
+const ALL_QUIZ_QUESTIONS = [
+  { id: 1, question: "¿Cuál es la edad mínima para conducir?", options: ["16", "18", "21"], answer: "18" },
+  { id: 2, question: "¿Qué documento es obligatorio portar?", options: ["Licencia", "Pasaporte", "Cédula"], answer: "Licencia" },
+]
+
+const ALL_GLOSSARY_TERMS = [
+  { term: "SOAT", explanation: "Seguro Obligatorio de Accidentes de Tránsito." },
+  { term: "Revisión Técnico-Mecánica", explanation: "Inspección periódica de seguridad vehicular." },
 ]
 
 // Función auxiliar para calcular días restantes
@@ -450,10 +366,6 @@ const LoginModal = ({ onClose, showNotification, setLoggedIn }) => {
   )
 }
 
-// Full bank of 100 quiz questions
-
-// Glossary Terms Data (30 terms)
-
 const App = () => {
   const [userId, setUserId] = useState("local-user-123")
   const [loggedIn, setLoggedIn] = useState(false)
@@ -652,6 +564,28 @@ const App = () => {
       // No Firebase initialization needed
     } catch (e) {
       console.error("Firebase Initialization Error:", e)
+    }
+  }, [])
+
+  // If the app is opened with a ?screen=... query param or hash, navigate to that screen
+  useEffect(() => {
+    try {
+      if (typeof window !== 'undefined') {
+        const params = new URLSearchParams(window.location.search)
+        const qScreen = params.get('screen')
+        const hashScreen = window.location.hash ? window.location.hash.replace(/^#/, '') : null
+        const target = qScreen || hashScreen
+        if (target) {
+          setActiveScreen(target)
+          // remove the screen param from URL to keep it clean
+          const url = new URL(window.location.href)
+          url.searchParams.delete('screen')
+          // keep hash if present
+          history.replaceState(null, '', url.pathname + (window.location.hash || ''))
+        }
+      }
+    } catch (e) {
+      // ignore
     }
   }, [])
 
@@ -1132,870 +1066,149 @@ const App = () => {
             </div>
           </div>
         )
-      case "knowledge":
-        return (
-          <div className="p-6">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Conocimiento Vial</h2>
-            <button
-              onClick={() => setActiveScreen("home")}
-              className="mb-4 bg-gray-300 text-gray-800 py-2 px-4 rounded-full text-sm hover:bg-gray-400 transition-colors duration-200 shadow-md"
-            >
-              ← Volver al Inicio
-            </button>
-            <div className="flex justify-around bg-gray-200 p-2 rounded-full mb-6 text-sm font-medium shadow-inner">
-              <button
-                className={`flex-1 py-2 rounded-full transition-all duration-200 ${activeScreen === "knowledge" && "learn" === "learn" ? "bg-blue-600 text-white shadow-md" : "text-gray-700 hover:bg-gray-300"}`}
-                onClick={() => setActiveScreen("knowledge")}
-              >
-                Aprende a defenderte
-              </button>
-              <button
-                className={`flex-1 py-2 rounded-full transition-all duration-200 ${activeScreen === "knowledge" && "learn" === "infractions" ? "bg-blue-600 text-white shadow-md" : "text-gray-700 hover:bg-gray-300"}`}
-                onClick={() => setActiveScreen("knowledge")}
-              >
-                Top de Infracciones
-              </button>
-            </div>
-            <div className="space-y-6 max-h-[calc(100vh-250px)] overflow-y-auto pr-2">
-              <p className="text-gray-600 text-center mb-6">
-                Información clave para reaccionar ante situaciones de tránsito cotidianas, basadas en la normativa.
-              </p>
-              {learnContent.map((item) => (
-                <div
-                  key={item.id}
-                  className="bg-white p-5 rounded-xl shadow-md border border-gray-200 transition-all duration-200 hover:shadow-lg"
-                >
-                  <div className="flex items-start justify-between mb-3">
-                    <h3 className="font-semibold text-gray-800 text-lg pr-4">{item.question}</h3>
-                    <button
-                      onClick={() => handleToggleFavorite(item, "learn")}
-                      className="p-1 rounded-full text-gray-400 hover:text-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 transition-colors duration-200"
-                      aria-label={item.saved ? "Eliminar de Favoritos" : "Guardar en Favoritos"}
-                    >
-                      <StarIcon className={`w-6 h-6 ${item.saved ? "text-yellow-400" : "text-gray-400"}`} />
-                    </button>
-                  </div>
-                  {learnExpandedState[item.id] && (
-                    <>
-                      <p className="text-gray-700 mt-2 text-sm leading-relaxed">{item.answer}</p>
-                      <p className="text-gray-500 text-xs italic mt-2">Normatividad: {item.normativity}</p>
-                    </>
-                  )}
-                  <button
-                    onClick={() => toggleLearnExpanded(item.id)}
-                    className="mt-4 w-full bg-blue-500 text-white py-2 px-4 rounded-full hover:bg-blue-600 transition-colors duration-200 text-sm shadow-md hover:shadow-lg"
-                  >
-                    {learnExpandedState[item.id] ? "Ver menos" : "Ver más"}
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-        )
-      case "favorites":
-        return (
-          <div className="p-6">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Tus Favoritos</h2>
-            <button
-              onClick={() => setActiveScreen("home")}
-              className="mb-4 bg-gray-300 text-gray-800 py-2 px-4 rounded-full text-sm hover:bg-gray-400 transition-colors duration-200 shadow-md"
-            >
-              ← Volver al Inicio
-            </button>
-            <div className="space-y-4 max-h-[calc(100vh-200px)] overflow-y-auto pr-2">
-              {favoriteItems.length === 0 ? (
-                <p className="text-gray-600 text-center">
-                  Aún no tienes información favorita. ¡Explora las secciones y guarda lo que te interese!
-                </p>
-              ) : (
-                favoriteItems.map((item, index) => (
-                  <div
-                    key={item.id}
-                    draggable="true"
-                    onDragStart={(e) => handleDragStart(e, index)}
-                    onDragOver={handleDragOver}
-                    onDragEnter={(e) => handleDragEnter(e, index)}
-                    onDragEnd={handleDragEnd}
-                    className="bg-white p-4 rounded-xl shadow-md cursor-grab active:cursor-grabbing transition-all duration-200 hover:shadow-lg data-[dragging=true]:opacity-50"
-                    data-dragging={draggedItemIndex === index ? "true" : "false"}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h4 className="font-semibold text-gray-800">
-                          {item.content.question || item.content.title || `Infracción ${item.content.code}`}
-                        </h4>
-                        <p className="text-sm text-gray-600 mt-1">
-                          {item.content.answer || item.content.summary || item.content.description}
-                        </p>
-                      </div>
-                      <button
-                        onClick={() => handleToggleFavorite(item.content, item.type)}
-                        className="p-1 rounded-full text-gray-400 hover:text-yellow-500 transition-colors duration-200"
-                        aria-label="Eliminar de favoritos"
-                      >
-                        <StarIcon className="w-6 h-6 text-yellow-400" />
-                      </button>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        )
-      case "documents":
-        return (
-          <div className="p-6">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Tus Documentos</h2>
-            <button
-              onClick={() => setActiveScreen("home")}
-              className="mb-4 bg-gray-300 text-gray-800 py-2 px-4 rounded-full text-sm hover:bg-gray-400 transition-colors duration-200 shadow-md"
-            >
-              ← Volver al Inicio
-            </button>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-[calc(100vh-200px)] overflow-y-auto pr-2">
-              {documents.map((doc) => {
-                const daysRemaining = calculateDaysRemaining(doc.dueDate)
-                const statusColor =
-                  daysRemaining <= 30 ? "text-red-500" : daysRemaining <= 90 ? "text-orange-500" : "text-green-500"
-                return (
-                  <div key={doc.id} className="bg-white p-4 rounded-xl shadow-md flex flex-col justify-between">
-                    <div className="flex items-center justify-between mb-2">
-                      <div>
-                        <h4 className="font-semibold text-gray-800">{doc.name}</h4>
-                        <p className="text-sm text-gray-600 mt-1">
-                          Vencimiento: {new Date(doc.dueDate).toLocaleDateString("es-CO")}
-                        </p>
-                        <p className={`text-sm font-bold ${statusColor}`}>
-                          {daysRemaining > 0 ? `Faltan ${daysRemaining} días` : "Vencido"}
-                        </p>
-                        {doc.insurerPhone && (
-                          <p className="text-sm text-gray-600 mt-1">Tel. Aseguradora: {doc.insurerPhone}</p>
-                        )}
-                      </div>
-                      <button
-                        onClick={() => handleDocumentUpload(doc.id)}
-                        className={`py-2 px-4 rounded-full text-white text-sm shadow-md ${doc.uploaded ? "bg-gray-500" : "bg-blue-500 hover:bg-blue-600"}`}
-                        aria-label={doc.uploaded ? `Marcar ${doc.name} como no subido` : `Subir ${doc.name}`}
-                      >
-                        {doc.uploaded ? "Subido" : "Subir"}
-                      </button>
-                    </div>
-                    {(doc.id === "licencia" || doc.id === "propiedad") && (
-                      <button
-                        onClick={() => window.open("https://www.runt.com.co/ciudadano/consulta-documento", "_blank")}
-                        className="mt-3 w-full bg-blue-500 text-white py-2 px-4 rounded-full hover:bg-blue-600 transition-colors duration-200 text-sm shadow-md"
-                        aria-label={`Ver ${doc.name} en RUNT`}
-                      >
-                        Ver en RUNT
-                      </button>
-                    )}
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-        )
+      case "my-profile":
+            // Render the extracted component to keep this file smaller
+            return (
+              <MyProfile
+                setActiveScreen={setActiveScreen}
+                userId={userId}
+                showNotification={showNotification}
+                registeredVehicles={registeredVehicles}
+                showRegisterVehicleForm={showRegisterVehicleForm}
+                setShowRegisterVehicleForm={setShowRegisterVehicleForm}
+                handleForgetVehicle={handleForgetVehicle}
+                newVehicleLastTwoDigits={newVehicleLastTwoDigits}
+                setNewVehicleLastTwoDigits={setNewVehicleLastTwoDigits}
+                newVehicleType={newVehicleType}
+                setNewVehicleType={setNewVehicleType}
+                newVehicleCity={newVehicleCity}
+                setNewVehicleCity={setNewVehicleCity}
+                handleRegisterVehicle={handleRegisterVehicle}
+              />
+            )
       case "quiz":
-        const currentQuestion = quizQuestions[currentQuestionIndex]
         return (
-          <div className="p-6">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">Quiz de Tránsito</h2>
-            <button
-              onClick={() => {
-                setActiveScreen("home")
-                setQuizStarted(false)
-              }}
-              className="mb-4 bg-gray-300 text-gray-800 py-2 px-4 rounded-full text-sm hover:bg-gray-400 transition-colors duration-200 shadow-md"
-            >
-              ← Volver al Inicio
-            </button>
-            {!quizStarted ? (
-              <div className="bg-white p-5 rounded-xl shadow-md border border-gray-200 text-center mt-8">
-                <h3 className="text-xl font-bold text-gray-800 mb-4">
-                  Aprende y pon a prueba tus conocimientos de tránsito
-                </h3>
-                <p className="text-gray-600 mb-6">
-                  Responde 20 preguntas aleatorias para evaluar tu dominio de las normas viales.
-                </p>
-                <button
-                  onClick={() => {
-                    setQuizStarted(true)
-                    selectRandomQuizQuestions()
-                  }}
-                  className="bg-blue-600 text-white py-3 px-6 rounded-full font-semibold hover:bg-blue-700 transition-colors duration-200 shadow-md"
-                >
-                  Comenzar Quiz
-                </button>
-              </div>
-            ) : quizCompleted ? (
-              <div className="bg-blue-100 p-5 rounded-xl shadow-md border border-blue-300 text-center mt-8">
-                <h3 className="text-xl font-bold text-blue-800 mb-3">¡Quiz Completado!</h3>
-                <p className="text-lg text-blue-700 mb-2">
-                  Tu puntuación:{" "}
-                  <span className="font-bold">
-                    {currentScore} / {quizQuestions.length}
-                  </span>
-                </p>
-                <p className="text-lg text-blue-700 font-semibold">{getKnowledgeRange(currentScore)}</p>
-                <button
-                  onClick={resetQuiz}
-                  className="mt-5 bg-blue-600 text-white py-2 px-5 rounded-full font-semibold hover:bg-blue-700 transition-colors duration-200 shadow-md"
-                >
-                  Reiniciar Quiz
-                </button>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                <div className="bg-white p-4 rounded-xl shadow-md">
-                  {currentQuestion.imageUrl && (
-                    <div className="mb-4 flex justify-center">
-                      <img
-                        src={currentQuestion.imageUrl || "/placeholder.svg"}
-                        alt="Imagen relacionada con el quiz"
-                        className="rounded-lg max-h-32 object-cover"
-                      />
-                    </div>
-                  )}
-                  <h4 className="font-semibold text-gray-800 mb-3">{currentQuestion.question}</h4>
-                  <div className="space-y-2">
-                    {currentQuestion.options.map((option, idx) => (
-                      <button
-                        key={idx}
-                        onClick={() => handleQuizAnswer(currentQuestion.id, option)}
-                        className={`w-full text-left p-3 rounded-lg border transition-colors duration-200 shadow-sm
-                          ${
-                            currentQuestion.selected === option
-                              ? currentQuestion.correct
-                                ? "bg-green-100 border-green-500 text-green-800"
-                                : "bg-red-100 border-red-500 text-red-800"
-                              : "bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100"
-                          }`}
-                        disabled={currentQuestion.selected !== null}
-                      >
-                        {option}
-                      </button>
-                    ))}
-                  </div>
-                  {currentQuestion.selected !== null && (
-                    <p
-                      className={`mt-3 text-sm font-semibold ${currentQuestion.correct ? "text-green-600" : "text-red-600"}`}
-                    >
-                      {currentQuestion.correct
-                        ? "¡Correcto!"
-                        : `Incorrecto. La respuesta correcta es: ${currentQuestion.answer}`}
-                    </p>
-                  )}
-                </div>
-                <div className="flex justify-between mt-4">
-                  <button
-                    onClick={goToPreviousQuestion}
-                    disabled={currentQuestionIndex === 0}
-                    className="bg-gray-300 text-gray-800 py-2 px-4 rounded-full text-sm hover:bg-gray-400 transition-colors duration-200 shadow-md disabled:opacity-50"
-                  >
-                    Anterior
-                  </button>
-                  <span className="text-gray-600 text-sm flex items-center">
-                    {currentQuestionIndex + 1} / {quizQuestions.length}
-                  </span>
-                  <button
-                    onClick={goToNextQuestion}
-                    disabled={currentQuestion.selected === null && currentQuestionIndex < quizQuestions.length - 1}
-                    className="bg-blue-600 text-white py-2 px-4 rounded-full font-semibold hover:bg-blue-700 transition-colors duration-200 shadow-md disabled:opacity-50"
-                  >
-                    {currentQuestionIndex === quizQuestions.length - 1 ? "Finalizar Quiz" : "Siguiente"}
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
+          <Quiz
+            quizQuestions={quizQuestions}
+            currentQuestionIndex={currentQuestionIndex}
+            currentScore={currentScore}
+            quizCompleted={quizCompleted}
+            quizStarted={quizStarted}
+            setActiveScreen={setActiveScreen}
+            setQuizStarted={setQuizStarted}
+            selectRandomQuizQuestions={selectRandomQuizQuestions}
+            handleQuizAnswer={handleQuizAnswer}
+            resetQuiz={resetQuiz}
+            goToNextQuestion={goToNextQuestion}
+            goToPreviousQuestion={goToPreviousQuestion}
+            getKnowledgeRange={getKnowledgeRange}
+          />
         )
       case "regulations-main":
         return (
-          <div className="p-6">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">Normatividad Vial</h2>
-            <button
-              onClick={() => setActiveScreen("home")}
-              className="mb-4 bg-gray-300 text-gray-800 py-2 px-4 rounded-full text-sm hover:bg-gray-400 transition-colors duration-200 shadow-md"
-            >
-              ← Volver al Inicio
-            </button>
-            <p className="text-gray-600 text-center mb-6">Principales normas de tránsito en Colombia.</p>
-            <div className="space-y-6 max-h-[calc(100vh-200px)] overflow-y-auto pr-2">
-              {regulationsData.map((regulation) => (
-                <div
-                  key={regulation.id}
-                  className="bg-white p-5 rounded-xl shadow-md border border-gray-200 transition-all duration-200 hover:shadow-lg"
-                >
-                  <h3 className="font-semibold text-gray-800 text-lg mb-2">{regulation.title}</h3>
-                  <p className="text-gray-700 text-sm leading-relaxed">{regulation.summary}</p>
-                  <button
-                    onClick={() => {
-                      setActiveScreen("regulation-detail")
-                      setSelectedRegulation(regulation)
-                    }}
-                    className="mt-4 inline-block bg-blue-500 text-white py-2 px-4 rounded-full text-sm hover:bg-blue-600 transition-colors duration-200 shadow-md hover:shadow-lg"
-                    aria-label={`Ver detalle de ${regulation.title}`}
-                  >
-                    Ver en detalle
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
+          <Regulations
+            regulationsData={regulationsData}
+            setActiveScreen={setActiveScreen}
+            setSelectedRegulation={setSelectedRegulation}
+          />
         )
       case "regulation-detail":
         return (
-          <div className="p-6">
-            <button
-              onClick={() => {
-                setActiveScreen("regulations-main")
-                setSelectedRegulation(null)
-              }}
-              className="mb-4 bg-gray-300 text-gray-800 py-2 px-4 rounded-full text-sm hover:bg-gray-400 transition-colors duration-200 shadow-md"
-            >
-              ← Volver a Normatividad
-            </button>
-            {selectedRegulation && (
-              <div className="bg-white p-5 rounded-xl shadow-md border border-gray-200 max-h-[calc(100vh-150px)] overflow-y-auto pr-2">
-                <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">{selectedRegulation.title}</h2>
-                <p className="text-gray-700 text-sm leading-relaxed mb-4">{selectedRegulation.summary}</p>
-                <h3 className="text-xl font-bold text-gray-800 mb-3">Artículos Clave:</h3>
-                <div className="space-y-4">
-                  {selectedRegulation.articles && selectedRegulation.articles.length > 0 ? (
-                    selectedRegulation.articles.map((article, index) => (
-                      <div key={index} className="bg-gray-50 p-3 rounded-lg border border-gray-200">
-                        <p className="font-semibold text-gray-800">Artículo {article.number}:</p>
-                        <p className="text-sm text-gray-700">{article.summary}</p>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-gray-600 italic">No hay artículos detallados disponibles para esta normativa.</p>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
+          <RegulationDetail
+            selectedRegulation={selectedRegulation}
+            setActiveScreen={setActiveScreen}
+            setSelectedRegulation={setSelectedRegulation}
+          />
         )
       case "glossary":
         return (
-          <div className="p-6">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Glosario de Tránsito</h2>
-            <button
-              onClick={() => setActiveScreen("home")}
-              className="mb-4 bg-gray-300 text-gray-800 py-2 px-4 rounded-full text-sm hover:bg-gray-400 transition-colors duration-200 shadow-md"
-            >
-              ← Volver al Inicio
-            </button>
-            <div className="relative mb-6">
-              <input
-                type="text"
-                placeholder="Buscar término..."
-                className="w-full pl-12 pr-4 py-3 rounded-full bg-white border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
-                value={glossarySearchTerm}
-                onChange={(e) => setGlossarySearchTerm(e.target.value)}
-                aria-label="Buscar término en el glosario"
-              />
-              <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
-                <SearchIcon />
-              </div>
-            </div>
-            <div className="max-h-[calc(100vh-250px)] overflow-y-auto pr-2">
-              {filteredGlossaryTerms.length === 0 ? (
-                <p className="text-gray-600 text-center">No se encontraron términos para tu búsqueda.</p>
-              ) : (
-                filteredGlossaryTerms.map((term, index) => (
-                  <div key={index} className="bg-white p-4 rounded-xl shadow-md border border-gray-200">
-                    <h3 className="font-bold text-lg text-gray-800 mb-1">{term.term}</h3>
-                    <p className="text-gray-700 text-sm">{term.explanation}</p>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
+          <Glossary
+            glossarySearchTerm={glossarySearchTerm}
+            setGlossarySearchTerm={setGlossarySearchTerm}
+            filteredGlossaryTerms={filteredGlossaryTerms}
+            setActiveScreen={setActiveScreen}
+          />
         )
       case "pqr":
+        // Render PQR from extracted component
         return (
-          <div className="p-6">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Preguntas, Quejas y Reclamos (PQR)</h2>
-            <button
-              onClick={() => setActiveScreen("home")}
-              className="mb-4 bg-gray-300 text-gray-800 py-2 px-4 rounded-full text-sm hover:bg-gray-400 transition-colors duration-200 shadow-md"
-            >
-              ← Volver al Inicio
-            </button>
-            <div className="bg-white p-5 rounded-xl shadow-md border border-gray-200 max-h-[calc(100vh-200px)] overflow-y-auto pr-2">
-              <p className="text-gray-700 mb-4">
-                ¿Tienes alguna pregunta sobre tránsito que te gustaría que incluimos en nuestra sección de Conocimiento?
-                ¡Escríbenos!
-              </p>
-              <textarea
-                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4 resize-none"
-                rows="6"
-                placeholder="Escribe tu mensaje aquí..."
-                value={pqrQuestion}
-                onChange={(e) => setPqrQuestion(e.target.value)}
-                aria-label="Campo para escribir tu pregunta, queja o reclamo"
-              ></textarea>
-              <button
-                onClick={handlePqrSubmit}
-                className="w-full bg-blue-600 text-white py-3 px-4 rounded-full font-semibold hover:bg-blue-700 transition-colors duration-200 shadow-md"
-              >
-                Enviar Pregunta
-              </button>
-            </div>
-          </div>
+          <Pqr
+            setActiveScreen={setActiveScreen}
+            pqrQuestion={pqrQuestion}
+            setPqrQuestion={setPqrQuestion}
+            handlePqrSubmit={handlePqrSubmit}
+          />
         )
       case "ai-assist":
         return (
-          <div className="p-6 flex flex-col h-full">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">Asesoría IA</h2>
-            <button
-              onClick={() => setActiveScreen("home")}
-              className="mb-4 bg-gray-300 text-gray-800 py-2 px-4 rounded-full text-sm hover:bg-gray-400 transition-colors duration-200 shadow-md"
-            >
-              ← Volver al Inicio
-            </button>
-            <p className="text-gray-600 text-center mb-6">
-              Pregunta a nuestro asistente inteligente sobre cualquier duda vial.
-            </p>
-            <div className="flex-grow bg-white p-4 rounded-xl shadow-md border border-gray-200 overflow-y-auto mb-4 space-y-4">
-              {chatHistory.length === 0 ? (
-                <p className="text-gray-500 text-center italic">¡Hola! ¿En qué puedo ayudarte hoy?</p>
-              ) : (
-                chatHistory.map((msg, index) => (
-                  <div key={index} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-                    <div
-                      className={`max-w-[80%] p-3 rounded-lg shadow-sm ${
-                        msg.role === "user"
-                          ? "bg-blue-500 text-white rounded-br-none"
-                          : "bg-gray-200 text-gray-800 rounded-bl-none"
-                      }`}
-                    >
-                      {msg.content}
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-            <div className="flex items-center space-x-3">
-              <textarea
-                className="flex-grow p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                rows="1"
-                placeholder="Escribe tu mensaje..."
-                value={userMessage}
-                onChange={(e) => setUserMessage(e.target.value)}
-                onKeyPress={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault()
-                    handleSendMessage()
-                  }
-                }}
-                aria-label="Escribir mensaje al asistente IA"
-              ></textarea>
-              <button
-                onClick={handleSendMessage}
-                className="bg-blue-600 text-white p-3 rounded-full shadow-md hover:bg-blue-700 transition-colors duration-200"
-                aria-label="Enviar mensaje"
-              >
-                <MicIcon className="w-6 h-6" />
-              </button>
-            </div>
-          </div>
+          <AiAssist
+            setActiveScreen={setActiveScreen}
+            chatHistory={chatHistory}
+            userMessage={userMessage}
+            setUserMessage={setUserMessage}
+            handleSendMessage={handleSendMessage}
+          />
         )
       case "notifications":
         return (
-          <div className="p-6">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Notificaciones</h2>
-            <button
-              onClick={() => setActiveScreen("home")}
-              className="mb-4 bg-gray-300 text-gray-800 py-2 px-4 rounded-full text-sm hover:bg-gray-400 transition-colors duration-200 shadow-md"
-            >
-              ← Volver al Inicio
-            </button>
-            <div className="bg-white p-5 rounded-xl shadow-md border border-gray-200 mb-6">
-              <h3 className="font-semibold text-gray-800 text-lg mb-3">Tus Multas</h3>
-              <p className="text-green-600 font-semibold">No tienes multas registradas en las páginas oficiales</p>
-              <button
-                onClick={() => showNotification("Redirigir a consulta SIMIT (simulado)", "info")}
-                className="mt-4 w-full bg-orange-500 text-white py-2 px-4 rounded-full hover:bg-orange-600 transition-colors duration-200 text-sm shadow-md"
-                aria-label="Consultar multas en SIMIT"
-              >
-                Consultar en SIMIT
-              </button>
-            </div>
-            <div className="bg-white p-5 rounded-xl shadow-md border border-gray-200 mb-6">
-              <h3 className="font-semibold text-gray-800 text-lg mb-3">Pico y Placa para tus Vehículos Registrados</h3>
-              {registeredVehicles.length === 0 ? (
-                <p className="text-gray-600">
-                  Aún no tienes vehículos registrados. Regístralos para recibir notificaciones de pico y placa.
-                </p>
-              ) : (
-                <ul className="space-y-3">
-                  {registeredVehicles.map((vehicle) => (
-                    <li key={vehicle.id} className="bg-gray-50 p-3 rounded-lg text-sm text-gray-700 shadow-sm">
-                      <p>
-                        <span className="font-semibold">Placa (últimos 2):</span> {vehicle.lastTwoDigits}
-                      </p>
-                      <p>
-                        <span className="font-semibold">Tipo:</span> {vehicle.type}
-                      </p>
-                      <p>
-                        <span className="font-semibold">Ciudad:</span> {vehicle.city}
-                      </p>
-                      <p
-                        className={`text-base font-bold mt-1 ${checkPicoYPlacaStatus(vehicle.lastTwoDigits, vehicle.type, vehicle.city).includes("Tiene") ? "text-red-500" : "text-green-500"}`}
-                      >
-                        {checkPicoYPlacaStatus(vehicle.lastTwoDigits, vehicle.type, vehicle.city)}
-                      </p>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-            <div className="bg-white p-5 rounded-xl shadow-md border border-gray-200">
-              <h3 className="font-semibold text-gray-800 text-lg mb-3">Recordatorio de Documentos</h3>
-              <div className="space-y-3">
-                {documents.map((doc) => {
-                  const daysRemaining = calculateDaysRemaining(doc.dueDate)
-                  const statusColor =
-                    daysRemaining <= 30 ? "text-red-500" : daysRemaining <= 90 ? "text-orange-500" : "text-green-500"
-                  return (
-                    <div key={doc.id} className="flex items-center justify-between text-gray-700 text-sm">
-                      <span>{doc.name}</span>
-                      <span className={`font-bold ${statusColor}`}>
-                        {daysRemaining > 0 ? `Faltan ${daysRemaining} días` : "Vencido"}
-                      </span>
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
-          </div>
+          <Notifications
+            setActiveScreen={setActiveScreen}
+            registeredVehicles={registeredVehicles}
+            checkPicoYPlacaStatus={checkPicoYPlacaStatus}
+            documents={documents}
+            calculateDaysRemaining={calculateDaysRemaining}
+            showNotification={showNotification}
+          />
         )
       case "news":
         return (
-          <div className="p-6">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Noticias y Novedades</h2>
-            <button
-              onClick={() => setActiveScreen("home")}
-              className="mb-4 bg-gray-300 text-gray-800 py-2 px-4 rounded-full text-sm hover:bg-gray-400 transition-colors duration-200 shadow-md"
-            >
-              ← Volver al Inicio
-            </button>
-            <div className="space-y-6 max-h-[calc(100vh-200px)] overflow-y-auto pr-2">
-              {newsItems.map((item) => (
-                <div
-                  key={item.id}
-                  className="bg-white p-4 rounded-xl shadow-md border border-gray-200 transition-all duration-200 hover:shadow-lg"
-                >
-                  <div className="flex items-start justify-between mb-3">
-                    <h3 className="font-semibold text-gray-800 text-lg pr-4">{item.title}</h3>
-                    <button
-                      onClick={() => handleToggleFavorite(item, "news")}
-                      className="p-1 rounded-full text-gray-400 hover:text-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 transition-colors duration-200"
-                      aria-label={item.saved ? "Eliminar de Favoritos" : "Guardar en Favoritos"}
-                    >
-                      <StarIcon className={`w-6 h-6 ${item.saved ? "text-yellow-400" : "text-gray-400"}`} />
-                    </button>
-                  </div>
-                  {item.imageUrl && (
-                    <div className="mb-4 flex justify-center">
-                      <img
-                        src={item.imageUrl || "/placeholder.svg"}
-                        alt={`Imagen de ${item.title}`}
-                        className="rounded-lg max-h-40 w-full object-cover"
-                      />
-                    </div>
-                  )}
-                  <p className="text-gray-700 mt-2 text-sm leading-relaxed">
-                    {newsExpandedState[item.id] ? item.fullContent : item.summary}
-                  </p>
-                  <button
-                    onClick={() => toggleNewsExpanded(item.id)}
-                    className="mt-4 w-full bg-purple-500 text-white py-2 px-4 rounded-full hover:bg-purple-600 transition-colors duration-200 text-sm shadow-md hover:shadow-lg"
-                  >
-                    {newsExpandedState[item.id] ? "Ver menos" : "Ver más"}
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
+          <News
+            setActiveScreen={setActiveScreen}
+            newsItems={newsItems}
+            toggleNewsExpanded={toggleNewsExpanded}
+            handleToggleFavorite={handleToggleFavorite}
+            StarIcon={StarIcon}
+          />
         )
       case "pico-y-placa":
         return (
-          <div className="p-6">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">Pico y Placa</h2>
-            <button
-              onClick={() => setActiveScreen("home")}
-              className="mb-4 bg-gray-300 text-gray-800 py-2 px-4 rounded-full text-sm hover:bg-gray-400 transition-colors duration-200 shadow-md"
-            >
-              ← Volver al Inicio
-            </button>
-            <div
-              className="bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded-md mb-6 text-sm"
-              role="alert"
-            >
-              <strong className="font-bold">¡Atención!</strong>
-              <span className="block sm:inline">
-                {" "}
-                La funcionalidad de Pico y Placa es una simulación. Las reglas reales varían y se actualizan
-                constantemente por cada ciudad. Para información precisa, consulte fuentes oficiales.
-              </span>
-            </div>
-            <div className="space-y-6">
-              <div className="bg-white p-5 rounded-xl shadow-md border border-gray-200">
-                <h3 className="font-semibold text-gray-800 text-lg mb-3">Pico y Placa en tu Ciudad de Domicilio</h3>
-                <div className="mb-4">
-                  <label htmlFor="pico-plate-domicile" className="block text-gray-700 text-sm font-bold mb-2">
-                    Placa:
-                  </label>
-                  <input
-                    type="text"
-                    id="pico-plate-domicile"
-                    placeholder="Ej: ABC123"
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    value={picoYPlacaPlateDomicile}
-                    onChange={(e) => setPicoYPlacaPlateDomicile(e.target.value.toUpperCase())}
-                    aria-label="Ingresar placa para Pico y Placa de domicilio"
-                  />
-                </div>
-                <div className="mb-4">
-                  <label htmlFor="pico-vehicle-type-domicile" className="block text-gray-700 text-sm font-bold mb-2">
-                    Tipo de Vehículo:
-                  </label>
-                  <select
-                    id="pico-vehicle-type-domicile"
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white"
-                    value={picoYPlacaVehicleTypeDomicile}
-                    onChange={(e) => setPicoYPlacaVehicleTypeDomicile(e.target.value)}
-                    aria-label="Seleccionar tipo de vehículo para Pico y Placa de domicilio"
-                  >
-                    <option value="">Selecciona</option>
-                    {VEHICLE_TYPES.map((type) => (
-                      <option key={type} value={type}>
-                        {type}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="mb-4">
-                  <label htmlFor="pico-city-domicile" className="block text-gray-700 text-sm font-bold mb-2">
-                    Ciudad:
-                  </label>
-                  <select
-                    id="pico-city-domicile"
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white"
-                    value={picoYPlacaCityDomicile}
-                    onChange={(e) => setPicoYPlacaCityDomicile(e.target.value)}
-                    aria-label="Seleccionar ciudad de domicilio para Pico y Placa"
-                  >
-                    {COLOMBIAN_CITIES_WITH_PICO_Y_PLACA.map((city) => (
-                      <option key={city} value={city}>
-                        {city}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <button
-                  onClick={handlePicoYPlacaConsultDomicile}
-                  className="w-full bg-orange-500 text-white py-3 px-4 rounded-full font-semibold hover:bg-orange-600 transition-colors duration-200 shadow-md"
-                >
-                  Consultar
-                </button>
-              </div>
-              <div className="bg-white p-5 rounded-xl shadow-md border border-gray-200">
-                <h3 className="font-semibold text-gray-800 text-lg mb-3">Pico y Placa en Otra Ciudad</h3>
-                <div className="mb-4">
-                  <label htmlFor="pico-plate-other" className="block text-gray-700 text-sm font-bold mb-2">
-                    Placa:
-                  </label>
-                  <input
-                    type="text"
-                    id="pico-plate-other"
-                    placeholder="Ej: XYZ789"
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    value={picoYPlacaPlateOther}
-                    onChange={(e) => setPicoYPlacaPlateOther(e.target.value.toUpperCase())}
-                    aria-label="Ingresar placa para Pico y Placa en otra ciudad"
-                  />
-                </div>
-                <div className="mb-4">
-                  <label htmlFor="pico-vehicle-type-other" className="block text-gray-700 text-sm font-bold mb-2">
-                    Tipo de Vehículo:
-                  </label>
-                  <select
-                    id="pico-vehicle-type-other"
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white"
-                    value={picoYPlacaVehicleTypeOther}
-                    onChange={(e) => setPicoYPlacaVehicleTypeOther(e.target.value)}
-                    aria-label="Seleccionar tipo de vehículo para Pico y Placa en otra ciudad"
-                  >
-                    <option value="">Selecciona</option>
-                    {VEHICLE_TYPES.map((type) => (
-                      <option key={type} value={type}>
-                        {type}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="mb-4">
-                  <label htmlFor="pico-city-other" className="block text-gray-700 text-sm font-bold mb-2">
-                    Ciudad:
-                  </label>
-                  <select
-                    id="pico-city-other"
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white"
-                    value={picoYPlacaCityOther}
-                    onChange={(e) => setPicoYPlacaCityOther(e.target.value)}
-                    aria-label="Seleccionar ciudad para Pico y Placa en otra ciudad"
-                  >
-                    <option value="">Selecciona una ciudad</option>
-                    {COLOMBIAN_CITIES_WITH_PICO_Y_PLACA.map((city) => (
-                      <option key={city} value={city}>
-                        {city}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <button
-                  onClick={handlePicoYPlacaConsultOther}
-                  className="w-full bg-orange-500 text-white py-3 px-4 rounded-full font-semibold hover:bg-orange-600 transition-colors duration-200 shadow-md"
-                >
-                  Consultar
-                </button>
-              </div>
-            </div>
-          </div>
+          <PicoYPlaca
+            setActiveScreen={setActiveScreen}
+            picoYPlacaPlateDomicile={picoYPlacaPlateDomicile}
+            setPicoYPlacaPlateDomicile={setPicoYPlacaPlateDomicile}
+            picoYPlacaVehicleTypeDomicile={picoYPlacaVehicleTypeDomicile}
+            setPicoYPlacaVehicleTypeDomicile={setPicoYPlacaVehicleTypeDomicile}
+            picoYPlacaCityDomicile={picoYPlacaCityDomicile}
+            setPicoYPlacaCityDomicile={setPicoYPlacaCityDomicile}
+            picoYPlacaPlateOther={picoYPlacaPlateOther}
+            setPicoYPlacaPlateOther={setPicoYPlacaPlateOther}
+            picoYPlacaVehicleTypeOther={picoYPlacaVehicleTypeOther}
+            setPicoYPlacaVehicleTypeOther={setPicoYPlacaVehicleTypeOther}
+            picoYPlacaCityOther={picoYPlacaCityOther}
+            setPicoYPlacaCityOther={setPicoYPlacaCityOther}
+            COLOMBIAN_CITIES_WITH_PICO_Y_PLACA={COLOMBIAN_CITIES_WITH_PICO_Y_PLACA}
+            VEHICLE_TYPES={VEHICLE_TYPES}
+            handlePicoYPlacaConsultDomicile={handlePicoYPlacaConsultDomicile}
+            handlePicoYPlacaConsultOther={handlePicoYPlacaConsultOther}
+            checkPicoYPlacaStatus={checkPicoYPlacaStatus}
+            registeredVehicles={registeredVehicles}
+          />
         )
-      case "my-profile":
+      case "documents":
+        // Lazy render external Documents component
         return (
-          <div className="p-6">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Mi Perfil</h2>
-            <button
-              onClick={() => setActiveScreen("home")}
-              className="mb-4 bg-gray-300 text-gray-800 py-2 px-4 rounded-full text-sm hover:bg-gray-400 transition-colors duration-200 shadow-md"
-            >
-              ← Volver al Inicio
-            </button>
-            <div className="space-y-6">
-              <div className="bg-white p-5 rounded-xl shadow-md border border-gray-200">
-                <h3 className="font-semibold text-gray-800 text-lg mb-3">Mis Datos</h3>
-                {userId && (
-                  <p className="text-gray-700 text-sm break-words">
-                    ID de usuario: <span className="font-mono">{userId}</span>
-                  </p>
-                )}
-                <button
-                  onClick={() => showNotification("Funcionalidad de edición de datos simulada", "info")}
-                  className="mt-4 w-full bg-blue-500 text-white py-2 px-4 rounded-full hover:bg-blue-600 transition-colors duration-200 text-sm shadow-md"
-                >
-                  Editar Datos
-                </button>
-              </div>
-              <div className="bg-white p-5 rounded-xl shadow-md border border-gray-200">
-                <div className="flex justify-between items-center mb-3">
-                  <h3 className="font-semibold text-gray-800 text-lg">Vehículos Registrados</h3>
-                  <button
-                    onClick={() => setShowRegisterVehicleForm((prev) => !prev)}
-                    className="p-2 rounded-full bg-blue-500 text-white hover:bg-blue-600 transition-colors duration-200 shadow-md"
-                    aria-label={
-                      showRegisterVehicleForm
-                        ? "Cerrar formulario de registro de vehículo"
-                        : "Abrir formulario de registro de vehículo"
-                    }
-                  >
-                    <PlusIcon className="w-6 h-6" />
-                  </button>
-                </div>
-                {registeredVehicles.length === 0 ? (
-                  <p className="text-gray-600 text-center">Aún no tienes vehículos registrados.</p>
-                ) : (
-                  <ul className="space-y-3">
-                    {registeredVehicles.map((vehicle) => (
-                      <li
-                        key={vehicle.id}
-                        className="bg-gray-50 p-3 rounded-lg text-sm text-gray-700 flex justify-between items-center shadow-sm"
-                      >
-                        <span>
-                          Placa (últimos 2): <span className="font-semibold">{vehicle.lastTwoDigits}</span> - Tipo:{" "}
-                          <span className="font-semibold">{vehicle.type}</span> - Ciudad:{" "}
-                          <span className="font-semibold">{vehicle.city}</span>
-                        </span>
-                        <button
-                          onClick={() => handleForgetVehicle(vehicle.id)}
-                          className="p-1 rounded-full text-red-500 hover:bg-red-100 transition-colors duration-200"
-                          aria-label={`Olvidar vehículo con últimos 2 dígitos ${vehicle.lastTwoDigits}`}
-                        >
-                          <XIcon className="w-5 h-5" />
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-              {showRegisterVehicleForm && (
-                <div className="bg-white p-5 rounded-xl shadow-md border border-gray-200">
-                  <h3 className="font-semibold text-gray-800 text-lg mb-3">Registra un Nuevo Vehículo</h3>
-                  <div className="mb-4">
-                    <label htmlFor="last-two-digits" className="block text-gray-700 text-sm font-bold mb-2">
-                      Últimos 2 dígitos de la placa:
-                    </label>
-                    <input
-                      type="text"
-                      id="last-two-digits"
-                      placeholder="Ej: 23"
-                      maxLength="2"
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      value={newVehicleLastTwoDigits}
-                      onChange={(e) => setNewVehicleLastTwoDigits(e.target.value.replace(/[^0-9]/g, ""))}
-                    />
-                  </div>
-                  <div className="mb-4">
-                    <label htmlFor="new-vehicle-type" className="block text-gray-700 text-sm font-bold mb-2">
-                      Tipo de Vehículo:
-                    </label>
-                    <select
-                      id="new-vehicle-type"
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
-                      value={newVehicleType}
-                      onChange={(e) => setNewVehicleType(e.target.value)}
-                    >
-                      <option value="">Selecciona</option>
-                      {VEHICLE_TYPES.map((type) => (
-                        <option key={type} value={type}>
-                          {type}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="mb-4">
-                    <label htmlFor="new-vehicle-city" className="block text-gray-700 text-sm font-bold mb-2">
-                      Ciudad:
-                    </label>
-                    <select
-                      id="new-vehicle-city"
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
-                      value={newVehicleCity}
-                      onChange={(e) => setNewVehicleCity(e.target.value)}
-                    >
-                      <option value="">Selecciona una ciudad</option>
-                      {COLOMBIAN_CITIES_WITH_PICO_Y_PLACA.map((city) => (
-                        <option key={city} value={city}>
-                          {city}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <button
-                    onClick={handleRegisterVehicle}
-                    className="w-full bg-blue-600 text-white py-3 px-4 rounded-full font-semibold hover:bg-blue-700 transition-colors duration-200 shadow-md"
-                  >
-                    Guardar Vehículo
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
+          <Documents
+            setActiveScreen={setActiveScreen}
+            documents={documents}
+            calculateDaysRemaining={calculateDaysRemaining}
+            handleDocumentUpload={handleDocumentUpload}
+            deleteDocument={deleteDocument}
+            showNotification={showNotification}
+            addDocument={addDocument}
+            setDocuments={setDocuments}
+            saveToLocalStorage={saveToLocalStorage}
+            ALL_DOCUMENTS_DATA={ALL_DOCUMENTS_DATA}
+          />
         )
       default:
         return null
@@ -2010,6 +1223,28 @@ const App = () => {
     { name: "Asesoría", icon: LightbulbIcon, screen: "ai-assist" },
   ]
 
+  // Navigation handler that requires authentication for routes different than 'home'
+  const handleNavClick = (screen) => {
+    // Allow global-search to open the modal without forcing login
+    if (screen !== 'home' && screen !== 'global-search' && !loggedIn) {
+      showNotification('Debes iniciar sesión para acceder a esta sección', 'info')
+      // Redirect to Auth0 login page to begin authentication
+      try {
+        if (typeof window !== 'undefined') window.location.href = '/api/auth/login'
+      } catch (e) {
+        // fallback: open local login modal
+        setShowLoginModal(true)
+      }
+      return
+    }
+
+    if (screen === 'global-search') {
+      setShowGlobalSearchModal(true)
+    } else {
+      setActiveScreen(screen)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gray-100 font-sans flex flex-col p-4">
       <div
@@ -2021,15 +1256,15 @@ const App = () => {
         >
           <div className="relative">
             {loggedIn ? (
-              <a
+              <button
                 ref={loginButtonRef}
-                href="/api/auth/logout"
+                onClick={() => setShowLoginDropdown((s) => !s)}
                 className="flex items-center space-x-2 px-3 py-2 rounded-full bg-blue-700 hover:bg-blue-800 transition-colors duration-200 text-sm font-semibold shadow-md"
-                aria-label="Cerrar sesión"
+                aria-label="Abrir menú de usuario"
               >
                 <UserIcon className="w-5 h-5" />
-                <span>Salir</span>
-              </a>
+                <span>Mi cuenta</span>
+              </button>
             ) : (
               <a
                 ref={loginButtonRef}
@@ -2048,14 +1283,26 @@ const App = () => {
               >
                 {loggedIn ? (
                   <>
-                    <a
-                      href="/api/auth/me"
-                      className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      onClick={() => setShowLoginDropdown(false)}
+                    <button
+                      className="w-full text-left flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={() => {
+                        setActiveScreen('my-profile')
+                        setShowLoginDropdown(false)
+                      }}
                     >
                       <UserIcon className="w-4 h-4" />
                       <span>Mi perfil</span>
-                    </a>
+                    </button>
+                    <button
+                      className="w-full text-left flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={() => {
+                        setActiveScreen('documents')
+                        setShowLoginDropdown(false)
+                      }}
+                    >
+                      <FileTextIcon className="w-4 h-4" />
+                      <span>Mis documentos</span>
+                    </button>
                     <a
                       href="#"
                       className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -2090,17 +1337,14 @@ const App = () => {
                       <span>Compartir app</span>
                     </a>
                     <div className="border-t border-gray-200 my-1"></div>
-                    <button
+                    <a
+                      href="/api/auth/logout"
                       className="w-full flex items-center space-x-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50"
-                      onClick={() => {
-                        setLoggedIn(false)
-                        setShowLoginDropdown(false)
-                        showNotification("Sesión cerrada.", "info")
-                      }}
+                      onClick={() => setShowLoginDropdown(false)}
                     >
                       <LogInIcon className="w-4 h-4 transform rotate-180" />
                       <span>Cerrar Sesión</span>
-                    </button>
+                    </a>
                   </>
                 ) : (
                   <>
@@ -2187,13 +1431,7 @@ const App = () => {
                               : "bg-white text-gray-600 hover:bg-gray-100"
                           }
                           focus:outline-none focus:ring-2 focus:ring-blue-300`}
-              onClick={() => {
-                if (item.screen === "global-search") {
-                  setShowGlobalSearchModal(true)
-                } else {
-                  setActiveScreen(item.screen)
-                }
-              }}
+              onClick={() => handleNavClick(item.screen)}
               aria-label={`Go to ${item.name}`}
             >
               <item.icon className="w-6 h-6" />
