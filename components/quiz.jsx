@@ -1,21 +1,116 @@
 "use client"
-import React from "react"
+import React, { useEffect, useState, useCallback } from "react"
+import { DEFAULT_QUIZ_QUESTIONS, fetchQuizQuestions } from "../lib/quiz-utils"
 
-export default function Quiz({
-  quizQuestions,
-  currentQuestionIndex,
-  currentScore,
-  quizCompleted,
-  quizStarted,
-  setActiveScreen,
-  setQuizStarted,
-  selectRandomQuizQuestions,
-  handleQuizAnswer,
-  resetQuiz,
-  goToNextQuestion,
-  goToPreviousQuestion,
-  getKnowledgeRange,
-}) {
+export default function Quiz({ setActiveScreen }) {
+  const [quizQuestions, setQuizQuestions] = useState([])
+  const [quizStarted, setQuizStarted] = useState(false)
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
+  const [currentScore, setCurrentScore] = useState(0)
+  const [quizCompleted, setQuizCompleted] = useState(false)
+
+  useEffect(() => {
+    let mounted = true
+    ;(async () => {
+      const data = await fetchQuizQuestions()
+      const base = Array.isArray(data) ? data.map((q) => ({ ...q, selected: null, correct: null })) : DEFAULT_QUIZ_QUESTIONS
+
+      // Try to restore saved progress if available
+      try {
+        const raw = typeof window !== 'undefined' ? localStorage.getItem('transit-quiz-progress') : null
+        if (raw) {
+          const saved = JSON.parse(raw)
+          if (saved && Array.isArray(saved.quizQuestions) && saved.quizQuestions.length > 0) {
+            if (mounted) {
+              setQuizQuestions(saved.quizQuestions)
+              setCurrentQuestionIndex(saved.currentQuestionIndex || 0)
+              setCurrentScore(saved.currentScore || 0)
+              setQuizStarted(Boolean(saved.quizStarted))
+              setQuizCompleted(Boolean(saved.quizCompleted))
+            }
+            return
+          }
+        }
+      } catch (e) {
+        // ignore and continue with base questions
+      }
+
+      if (mounted) setQuizQuestions(base)
+    })()
+    return () => (mounted = false)
+  }, [])
+
+  const selectRandomQuizQuestions = useCallback(() => {
+    const shuffled = [...quizQuestions].sort(() => 0.5 - Math.random())
+    const selected20 = shuffled.slice(0, 20).map((q) => ({ ...q, selected: null, correct: null }))
+    setQuizQuestions(selected20)
+    setCurrentScore(0)
+    setQuizCompleted(false)
+    setCurrentQuestionIndex(0)
+  }, [quizQuestions])
+
+  useEffect(() => {
+    if (quizStarted && quizQuestions.length === 0) selectRandomQuizQuestions()
+  }, [quizStarted, quizQuestions.length, selectRandomQuizQuestions])
+
+  const handleQuizAnswer = (questionId, selectedOption) => {
+    const updatedQuizQuestions = quizQuestions.map((q) =>
+      q.id === questionId ? { ...q, selected: selectedOption, correct: selectedOption === q.answer } : q,
+    )
+    setQuizQuestions(updatedQuizQuestions)
+    const answeredQuestion = updatedQuizQuestions.find((q) => q.id === questionId)
+    if (answeredQuestion && answeredQuestion.correct) setCurrentScore((prev) => prev + 1)
+  }
+
+  // Persist quiz progress to localStorage
+  useEffect(() => {
+    try {
+      if (typeof window !== 'undefined') {
+        const payload = {
+          quizQuestions,
+          currentQuestionIndex,
+          currentScore,
+          quizStarted,
+          quizCompleted,
+          updatedAt: new Date().toISOString(),
+        }
+        localStorage.setItem('transit-quiz-progress', JSON.stringify(payload))
+      }
+    } catch (e) {
+      // ignore
+    }
+  }, [quizQuestions, currentQuestionIndex, currentScore, quizStarted, quizCompleted])
+
+  const resetQuiz = () => {
+    selectRandomQuizQuestions()
+    setQuizStarted(true)
+    setCurrentQuestionIndex(0)
+  }
+
+  const goToNextQuestion = () => {
+    if (currentQuestionIndex < quizQuestions.length - 1) {
+      setCurrentQuestionIndex((prevIndex) => prevIndex + 1)
+    } else {
+      setQuizCompleted(true)
+    }
+  }
+
+  const goToPreviousQuestion = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex((prevIndex) => prevIndex - 1)
+      setQuizCompleted(false)
+    }
+  }
+
+  const getKnowledgeRange = (score) => {
+    const totalQuestions = quizQuestions.length
+    if (totalQuestions === 0) return "N/A"
+    if (score === totalQuestions) return "Experto: ¡Dominas las normas de tránsito!"
+    if (score >= totalQuestions * 0.8) return "Avanzado: ¡Excelente conocimiento vial!"
+    if (score >= totalQuestions * 0.5) return "Intermedio: Vas por buen camino, ¡sigue practicando!"
+    return "Principiante: Es hora de revisar las regulaciones, ¡puedes mejorar!"
+  }
+
   const currentQuestion = quizQuestions && quizQuestions.length > 0 ? quizQuestions[currentQuestionIndex] : null
 
   return (

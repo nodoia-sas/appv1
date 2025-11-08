@@ -6,15 +6,19 @@ import MyProfile from './my-profile'
 import Documents from './documents'
 import Quiz from "./quiz"
 import Regulations from "./regulations"
+import RegulationsMain from "./regulations-main"
 import RegulationDetail from "./regulation-detail"
 import Glossary from "./glossary"
+import GlossaryMain from "./glossary-main"
 import Pqr from "./pqr"
+import PqrMain from "./pqr-main"
 import AiAssist from "./ai-assist"
 import Notifications from "./notifications"
 import News from "./news"
 import PicoYPlaca from "./pico-y-placa"
 import UnderConstruction from "./under-construction"
 import { checkPicoYPlacaStatus } from "../lib/pico-utils"
+import { getFavorites, hasFavorite } from "../lib/favorites-utils"
 
 
 // Datos simulados para la aplicación
@@ -398,31 +402,12 @@ const App = () => {
       saveToLocalStorage("transit-user-documents", ALL_DOCUMENTS_DATA)
     }
 
-    const savedFavorites = localStorage.getItem("transit-favorites")
-    if (savedFavorites) {
-      const favorites = JSON.parse(savedFavorites)
-
-      // Update content with saved status
-      setLearnContent((prev) =>
-        prev.map((item) => ({
-          ...item,
-          saved: favorites.some((fav) => fav.originalId === item.id && fav.type === "learn"),
-        })),
-      )
-
-      setInfractionsData((prev) =>
-        prev.map((item) => ({
-          ...item,
-          saved: favorites.some((fav) => fav.originalId === item.id && fav.type === "infractions"),
-        })),
-      )
-
-      setNewsItems((prev) =>
-        prev.map((item) => ({
-          ...item,
-          saved: favorites.some((fav) => fav.originalId === item.id && fav.type === "news"),
-        })),
-      )
+    const favs = getFavorites()
+    if (favs && favs.length > 0) {
+      // Update content with saved status using centralized favorites util
+      setLearnContent((prev) => prev.map((item) => ({ ...item, saved: hasFavorite(favs, item.id, "learn") })))
+      setInfractionsData((prev) => prev.map((item) => ({ ...item, saved: hasFavorite(favs, item.id, "infractions") })))
+      setNewsItems((prev) => prev.map((item) => ({ ...item, saved: hasFavorite(favs, item.id, "news") })))
     }
 
     const savedQuizProgress = localStorage.getItem("transit-quiz-progress")
@@ -858,26 +843,11 @@ const App = () => {
         )
       case "quiz":
         return (
-          <Quiz
-            quizQuestions={quizQuestions}
-            currentQuestionIndex={currentQuestionIndex}
-            currentScore={currentScore}
-            quizCompleted={quizCompleted}
-            quizStarted={quizStarted}
-            setActiveScreen={setActiveScreen}
-            setQuizStarted={setQuizStarted}
-            selectRandomQuizQuestions={selectRandomQuizQuestions}
-            handleQuizAnswer={handleQuizAnswer}
-            resetQuiz={resetQuiz}
-            goToNextQuestion={goToNextQuestion}
-            goToPreviousQuestion={goToPreviousQuestion}
-            getKnowledgeRange={getKnowledgeRange}
-          />
+          <Quiz setActiveScreen={setActiveScreen} />
         )
       case "regulations-main":
         return (
-          <Regulations
-            regulationsData={regulationsData}
+          <RegulationsMain
             setActiveScreen={setActiveScreen}
             setSelectedRegulation={setSelectedRegulation}
           />
@@ -892,22 +862,14 @@ const App = () => {
         )
       case "glossary":
         return (
-          <Glossary
-            glossarySearchTerm={glossarySearchTerm}
-            setGlossarySearchTerm={setGlossarySearchTerm}
-            filteredGlossaryTerms={filteredGlossaryTerms}
+          <GlossaryMain
             setActiveScreen={setActiveScreen}
           />
         )
       case "pqr":
-        // Render PQR from extracted component
+        // Render autonomous PQR
         return (
-          <Pqr
-            setActiveScreen={setActiveScreen}
-            pqrQuestion={pqrQuestion}
-            setPqrQuestion={setPqrQuestion}
-            handlePqrSubmit={handlePqrSubmit}
-          />
+          <PqrMain setActiveScreen={setActiveScreen} showNotification={showNotification} />
         )
       case "ai-assist":
         return (

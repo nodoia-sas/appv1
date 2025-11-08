@@ -7,13 +7,18 @@ export default function RegulationDetail({ selectedRegulation, setActiveScreen, 
       <button
         onClick={() => {
           setActiveScreen("regulations-main")
-          setSelectedRegulation(null)
+          try {
+            // prefer parent setter
+            setSelectedRegulation(null)
+          } catch (e) {
+            // ignore
+          }
         }}
         className="mb-4 bg-gray-300 text-gray-800 py-2 px-4 rounded-full text-sm hover:bg-gray-400 transition-colors duration-200 shadow-md"
       >
         ← Volver a Normatividad
       </button>
-      {selectedRegulation && (
+      {selectedRegulation ? (
         <div className="bg-white p-5 rounded-xl shadow-md border border-gray-200 max-h-[calc(100vh-150px)] overflow-y-auto pr-2">
           <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">{selectedRegulation.title}</h2>
           <p className="text-gray-700 text-sm leading-relaxed mb-4">{selectedRegulation.summary}</p>
@@ -31,6 +36,8 @@ export default function RegulationDetail({ selectedRegulation, setActiveScreen, 
             )}
           </div>
         </div>
+      ) : (
+        <div className="text-center text-gray-600 italic">No hay normativa seleccionada.</div>
       )}
     </div>
   )
