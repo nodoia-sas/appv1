@@ -1,5 +1,6 @@
 "use client"
-import React from "react"
+import React, { useEffect, useState } from "react"
+import { getAiResponse, loadChatHistory, saveChatHistory } from "../lib/ai-utils"
 
 const MicIcon = ({ className }) => (
   <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -12,7 +13,28 @@ const MicIcon = ({ className }) => (
   </svg>
 )
 
-export default function AiAssist({ setActiveScreen, chatHistory, userMessage, setUserMessage, handleSendMessage }) {
+export default function AiAssist({ setActiveScreen }) {
+  const [chatHistory, setChatHistory] = useState([])
+  const [userMessage, setUserMessage] = useState("")
+
+  useEffect(() => {
+    const saved = loadChatHistory()
+    setChatHistory(saved)
+  }, [])
+
+  useEffect(() => {
+    saveChatHistory(chatHistory)
+  }, [chatHistory])
+
+  const handleSendMessage = async () => {
+    if (userMessage.trim() === "") return
+    const newUserMessage = { role: "user", content: userMessage }
+    setChatHistory((prev) => [...prev, newUserMessage])
+    setUserMessage("")
+    const aiResponse = await getAiResponse(userMessage)
+    setChatHistory((prev) => [...prev, { role: "ai", content: aiResponse }])
+  }
+
   return (
     <div className="p-6 flex flex-col h-full">
       <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">Asesoría IA</h2>

@@ -5,12 +5,9 @@ import { useUser } from '@auth0/nextjs-auth0/client'
 import MyProfile from './my-profile'
 import Documents from './documents'
 import Quiz from "./quiz"
-import Regulations from "./regulations"
 import RegulationsMain from "./regulations-main"
 import RegulationDetail from "./regulation-detail"
-import Glossary from "./glossary"
 import GlossaryMain from "./glossary-main"
-import Pqr from "./pqr"
 import PqrMain from "./pqr-main"
 import AiAssist from "./ai-assist"
 import Notifications from "./notifications"
@@ -704,44 +701,7 @@ const App = () => {
       ],
     },
   ])
-  const [selectedRegulation, setSelectedRegulation] = useState(null)
-
-  const [chatHistory, setChatHistory] = useState([])
-  const [userMessage, setUserMessage] = useState("")
-
-  const getAiResponse = useCallback(async (prompt) => {
-    try {
-      const chatHistoryForApi = [{ role: "user", parts: [{ text: prompt }] }]
-      const payload = { contents: chatHistoryForApi }
-      const apiKey = ""
-      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`
-
-      const response = await fetch(apiUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      })
-      const result = await response.json()
-      if (result.candidates && result.candidates.length > 0 && result.candidates[0].content?.parts?.[0]?.text) {
-        return result.candidates[0].content.parts[0].text
-      } else {
-        console.error("Unexpected API response structure:", result)
-        return "Lo siento, no pude obtener una respuesta en este momento. Intenta de nuevo más tarde."
-      }
-    } catch (error) {
-      console.error("Error calling Gemini API:", error)
-      return "Hubo un error al conectar con el asistente de IA. Por favor, verifica tu conexión o intenta más tarde."
-    }
-  }, [])
-
-  const handleSendMessage = async () => {
-    if (userMessage.trim() === "") return
-    const newUserMessage = { role: "user", content: userMessage }
-    setChatHistory((prev) => [...prev, newUserMessage])
-    setUserMessage("")
-    const aiResponse = await getAiResponse(userMessage)
-    setChatHistory((prev) => [...prev, { role: "ai", content: aiResponse }])
-  }
+  const [selectedRegulation, setSelectedRegulation] = useState(null) 
 
   const renderContent = () => {
     switch (activeScreen) {
@@ -872,13 +832,10 @@ const App = () => {
           <PqrMain setActiveScreen={setActiveScreen} showNotification={showNotification} />
         )
       case "ai-assist":
+        // Autonomous AiAssist now manages its own chat state and persistence via lib/ai-utils
         return (
           <AiAssist
             setActiveScreen={setActiveScreen}
-            chatHistory={chatHistory}
-            userMessage={userMessage}
-            setUserMessage={setUserMessage}
-            handleSendMessage={handleSendMessage}
           />
         )
       case "notifications":
