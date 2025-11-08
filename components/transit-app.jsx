@@ -348,7 +348,7 @@ const App = () => {
     phone: "300 123 4567",
     vehicles: [],
   })
-  const [userDocuments, setUserDocuments] = useState([])
+  
   const [quizProgress, setQuizProgress] = useState({})
 
   const [activeScreen, setActiveScreen] = useState("home")
@@ -363,7 +363,6 @@ const App = () => {
   const [infractionsData, setInfractionsData] = useState(
     ALL_INFRACTIONS_DATA.map((item) => ({ ...item, saved: false })),
   )
-  const [documents, setDocuments] = useState(ALL_DOCUMENTS_DATA)
   const [registeredVehicles, setRegisteredVehicles] = useState([])
   const [newsItems, setNewsItems] = useState(ALL_NEWS_ITEMS.map((item) => ({ ...item, expanded: false, saved: false })))
 
@@ -389,15 +388,7 @@ const App = () => {
       setRegisteredVehicles(JSON.parse(savedVehicles))
     }
 
-    const savedDocuments = localStorage.getItem("transit-user-documents")
-    if (savedDocuments) {
-      setUserDocuments(JSON.parse(savedDocuments))
-      setDocuments(JSON.parse(savedDocuments))
-    } else {
-      // Initialize with default documents if none exist
-      setDocuments(ALL_DOCUMENTS_DATA)
-      saveToLocalStorage("transit-user-documents", ALL_DOCUMENTS_DATA)
-    }
+    // Documents are managed by the Documents component and lib/documents-utils.js
 
     const favs = getFavorites()
     if (favs && favs.length > 0) {
@@ -417,22 +408,8 @@ const App = () => {
     localStorage.setItem(key, JSON.stringify(data))
   }
 
-  const addDocument = async (documentData) => {
-    const newDocument = {
-      id: Date.now().toString(),
-      ...documentData,
-      createdAt: new Date().toISOString(),
-    }
-    const updatedDocuments = [...userDocuments, newDocument]
-    setUserDocuments(updatedDocuments)
-    saveToLocalStorage("transit-user-documents", updatedDocuments)
-  }
-
-  const deleteDocument = async (documentId) => {
-    const updatedDocuments = userDocuments.filter((doc) => doc.id !== documentId)
-    setUserDocuments(updatedDocuments)
-    saveToLocalStorage("transit-user-documents", updatedDocuments)
-  }
+  // Document management moved to `components/Documents` and `lib/documents-utils.js`.
+  // Parent no longer performs add/delete operations on transit-user-documents.
 
   // If the app is opened with a ?screen=... query param or hash, navigate to that screen
   useEffect(() => {
@@ -839,30 +816,15 @@ const App = () => {
           />
         )
       case "notifications":
+        // Notifications is now autonomous: it reads vehicles/documents from localStorage and uses pico-utils
         return (
-          <Notifications
-            setActiveScreen={setActiveScreen}
-            registeredVehicles={registeredVehicles}
-            checkPicoYPlacaStatus={checkPicoYPlacaStatus}
-            documents={documents}
-            calculateDaysRemaining={calculateDaysRemaining}
-            showNotification={showNotification}
-          />
+          <Notifications setActiveScreen={setActiveScreen} />
         )
       case "documents":
         // Lazy render external Documents component
         return (
           <Documents
             setActiveScreen={setActiveScreen}
-            documents={documents}
-            calculateDaysRemaining={calculateDaysRemaining}
-            handleDocumentUpload={handleDocumentUpload}
-            deleteDocument={deleteDocument}
-            showNotification={showNotification}
-            addDocument={addDocument}
-            setDocuments={setDocuments}
-            saveToLocalStorage={saveToLocalStorage}
-            ALL_DOCUMENTS_DATA={ALL_DOCUMENTS_DATA}
           />
         )
       default:

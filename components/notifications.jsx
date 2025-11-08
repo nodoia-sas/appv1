@@ -1,14 +1,45 @@
 "use client"
-import React from "react"
+import React, { useEffect, useState } from "react"
+import { checkPicoYPlacaStatus } from "../lib/pico-utils"
 
-export default function Notifications({
-  setActiveScreen,
-  registeredVehicles,
-  checkPicoYPlacaStatus,
-  documents,
-  calculateDaysRemaining,
-  showNotification,
-}) {
+export default function Notifications({ setActiveScreen }) {
+  const [registeredVehicles, setRegisteredVehicles] = useState([])
+  const [documents, setDocuments] = useState([])
+  const [notification, setNotification] = useState({ message: "", visible: false, type: "" })
+
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem("transit-user-vehicles") || "[]")
+      setRegisteredVehicles(Array.isArray(saved) ? saved : [])
+    } catch (e) {
+      setRegisteredVehicles([])
+    }
+
+    try {
+      const docs = JSON.parse(localStorage.getItem("transit-user-documents") || "[]")
+      setDocuments(Array.isArray(docs) ? docs : [])
+    } catch (e) {
+      setDocuments([])
+    }
+  }, [])
+
+  const showNotification = (message, type = "info") => {
+    setNotification({ message, visible: true, type })
+    setTimeout(() => setNotification({ message: "", visible: false, type: "" }), 3000)
+  }
+
+  const calculateDaysRemaining = (dueDate) => {
+    try {
+      const today = new Date()
+      const due = new Date(dueDate)
+      const diffTime = due - today
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+      return diffDays
+    } catch (e) {
+      return Infinity
+    }
+  }
+
   return (
     <div className="p-6">
       <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Notificaciones</h2>
@@ -71,6 +102,12 @@ export default function Notifications({
           })}
         </div>
       </div>
+
+      {notification.visible && (
+        <div className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-full shadow-lg text-white z-50 transition-all duration-300 ${notification.type === "success" ? "bg-green-500" : "bg-blue-500"}`}>
+          {notification.message}
+        </div>
+      )}
     </div>
   )
 }
