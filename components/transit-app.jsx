@@ -1067,28 +1067,28 @@ const App = () => {
             <h2 className="text-xl font-bold text-gray-800 mb-6 text-center">Tu asesor inteligente de tránsito</h2>
             <div className="grid grid-cols-2 gap-4">
               <div
-                className="flex flex-col items-center justify-center p-3 rounded-xl shadow-lg cursor-pointer transition-all duration-200 transform hover:scale-105 bg-gradient-to-br from-blue-500 to-blue-700 text-white col-span-2"
+                className="flex flex-col items-center justify-center p-3 rounded-xl shadow-lg cursor-pointer transition-all duration-200 transform hover:scale-105 bg-gradient-to-br from-blue-500 to-blue-700 text-white"
                 onClick={() => setActiveScreen("knowledge")}
               >
                 <BookOpenIcon className="w-8 h-8 mb-2" />
                 <span className="text-base font-semibold text-center">Conocimiento</span>
               </div>
               <div
-                className="flex flex-col items-center justify-center p-3 rounded-xl shadow-lg cursor-pointer transition-all duration-200 transform hover:scale-105 bg-gradient-to-br from-orange-500 to-orange-700 text-white col-span-2"
+                className="flex flex-col items-center justify-center p-3 rounded-xl shadow-lg cursor-pointer transition-all duration-200 transform hover:scale-105 bg-gradient-to-br from-orange-500 to-orange-700 text-white"
                 onClick={() => setActiveScreen("pico-y-placa")}
               >
                 <CalendarCheckIcon className="w-8 h-8 mb-2" />
                 <span className="text-base font-semibold text-center">Pico y Placa</span>
               </div>
               <div
-                className="flex flex-col items-center justify-center p-3 rounded-xl shadow-lg cursor-pointer transition-all duration-200 transform hover:scale-105 bg-gradient-to-br from-red-500 to-red-700 text-white col-span-2"
+                className="flex flex-col items-center justify-center p-3 rounded-xl shadow-lg cursor-pointer transition-all duration-200 transform hover:scale-105 bg-gradient-to-br from-red-500 to-red-700 text-white"
                 onClick={() => showNotification("Funcionalidad en desarrollo", "info")}
               >
                 <ReceiptTextIcon className="w-8 h-8 mb-2" />
                 <span className="text-base font-semibold text-center">Consulta Multas</span>
               </div>
               <div
-                className="flex flex-col items-center justify-center p-3 rounded-xl shadow-lg cursor-pointer transition-all duration-200 transform hover:scale-105 bg-gradient-to-br from-purple-500 to-purple-700 text-white col-span-2"
+                className="flex flex-col items-center justify-center p-3 rounded-xl shadow-lg cursor-pointer transition-all duration-200 transform hover:scale-105 bg-gradient-to-br from-purple-500 to-purple-700 text-white"
                 onClick={() => setActiveScreen("news")}
               >
                 <NewspaperIcon className="w-8 h-8 mb-2" />
@@ -2004,10 +2004,9 @@ const App = () => {
   ]
 
   return (
-    <div className="min-h-screen bg-gray-100 font-sans flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-100 font-sans flex flex-col p-4">
       <div
-        className="relative w-full max-w-md bg-white rounded-xl shadow-lg overflow-hidden flex flex-col"
-        style={{ minHeight: "80vh" }}
+        className="relative w-full max-w-md bg-white rounded-xl shadow-lg overflow-hidden flex flex-col h-screen"
       >
         <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-4 flex items-center justify-between rounded-t-xl shadow-md">
           <div className="relative">
@@ -2019,7 +2018,7 @@ const App = () => {
                 aria-label="Opciones de usuario"
               >
                 <UserIcon className="w-5 h-5" />
-                <span>Mi Perfil</span>
+                <span>Perfil</span>
               </button>
             ) : (
               <button
@@ -2147,7 +2146,7 @@ const App = () => {
               </div>
             )}
           </div>
-          <h1 className="text-3xl font-bold absolute left-1/2 transform -translate-x-1/2">Transit IA</h1>
+          <h1 className="text-2xl font-bold absolute left-1/2 transform -translate-x-1/2">Transit IA</h1>
           <button
             className="p-2 rounded-full bg-blue-700 hover:bg-blue-800 transition-colors duration-200 shadow-md"
             onClick={() => setActiveScreen("notifications")}

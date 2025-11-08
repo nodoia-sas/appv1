@@ -8,7 +8,7 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "Transit IA - Tu asesor inteligente de tránsito",
   description: "Aplicación colombiana para consultar normas de tránsito, pico y placa, documentos vehiculares y más.",
-    generator: 'v0.app'
+  generator: 'v0.app'
 }
 
 export default function RootLayout({
