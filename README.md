@@ -11,7 +11,7 @@ Front-end construido con Next.js + React (App Router). Aplicación cliente con U
 
 ## 📦 Requisitos previos
 - Node.js >= 18.x (comprobar con `node -v`)
-- pnpm (recomendado, por la presencia de `pnpm-lock.yaml`) — instalar con `npm i -g pnpm` si hace falta
+- npm (recomendado, por la presencia de `package-lock.json`) — viene incluido con Node.js
 - Git
 
 ## 🔧 Clonar el repositorio
@@ -34,13 +34,13 @@ Entra en el directorio del proyecto:
 
 En PowerShell (Windows):
 
-	pnpm install
+	npm install
 
 Esto instalará todas las dependencias definidas en `package.json`.
 
 ## 🚀 Ejecutar en modo desarrollo
 
-	pnpm dev
+	npm run dev
 
 Abrirá la app en modo dev (por defecto Next.js en http://localhost:3000). Actualizaciones en caliente habilitadas.
 
@@ -48,7 +48,7 @@ Abrirá la app en modo dev (por defecto Next.js en http://localhost:3000). Actua
 
 1. Construir:
 
-	 pnpm build
+	 npm run build
 
 2. Ejecutar producción:
 
