@@ -14,7 +14,6 @@ import Notifications from "./notifications"
 import News from "./news"
 import PicoYPlaca from "./pico-y-placa"
 import UnderConstruction from "./under-construction"
-import { checkPicoYPlacaStatus } from "../lib/pico-utils"
 import { getFavorites, hasFavorite } from "../lib/favorites-utils"
 
 
@@ -42,12 +41,6 @@ const ALL_INFRACTIONS_DATA = [
   { id: 3, code: "C14", description: "No usar cinturón de seguridad", fine: "$432.300", points: 0, immobilization: false },
 ]
 
-const ALL_DOCUMENTS_DATA = [
-  { id: "licencia", name: "Licencia de Conducción", dueDate: "2025-06-15", uploaded: false },
-  { id: "soat", name: "SOAT", dueDate: "2025-03-20", uploaded: false },
-  { id: "propiedad", name: "Tarjeta de Propiedad", dueDate: "2026-01-10", uploaded: false },
-]
-
 const ALL_NEWS_ITEMS = [
   { id: 1, title: "Actualización de normas de tránsito", summary: "Resumen breve de cambios en la normativa.", fullContent: "Detalle ampliado de la noticia.", imageUrl: "" },
 ]
@@ -57,21 +50,6 @@ const ALL_QUIZ_QUESTIONS = [
   { id: 2, question: "¿Qué documento es obligatorio portar?", options: ["Licencia", "Pasaporte", "Cédula"], answer: "Licencia" },
 ]
 
-const ALL_GLOSSARY_TERMS = [
-  { term: "SOAT", explanation: "Seguro Obligatorio de Accidentes de Tránsito." },
-  { term: "Revisión Técnico-Mecánica", explanation: "Inspección periódica de seguridad vehicular." },
-]
-
-// Función auxiliar para calcular días restantes
-const calculateDaysRemaining = (dueDate) => {
-  const today = new Date()
-  const due = new Date(dueDate)
-  const diffTime = due - today
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-  return diffDays
-}
-
-// Lucide React Icons (simulating common app icons)
 // SVGs are included directly to simulate 'lucide-react' imports.
 const BookOpenIcon = ({ className }) => (
   <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -158,12 +136,6 @@ const MessageSquareTextIcon = ({ className }) => (
       strokeWidth={2}
       d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
     />
-  </svg>
-)
-
-const SearchIcon = ({ className }) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
   </svg>
 )
 
@@ -355,7 +327,6 @@ const App = () => {
   const [showLoginModal, setShowLoginModal] = useState(false)
   const [showLoginDropdown, setShowLoginDropdown] = useState(false)
   const loginButtonRef = useRef(null)
-  const [showGlobalSearchModal, setShowGlobalSearchModal] = useState(false)
   const [notification, setNotification] = useState({ message: "", visible: false, type: "" })
 
   // Data states now using local storage
@@ -433,60 +404,7 @@ const App = () => {
     }, 3000)
   }, [])
 
-  const [globalSearchTerm, setGlobalSearchTerm] = useState("")
-  const [globalSearchResults, setGlobalSearchResults] = useState([])
-
-  const performGlobalSearch = (term) => {
-    const results = []
-    const lowerCaseTerm = term.toLowerCase()
-
-    const searchSources = {
-      "Aprende a defenderte": learnContent,
-      "Top de Infracciones": infractionsData,
-      Noticias: newsItems,
-      Glosario: ALL_GLOSSARY_TERMS,
-    }
-
-    for (const section in searchSources) {
-      searchSources[section].forEach((item) => {
-        const itemText = JSON.stringify(item).toLowerCase()
-        if (itemText.includes(lowerCaseTerm)) {
-          const title = item.title || item.question || item.term || "Resultado de búsqueda"
-          let snippet = item.summary || item.answer || item.explanation || ""
-          if (snippet.length > 100) {
-            snippet = snippet.substring(0, 100) + "..."
-          }
-          results.push({
-            id: item.id || item.term,
-            title,
-            snippet,
-            section,
-            type: item.type,
-          })
-        }
-      })
-    }
-    setGlobalSearchResults(results)
-  }
-
-  const handleGlobalSearchChange = (e) => {
-    const term = e.target.value
-    setGlobalSearchTerm(term)
-    if (term.length > 2) {
-      performGlobalSearch(term)
-    } else {
-      setGlobalSearchResults([])
-    }
-  }
-
-  const handleGlobalSearchResultClick = (result) => {
-    // This is a simple navigation, a real app might handle this more robustly
-    showNotification(`Navegando a: ${result.section}`, "info")
-    setShowGlobalSearchModal(false)
-    setGlobalSearchTerm("")
-    setGlobalSearchResults([])
-    setActiveScreen(result.section.replace(/\s+/g, "-").toLowerCase())
-  }
+  // Global search removed — related state and helpers cleaned up
 
   const selectRandomQuizQuestions = useCallback(() => {
     const shuffled = [...ALL_QUIZ_QUESTIONS].sort(() => 0.5 - Math.random())
@@ -658,7 +576,7 @@ const App = () => {
   }
 
   const navItems = [
-    { name: "Buscar", icon: SearchIcon, screen: "global-search" },
+    { name: "Perfil", icon: UserIcon, screen: "my-profile" },
     { name: "Docs", icon: FileTextIcon, screen: "documents" },
     { name: "Inicio", icon: HomeIcon, screen: "home" },
     { name: "Favs", icon: StarIcon, screen: "favorites" },
@@ -667,8 +585,7 @@ const App = () => {
 
   // Navigation handler that requires authentication for routes different than 'home'
   const handleNavClick = (screen) => {
-    // Allow global-search to open the modal without forcing login
-    if (screen !== 'home' && screen !== 'global-search' && !loggedIn) {
+    if (screen !== 'home' && !loggedIn) {
       showNotification('Debes iniciar sesión para acceder a esta sección', 'info')
       // Redirect to Auth0 login page to begin authentication
       try {
@@ -680,11 +597,7 @@ const App = () => {
       return
     }
 
-    if (screen === 'global-search') {
-      setShowGlobalSearchModal(true)
-    } else {
-      setActiveScreen(screen)
-    }
+    setActiveScreen(screen)
   }
 
   return (
@@ -889,57 +802,7 @@ const App = () => {
           setLoggedIn={setLoggedIn}
         />
       )}
-      {showGlobalSearchModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center p-4 z-50">
-          <div className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md relative transform transition-all duration-300 scale-100 opacity-100 mt-10">
-            <button
-              onClick={() => {
-                setShowGlobalSearchModal(false)
-                setGlobalSearchTerm("")
-                setGlobalSearchResults([])
-              }}
-              className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 transition-colors duration-200"
-              aria-label="Close global search"
-            >
-              <XIcon className="w-6 h-6" />
-            </button>
-            <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Búsqueda Rápida</h2>
-            <div className="relative mb-6">
-              <input
-                type="text"
-                placeholder="Buscar en toda la app..."
-                className="w-full pl-12 pr-4 py-3 rounded-full bg-gray-100 border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
-                value={globalSearchTerm}
-                onChange={handleGlobalSearchChange}
-                aria-label="Global search input field"
-              />
-              <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
-                <SearchIcon />
-              </div>
-            </div>
-            <div className="max-h-80 overflow-y-auto space-y-3">
-              {globalSearchTerm.length > 2 && globalSearchResults.length === 0 ? (
-                <p className="text-gray-600 text-center">No se encontraron resultados para "{globalSearchTerm}".</p>
-              ) : (
-                globalSearchResults.map((result, index) => (
-                  <div
-                    key={index}
-                    className="bg-gray-50 p-3 rounded-lg shadow-sm border border-gray-200 cursor-pointer hover:bg-gray-100 transition-colors duration-150"
-                    onClick={() => handleGlobalSearchResultClick(result)}
-                    aria-label={`Search result: ${result.title} in ${result.section}`}
-                  >
-                    <h4 className="font-semibold text-gray-800">{result.title}</h4>
-                    <p className="text-sm text-gray-600 mt-1">
-                      Sección: <span className="font-medium">{result.section}</span>
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1">{result.snippet}</p>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Global search removed */}
       {notification.visible && (
         <div
           className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-full shadow-lg text-white z-50 transition-all duration-300 ${notification.type === "success" ? "bg-green-500" : "bg-blue-500"}`}
