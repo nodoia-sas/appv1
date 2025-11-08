@@ -14,6 +14,7 @@ import Notifications from "./notifications"
 import News from "./news"
 import PicoYPlaca from "./pico-y-placa"
 import UnderConstruction from "./under-construction"
+import { checkPicoYPlacaStatus } from "../lib/pico-utils"
 
 
 // Datos simulados para la aplicación
@@ -31,21 +32,6 @@ const ALL_LEARN_CONTENT = [
     answer:
       "En general es posible grabar procedimientos en vía pública; sin embargo, respeta indicaciones de seguridad y evita confrontaciones. Consulta siempre fuentes oficiales para casos específicos.",
   },
-]
-
-const VEHICLE_TYPES = ["Carro", "Moto", "Taxi", "Bus", "Camión"]
-
-const COLOMBIAN_CITIES_WITH_PICO_Y_PLACA = [
-  "Bogotá",
-  "Medellín",
-  "Cali",
-  "Barranquilla",
-  "Cartagena",
-  "Bucaramanga",
-  "Pereira",
-  "Manizales",
-  "Ibagué",
-  "Villavicencio",
 ]
 
 // Default data sets used by the app. Restored minimal versions to avoid runtime errors
@@ -290,32 +276,11 @@ const Share2Icon = ({ className }) => (
   </svg>
 )
 
-const PlusIcon = ({ className }) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-  </svg>
-)
-
 const XIcon = ({ className }) => (
   <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
   </svg>
 )
-
-const MicIcon = ({ className }) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2M12 19v4M8 23h8"
-    />
-  </svg>
-)
-
-// Define data for dropdowns
-
-// Helper to calculate days remaining until a due date.
 
 const LoginModal = ({ onClose, showNotification, setLoggedIn }) => {
   const [email, setEmail] = useState("")
@@ -382,9 +347,7 @@ const App = () => {
     phone: "300 123 4567",
     vehicles: [],
   })
-  const [userVehicles, setUserVehicles] = useState([])
   const [userDocuments, setUserDocuments] = useState([])
-  const [favoriteNews, setFavoriteNews] = useState([])
   const [quizProgress, setQuizProgress] = useState({})
 
   const [activeScreen, setActiveScreen] = useState("home")
@@ -401,7 +364,6 @@ const App = () => {
   )
   const [documents, setDocuments] = useState(ALL_DOCUMENTS_DATA)
   const [registeredVehicles, setRegisteredVehicles] = useState([])
-  const [favoriteItems, setFavoriteItems] = useState([])
   const [newsItems, setNewsItems] = useState(ALL_NEWS_ITEMS.map((item) => ({ ...item, expanded: false, saved: false })))
 
   // Quiz States
@@ -411,23 +373,7 @@ const App = () => {
   const [quizStarted, setQuizStarted] = useState(false)
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
 
-  // Learn & Infractions Expanded States (local to component)
-  const [learnExpandedState, setLearnExpandedState] = useState({})
-  const [infractionsExpandedState, setInfractionsExpandedState] = useState({})
-  const [newsExpandedState, setNewsExpandedState] = useState({})
-
-  // Pico y Placa States
-  const [picoYPlacaPlateDomicile, setPicoYPlacaPlateDomicile] = useState("")
-  const [picoYPlacaVehicleTypeDomicile, setPicoYPlacaVehicleTypeDomicile] = useState("")
-  const [picoYPlacaCityDomicile, setPicoYPlacaCityDomicile] = useState("Bogotá")
-  const [picoYPlacaPlateOther, setPicoYPlacaPlateOther] = useState("")
-  const [picoYPlacaVehicleTypeOther, setPicoYPlacaVehicleTypeOther] = useState("")
-  const [picoYPlacaCityOther, setPicoYPlacaCityOther] = useState("")
-  const [showRegisterVehicleForm, setShowRegisterVehicleForm] = useState(false)
-
-  const [newVehicleLastTwoDigits, setNewVehicleLastTwoDigits] = useState("")
-  const [newVehicleType, setNewVehicleType] = useState("")
-  const [newVehicleCity, setNewVehicleCity] = useState("")
+  // Pico y Placa States (kept minimal in parent: registeredVehicles)
 
   // Firestore Initialization & Authentication
   useEffect(() => {
@@ -439,7 +385,6 @@ const App = () => {
 
     const savedVehicles = localStorage.getItem("transit-user-vehicles")
     if (savedVehicles) {
-      setUserVehicles(JSON.parse(savedVehicles))
       setRegisteredVehicles(JSON.parse(savedVehicles))
     }
 
@@ -456,7 +401,6 @@ const App = () => {
     const savedFavorites = localStorage.getItem("transit-favorites")
     if (savedFavorites) {
       const favorites = JSON.parse(savedFavorites)
-      setFavoriteNews(favorites)
 
       // Update content with saved status
       setLearnContent((prev) =>
@@ -479,8 +423,6 @@ const App = () => {
           saved: favorites.some((fav) => fav.originalId === item.id && fav.type === "news"),
         })),
       )
-
-      setFavoriteItems(favorites)
     }
 
     const savedQuizProgress = localStorage.getItem("transit-quiz-progress")
@@ -491,31 +433,6 @@ const App = () => {
 
   const saveToLocalStorage = (key, data) => {
     localStorage.setItem(key, JSON.stringify(data))
-  }
-
-  const addVehicle = async (vehicleData) => {
-    const newVehicle = {
-      id: Date.now().toString(),
-      ...vehicleData,
-      createdAt: new Date().toISOString(),
-    }
-    const updatedVehicles = [...userVehicles, newVehicle]
-    setUserVehicles(updatedVehicles)
-    saveToLocalStorage("transit-user-vehicles", updatedVehicles)
-  }
-
-  const updateVehicle = async (vehicleId, updates) => {
-    const updatedVehicles = userVehicles.map((vehicle) =>
-      vehicle.id === vehicleId ? { ...vehicle, ...updates } : vehicle,
-    )
-    setUserVehicles(updatedVehicles)
-    saveToLocalStorage("transit-user-vehicles", updatedVehicles)
-  }
-
-  const deleteVehicle = async (vehicleId) => {
-    const updatedVehicles = userVehicles.filter((vehicle) => vehicle.id !== vehicleId)
-    setUserVehicles(updatedVehicles)
-    saveToLocalStorage("transit-user-vehicles", updatedVehicles)
   }
 
   const addDocument = async (documentData) => {
@@ -529,44 +446,11 @@ const App = () => {
     saveToLocalStorage("transit-user-documents", updatedDocuments)
   }
 
-  const updateDocument = async (documentId, updates) => {
-    const updatedDocuments = userDocuments.map((doc) => (doc.id === documentId ? { ...doc, ...updates } : doc))
-    setUserDocuments(updatedDocuments)
-    saveToLocalStorage("transit-user-documents", updatedDocuments)
-  }
-
   const deleteDocument = async (documentId) => {
     const updatedDocuments = userDocuments.filter((doc) => doc.id !== documentId)
     setUserDocuments(updatedDocuments)
     saveToLocalStorage("transit-user-documents", updatedDocuments)
   }
-
-  const updateProfile = async (updates) => {
-    const updatedProfile = { ...userProfile, ...updates }
-    setUserProfile(updatedProfile)
-    saveToLocalStorage("transit-user-profile", updatedProfile)
-  }
-
-  const toggleFavoriteNews = (newsId) => {
-    const updatedFavorites = favoriteNews.includes(newsId)
-      ? favoriteNews.filter((id) => id !== newsId)
-      : [...favoriteNews, newsId]
-    setFavoriteNews(updatedFavorites)
-    saveToLocalStorage("transit-favorites", updatedFavorites)
-  }
-
-  const saveQuizProgress = (progress) => {
-    setQuizProgress(progress)
-    saveToLocalStorage("transit-quiz-progress", progress)
-  }
-
-  useEffect(() => {
-    try {
-      // No Firebase initialization needed
-    } catch (e) {
-      console.error("Firebase Initialization Error:", e)
-    }
-  }, [])
 
   // If the app is opened with a ?screen=... query param or hash, navigate to that screen
   useEffect(() => {
@@ -597,115 +481,6 @@ const App = () => {
     }, 3000)
   }, [])
 
-  // Simulate Pico y Placa logic
-  const checkPicoYPlacaStatus = (plate, vehicleType, city) => {
-    if (!plate || !vehicleType || !city) return "Datos incompletos para verificar Pico y Placa (simulado)."
-    const lastDigit = Number.parseInt(plate.slice(-1))
-    const today = new Date()
-    const dayOfWeek = today.getDay() // Sunday - 0, Monday - 1, ..., Saturday - 6
-    let status = "No tiene Pico y Placa hoy (simulado)."
-    if (city === "Bogotá") {
-      if (vehicleType === "Carro") {
-        if (dayOfWeek === 1 && [0, 1, 2, 3, 4].includes(lastDigit)) {
-          status = "Tiene Pico y Placa hoy (dígitos 0-4, simulado)."
-        } else if (dayOfWeek === 2 && [5, 6, 7, 8, 9].includes(lastDigit)) {
-          status = "Tiene Pico y Placa hoy (dígitos 5-9, simulado)."
-        }
-      } else if (vehicleType === "Moto") {
-        if (dayOfWeek === 3 && [1, 2].includes(lastDigit)) {
-          status = "Tiene Pico y Placa hoy (motos, dígitos 1-2 Miércoles, simulado)."
-        }
-      }
-    } else if (city === "Medellín") {
-      if (vehicleType === "Carro") {
-        if (dayOfWeek === 1 && [0, 1].includes(lastDigit))
-          status = "Tiene Pico y Placa hoy (ejemplo: 0-1 Lunes, simulado)."
-        else if (dayOfWeek === 2 && [2, 3].includes(lastDigit))
-          status = "Tiene Pico y Placa hoy (ejemplo: 2-3 Martes, simulado)."
-        else if (dayOfWeek === 3 && [4, 5].includes(lastDigit))
-          status = "Tiene Pico y Placa hoy (ejemplo: 4-5 Miércoles, simulado)."
-        else if (dayOfWeek === 4 && [6, 7].includes(lastDigit))
-          status = "Tiene Pico y Placa hoy (ejemplo: 6-7 Jueves, simulado)."
-        else if (dayOfWeek === 5 && [8, 9].includes(lastDigit))
-          status = "Tiene Pico y Placa hoy (ejemplo: 8-9 Viernes, simulado)."
-      } else {
-        status = "Reglas específicas para motos o taxis en Medellín (simulado)."
-      }
-    }
-    return status
-  }
-
-  const handlePicoYPlacaConsultDomicile = () => {
-    const message = checkPicoYPlacaStatus(
-      picoYPlacaPlateDomicile,
-      picoYPlacaVehicleTypeDomicile,
-      picoYPlacaCityDomicile,
-    )
-    showNotification(message, "info")
-  }
-
-  const handlePicoYPlacaConsultOther = () => {
-    const message = checkPicoYPlacaStatus(picoYPlacaPlateOther, picoYPlacaVehicleTypeOther, picoYPlacaCityOther)
-    showNotification(message, "info")
-  }
-
-  const toggleLearnExpanded = (id) => {
-    setLearnExpandedState((prev) => ({ ...prev, [id]: !prev[id] }))
-  }
-
-  const toggleInfractionExpanded = (id) => {
-    setInfractionsExpandedState((prev) => ({ ...prev, [id]: !prev[id] }))
-  }
-
-  const toggleNewsExpanded = (id) => {
-    setNewsExpandedState((prev) => ({ ...prev, [id]: !prev[id] }))
-  }
-
-  const handleToggleFavorite = async (item, source) => {
-    const existingFavoriteIndex = favoriteItems.findIndex((fav) => fav.originalId === item.id && fav.type === source)
-
-    let updatedFavorites
-    if (existingFavoriteIndex >= 0) {
-      // Remove from favorites
-      updatedFavorites = favoriteItems.filter((_, index) => index !== existingFavoriteIndex)
-      showNotification("Eliminado de Favoritos", "info")
-    } else {
-      // Add to favorites
-      const favoriteData = {
-        id: Date.now().toString(),
-        originalId: item.id,
-        type: source,
-        content: item,
-      }
-      updatedFavorites = [...favoriteItems, favoriteData]
-      showNotification("Añadido a Favoritos", "success")
-    }
-
-    setFavoriteItems(updatedFavorites)
-    saveToLocalStorage("transit-favorites", updatedFavorites)
-
-    // Update the saved status in the respective content arrays
-    if (source === "learn") {
-      setLearnContent((prev) =>
-        prev.map((contentItem) =>
-          contentItem.id === item.id ? { ...contentItem, saved: existingFavoriteIndex < 0 } : contentItem,
-        ),
-      )
-    } else if (source === "infractions") {
-      setInfractionsData((prev) =>
-        prev.map((contentItem) =>
-          contentItem.id === item.id ? { ...contentItem, saved: existingFavoriteIndex < 0 } : contentItem,
-        ),
-      )
-    } else if (source === "news") {
-      setNewsItems((prev) =>
-        prev.map((contentItem) =>
-          contentItem.id === item.id ? { ...contentItem, saved: existingFavoriteIndex < 0 } : contentItem,
-        ),
-      )
-    }
-  }
-
   const handleDocumentUpload = async (id) => {
     const updatedDocuments = documents.map((doc) => (doc.id === id ? { ...doc, uploaded: !doc.uploaded } : doc))
     setDocuments(updatedDocuments)
@@ -719,24 +494,6 @@ const App = () => {
       )
     }
   }
-
-  const [draggedItemIndex, setDraggedItemIndex] = useState(null)
-  const handleDragStart = (e, index) => {
-    setDraggedItemIndex(index)
-    e.dataTransfer.effectAllowed = "move"
-    e.dataTransfer.setData("text/plain", index)
-  }
-  const handleDragOver = (e) => e.preventDefault()
-  const handleDragEnter = (e, index) => {
-    e.preventDefault()
-    if (draggedItemIndex === null || draggedItemIndex === index) return
-    const newFavorites = [...favoriteItems]
-    const draggedItem = newFavorites.splice(draggedItemIndex, 1)[0]
-    newFavorites.splice(index, 0, draggedItem)
-    setDraggedItemIndex(index)
-    setFavoriteItems(newFavorites)
-  }
-  const handleDragEnd = () => setDraggedItemIndex(null)
 
   const [glossarySearchTerm, setGlossarySearchTerm] = useState("")
   const filteredGlossaryTerms = ALL_GLOSSARY_TERMS.filter(
@@ -1010,7 +767,7 @@ const App = () => {
             <div className="grid grid-cols-2 gap-4">
               <div
                 className="flex flex-col items-center justify-center p-3 rounded-xl shadow-lg cursor-pointer transition-all duration-200 transform hover:scale-105 bg-gradient-to-br from-blue-500 to-blue-700 text-white"
-                onClick={() => setActiveScreen("under-construction")} // "knowledge"
+                onClick={() => setActiveScreen("under-construction")} // no screen yet
                 role="button"
                 aria-label="Conocimiento - Próximamente"
                 title="Conocimiento - Próximamente"
@@ -1083,26 +840,22 @@ const App = () => {
         return (
           <UnderConstruction setActiveScreen={setActiveScreen} showNotification={showNotification} />
         )
+      case "pico-y-placa":
+        return (
+          <PicoYPlaca setActiveScreen={setActiveScreen} />
+        )
+      case "news":
+        return (
+          <News setActiveScreen={setActiveScreen} />
+        )
       case "my-profile":
-            // Render the extracted component to keep this file smaller
-            return (
-              <MyProfile
-                setActiveScreen={setActiveScreen}
-                userId={userId}
-                showNotification={showNotification}
-                registeredVehicles={registeredVehicles}
-                showRegisterVehicleForm={showRegisterVehicleForm}
-                setShowRegisterVehicleForm={setShowRegisterVehicleForm}
-                handleForgetVehicle={handleForgetVehicle}
-                newVehicleLastTwoDigits={newVehicleLastTwoDigits}
-                setNewVehicleLastTwoDigits={setNewVehicleLastTwoDigits}
-                newVehicleType={newVehicleType}
-                setNewVehicleType={setNewVehicleType}
-                newVehicleCity={newVehicleCity}
-                setNewVehicleCity={setNewVehicleCity}
-                handleRegisterVehicle={handleRegisterVehicle}
-              />
-            )
+        return (
+          <MyProfile
+            setActiveScreen={setActiveScreen}
+            userId={userId}
+            showNotification={showNotification}
+          />
+        )
       case "quiz":
         return (
           <Quiz
@@ -1175,40 +928,6 @@ const App = () => {
             documents={documents}
             calculateDaysRemaining={calculateDaysRemaining}
             showNotification={showNotification}
-          />
-        )
-      case "news":
-        return (
-          <News
-            setActiveScreen={setActiveScreen}
-            newsItems={newsItems}
-            toggleNewsExpanded={toggleNewsExpanded}
-            handleToggleFavorite={handleToggleFavorite}
-            StarIcon={StarIcon}
-          />
-        )
-      case "pico-y-placa":
-        return (
-          <PicoYPlaca
-            setActiveScreen={setActiveScreen}
-            picoYPlacaPlateDomicile={picoYPlacaPlateDomicile}
-            setPicoYPlacaPlateDomicile={setPicoYPlacaPlateDomicile}
-            picoYPlacaVehicleTypeDomicile={picoYPlacaVehicleTypeDomicile}
-            setPicoYPlacaVehicleTypeDomicile={setPicoYPlacaVehicleTypeDomicile}
-            picoYPlacaCityDomicile={picoYPlacaCityDomicile}
-            setPicoYPlacaCityDomicile={setPicoYPlacaCityDomicile}
-            picoYPlacaPlateOther={picoYPlacaPlateOther}
-            setPicoYPlacaPlateOther={setPicoYPlacaPlateOther}
-            picoYPlacaVehicleTypeOther={picoYPlacaVehicleTypeOther}
-            setPicoYPlacaVehicleTypeOther={setPicoYPlacaVehicleTypeOther}
-            picoYPlacaCityOther={picoYPlacaCityOther}
-            setPicoYPlacaCityOther={setPicoYPlacaCityOther}
-            COLOMBIAN_CITIES_WITH_PICO_Y_PLACA={COLOMBIAN_CITIES_WITH_PICO_Y_PLACA}
-            VEHICLE_TYPES={VEHICLE_TYPES}
-            handlePicoYPlacaConsultDomicile={handlePicoYPlacaConsultDomicile}
-            handlePicoYPlacaConsultOther={handlePicoYPlacaConsultOther}
-            checkPicoYPlacaStatus={checkPicoYPlacaStatus}
-            registeredVehicles={registeredVehicles}
           />
         )
       case "documents":

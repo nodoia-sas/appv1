@@ -1,42 +1,62 @@
 "use client"
-import React from "react"
+import React, { useState, useEffect } from "react"
+import { VEHICLE_TYPES as DEFAULT_VEHICLE_TYPES, COLOMBIAN_CITIES_WITH_PICO_Y_PLACA as DEFAULT_CITIES, checkPicoYPlacaStatus as defaultCheck }
+  from "../lib/pico-utils"
 
-export default function PicoYPlaca({
-  setActiveScreen,
-  picoYPlacaPlateDomicile,
-  setPicoYPlacaPlateDomicile,
-  picoYPlacaVehicleTypeDomicile,
-  setPicoYPlacaVehicleTypeDomicile,
-  picoYPlacaCityDomicile,
-  setPicoYPlacaCityDomicile,
-  picoYPlacaPlateOther,
-  setPicoYPlacaPlateOther,
-  picoYPlacaVehicleTypeOther,
-  setPicoYPlacaVehicleTypeOther,
-  picoYPlacaCityOther,
-  setPicoYPlacaCityOther,
-  COLOMBIAN_CITIES_WITH_PICO_Y_PLACA,
-  VEHICLE_TYPES,
-  handlePicoYPlacaConsultDomicile,
-  handlePicoYPlacaConsultOther,
-  checkPicoYPlacaStatus,
-  registeredVehicles,
-}) {
+export default function PicoYPlaca({ setActiveScreen }) {
+  // Local state: component autonomous, loads/saves registered vehicles from localStorage
+  const [picoYPlacaPlateDomicile, setPicoYPlacaPlateDomicile] = useState("")
+  const [picoYPlacaVehicleTypeDomicile, setPicoYPlacaVehicleTypeDomicile] = useState("")
+  const [picoYPlacaCityDomicile, setPicoYPlacaCityDomicile] = useState(DEFAULT_CITIES[0] || "")
+
+  const [picoYPlacaPlateOther, setPicoYPlacaPlateOther] = useState("")
+  const [picoYPlacaVehicleTypeOther, setPicoYPlacaVehicleTypeOther] = useState("")
+  const [picoYPlacaCityOther, setPicoYPlacaCityOther] = useState("")
+
+  const [registeredVehicles, setRegisteredVehicles] = useState([])
+  const [consultResult, setConsultResult] = useState("")
+
+  const VEHICLE_TYPES = DEFAULT_VEHICLE_TYPES
+  const COLOMBIAN_CITIES_WITH_PICO_Y_PLACA = DEFAULT_CITIES
+  const checkPicoYPlacaStatus = defaultCheck
+
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem("transit-user-vehicles") || "[]")
+      setRegisteredVehicles(Array.isArray(saved) ? saved : [])
+    } catch (e) {
+      setRegisteredVehicles([])
+    }
+  }, [])
+
+  const handlePicoYPlacaConsultDomicile = () => {
+    const message = checkPicoYPlacaStatus(picoYPlacaPlateDomicile, picoYPlacaVehicleTypeDomicile, picoYPlacaCityDomicile)
+    setConsultResult(message)
+  }
+
+  const handlePicoYPlacaConsultOther = () => {
+    const message = checkPicoYPlacaStatus(picoYPlacaPlateOther, picoYPlacaVehicleTypeOther, picoYPlacaCityOther)
+    setConsultResult(message)
+  }
+
+  const forgetVehicle = (id) => {
+    const updated = registeredVehicles.filter((v) => v.id !== id)
+    setRegisteredVehicles(updated)
+    try {
+      localStorage.setItem("transit-user-vehicles", JSON.stringify(updated))
+    } catch (e) {
+      // ignore
+    }
+  }
   return (
     <div className="p-6">
       <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">Pico y Placa</h2>
-      <button
-        onClick={() => setActiveScreen("home")}
-        className="mb-4 bg-gray-300 text-gray-800 py-2 px-4 rounded-full text-sm hover:bg-gray-400 transition-colors duration-200 shadow-md"
-      >
-        ← Volver al Inicio
-      </button>
       <div className="bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded-md mb-6 text-sm" role="alert">
         <strong className="font-bold">¡Atención!</strong>
         <span className="block sm:inline"> La funcionalidad de Pico y Placa es una simulación. Las reglas reales varían y se actualizan constantemente por cada ciudad. Para información precisa, consulte fuentes oficiales.</span>
       </div>
 
-      <div className="space-y-6">
+    <div className="space-y-6">
         <div className="bg-white p-5 rounded-xl shadow-md border border-gray-200">
           <h3 className="font-semibold text-gray-800 text-lg mb-3">Pico y Placa en tu Ciudad de Domicilio</h3>
           <div className="mb-4">
@@ -118,19 +138,33 @@ export default function PicoYPlaca({
           <button onClick={handlePicoYPlacaConsultOther} className="w-full bg-orange-500 text-white py-3 px-4 rounded-full font-semibold hover:bg-orange-600 transition-colors duration-200 shadow-md">Consultar</button>
         </div>
       </div>
-
+      
       <div className="mt-6">
-        <h3 className="font-semibold text-gray-800 text-lg mb-3">Pico y Placa - Vehículos Registrados</h3>
+        <h3 className="font-semibold text-gray-800 text-lg mb-3">Resultado</h3>
+        {consultResult ? (
+          <div className="bg-gray-50 p-3 rounded-lg text-sm text-gray-700 shadow-sm mb-4">
+            <p className={`text-base font-bold ${consultResult.includes("Tiene") ? "text-red-500" : "text-green-500"}`}>{consultResult}</p>
+          </div>
+        ) : (
+          <p className="text-gray-600">Realiza una consulta para ver el resultado aquí.</p>
+        )}
+
+        <h3 className="font-semibold text-gray-800 text-lg mb-3 mt-4">Vehículos Registrados</h3>
         {registeredVehicles.length === 0 ? (
           <p className="text-gray-600">No hay vehículos registrados.</p>
         ) : (
           <ul className="space-y-3">
             {registeredVehicles.map((vehicle) => (
-              <li key={vehicle.id} className="bg-gray-50 p-3 rounded-lg text-sm text-gray-700 shadow-sm">
-                <p><span className="font-semibold">Placa (últimos 2):</span> {vehicle.lastTwoDigits}</p>
-                <p><span className="font-semibold">Tipo:</span> {vehicle.type}</p>
-                <p><span className="font-semibold">Ciudad:</span> {vehicle.city}</p>
-                <p className={`text-base font-bold mt-1 ${checkPicoYPlacaStatus(vehicle.lastTwoDigits, vehicle.type, vehicle.city).includes("Tiene") ? "text-red-500" : "text-green-500"}`}>{checkPicoYPlacaStatus(vehicle.lastTwoDigits, vehicle.type, vehicle.city)}</p>
+              <li key={vehicle.id} className="bg-gray-50 p-3 rounded-lg text-sm text-gray-700 shadow-sm flex justify-between items-start">
+                <div>
+                  <p><span className="font-semibold">Placa (últimos 2):</span> {vehicle.lastTwoDigits}</p>
+                  <p><span className="font-semibold">Tipo:</span> {vehicle.type}</p>
+                  <p><span className="font-semibold">Ciudad:</span> {vehicle.city}</p>
+                  <p className={`text-base font-bold mt-1 ${checkPicoYPlacaStatus(vehicle.lastTwoDigits, vehicle.type, vehicle.city).includes("Tiene") ? "text-red-500" : "text-green-500"}`}>{checkPicoYPlacaStatus(vehicle.lastTwoDigits, vehicle.type, vehicle.city)}</p>
+                </div>
+                <div>
+                  <button onClick={() => forgetVehicle(vehicle.id)} className="ml-4 bg-red-100 text-red-600 px-3 py-1 rounded-full text-xs hover:bg-red-200">Olvidar</button>
+                </div>
               </li>
             ))}
           </ul>
