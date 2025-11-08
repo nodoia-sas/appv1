@@ -404,13 +404,6 @@ const App = () => {
     }
   }, [])
 
-  const saveToLocalStorage = (key, data) => {
-    localStorage.setItem(key, JSON.stringify(data))
-  }
-
-  // Document management moved to `components/Documents` and `lib/documents-utils.js`.
-  // Parent no longer performs add/delete operations on transit-user-documents.
-
   // If the app is opened with a ?screen=... query param or hash, navigate to that screen
   useEffect(() => {
     try {
@@ -439,49 +432,6 @@ const App = () => {
       setNotification((prev) => ({ ...prev, visible: false }))
     }, 3000)
   }, [])
-
-  const handleDocumentUpload = async (id) => {
-    const updatedDocuments = documents.map((doc) => (doc.id === id ? { ...doc, uploaded: !doc.uploaded } : doc))
-    setDocuments(updatedDocuments)
-    saveToLocalStorage("transit-user-documents", updatedDocuments)
-
-    const docToUpdate = documents.find((d) => d.id === id)
-    if (docToUpdate) {
-      showNotification(
-        `Documento ${docToUpdate.name} marcado como ${!docToUpdate.uploaded ? "subido" : "no subido"}.`,
-        "info",
-      )
-    }
-  }
-
-  const [glossarySearchTerm, setGlossarySearchTerm] = useState("")
-  const filteredGlossaryTerms = ALL_GLOSSARY_TERMS.filter(
-    (term) =>
-      term.term.toLowerCase().includes(glossarySearchTerm.toLowerCase()) ||
-      term.explanation.toLowerCase().includes(glossarySearchTerm.toLowerCase()),
-  )
-
-  const [pqrQuestion, setPqrQuestion] = useState("")
-  const handlePqrSubmit = async () => {
-    if (pqrQuestion.trim() === "") {
-      showNotification("Por favor, escribe tu pregunta antes de enviar.", "info")
-      return
-    }
-
-    // Simulate saving PQR locally
-    const pqrData = {
-      id: Date.now().toString(),
-      question: pqrQuestion,
-      timestamp: new Date().toISOString(),
-    }
-
-    const existingPqrs = JSON.parse(localStorage.getItem("transit-pqrs") || "[]")
-    const updatedPqrs = [...existingPqrs, pqrData]
-    saveToLocalStorage("transit-pqrs", updatedPqrs)
-
-    showNotification("¡Gracias! Tu pregunta ha sido enviada.", "success")
-    setPqrQuestion("")
-  }
 
   const [globalSearchTerm, setGlobalSearchTerm] = useState("")
   const [globalSearchResults, setGlobalSearchResults] = useState([])
@@ -538,41 +488,6 @@ const App = () => {
     setActiveScreen(result.section.replace(/\s+/g, "-").toLowerCase())
   }
 
-  const handleRegisterVehicle = async () => {
-    if (!newVehicleLastTwoDigits || !newVehicleType || !newVehicleCity) {
-      showNotification("Por favor, completa todos los campos para registrar el vehículo.", "error")
-      return
-    }
-    if (newVehicleLastTwoDigits.length !== 2 || isNaN(newVehicleLastTwoDigits)) {
-      showNotification("Los últimos dos dígitos de la placa deben ser numéricos y tener 2 dígitos.", "error")
-      return
-    }
-
-    const newVehicle = {
-      id: Date.now().toString(),
-      lastTwoDigits: newVehicleLastTwoDigits,
-      type: newVehicleType,
-      city: newVehicleCity,
-    }
-
-    const updatedVehicles = [...registeredVehicles, newVehicle]
-    setRegisteredVehicles(updatedVehicles)
-    saveToLocalStorage("transit-user-vehicles", updatedVehicles)
-
-    showNotification(`Vehículo ${newVehicleLastTwoDigits} (${newVehicleType}) registrado con éxito.`, "success")
-    setNewVehicleLastTwoDigits("")
-    setNewVehicleType("")
-    setNewVehicleCity("")
-    setShowRegisterVehicleForm(false)
-  }
-
-  const handleForgetVehicle = async (id) => {
-    const updatedVehicles = registeredVehicles.filter((vehicle) => vehicle.id !== id)
-    setRegisteredVehicles(updatedVehicles)
-    saveToLocalStorage("transit-user-vehicles", updatedVehicles)
-    showNotification("Vehículo olvidado correctamente.", "info")
-  }
-
   const selectRandomQuizQuestions = useCallback(() => {
     const shuffled = [...ALL_QUIZ_QUESTIONS].sort(() => 0.5 - Math.random())
     const selected20 = shuffled.slice(0, 20).map((q) => ({ ...q, selected: null, correct: null }))
@@ -588,96 +503,6 @@ const App = () => {
     }
   }, [activeScreen, quizStarted, quizQuestions.length, selectRandomQuizQuestions])
 
-  const handleQuizAnswer = (questionId, selectedOption) => {
-    const updatedQuizQuestions = quizQuestions.map((q) =>
-      q.id === questionId ? { ...q, selected: selectedOption, correct: selectedOption === q.answer } : q,
-    )
-    setQuizQuestions(updatedQuizQuestions)
-    const answeredQuestion = updatedQuizQuestions.find((q) => q.id === questionId)
-    if (answeredQuestion && answeredQuestion.correct) {
-      setCurrentScore((prevScore) => prevScore + 1)
-    }
-  }
-
-  const resetQuiz = () => {
-    selectRandomQuizQuestions()
-    setQuizStarted(true)
-    setCurrentQuestionIndex(0)
-  }
-
-  const goToNextQuestion = () => {
-    if (currentQuestionIndex < quizQuestions.length - 1) {
-      setCurrentQuestionIndex((prevIndex) => prevIndex + 1)
-    } else {
-      setQuizCompleted(true)
-    }
-  }
-
-  const goToPreviousQuestion = () => {
-    if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex((prevIndex) => prevIndex - 1)
-      setQuizCompleted(false)
-    }
-  }
-
-  const getKnowledgeRange = (score) => {
-    const totalQuestions = quizQuestions.length
-    if (totalQuestions === 0) return "N/A"
-    if (score === totalQuestions) {
-      return "Experto: ¡Dominas las normas de tránsito!"
-    } else if (score >= totalQuestions * 0.8) {
-      return "Avanzado: ¡Excelente conocimiento vial!"
-    } else if (score >= totalQuestions * 0.5) {
-      return "Intermedio: Vas por buen camino, ¡sigue practicando!"
-    } else {
-      return "Principiante: Es hora de revisar las regulaciones, ¡puedes mejorar!"
-    }
-  }
-
-  const [regulationsData, setRegulationsData] = useState([
-    {
-      id: "ley769",
-      title: "Ley 769 de 2002 - Código Nacional de Tránsito",
-      summary:
-        "Establece las normas de comportamiento para conductores, pasajeros, peatones y ciclistas en las vías públicas y privadas abiertas al público.",
-      articles: [
-        { number: "21", summary: "Obligatoriedad de la licencia de conducción y su presentación." },
-        { number: "25", summary: "Uso obligatorio del cinturón de seguridad para todos los ocupantes del vehículo." },
-        { number: "55", summary: "Comportamiento de conductores y pasajeros en la vía, incluyendo prohibiciones." },
-        { number: "131", summary: "Clasificación de las infracciones de tránsito y sus respectivas sanciones." },
-      ],
-    },
-    {
-      id: "res3027",
-      title: "Resolución 3027 de 2010 - Manual de Señalización Vial",
-      summary:
-        "Define las características y el uso de la señalización vial en Colombia para garantizar la seguridad y fluidez del tránsito.",
-      articles: [
-        {
-          number: "5",
-          summary:
-            "Clasificación general de las señales de tránsito (reglamentarias, preventivas, informativas, transitorias).",
-        },
-        { number: "10", summary: "Características de las señales reglamentarias (forma, color, significado)." },
-        { number: "15", summary: "Características de las señales preventivas (forma, color, significado)." },
-      ],
-    },
-    {
-      id: "decreto1079",
-      title: "Decreto 1079 de 2015 - Decreto Único Reglamentario del Sector Transporte",
-      summary: "Compila y racionaliza las normas de carácter reglamentario que rigen el sector transporte en Colombia.",
-      articles: [
-        {
-          number: "2.3.1.5.1",
-          summary: "Regulación sobre la presentación de documentos de tránsito en formato digital.",
-        },
-        {
-          number: "2.3.1.5.2",
-          summary: "Disposiciones sobre la revisión técnico-mecánica y de emisiones contaminantes.",
-        },
-      ],
-    },
-  ])
   const [selectedRegulation, setSelectedRegulation] = useState(null) 
 
   const renderContent = () => {
