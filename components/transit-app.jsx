@@ -415,7 +415,7 @@ const App = () => {
                         setShowLoginDropdown(false)
                       }}
                     >
-                      <FileWarningIcon className="w-4 h-4" />
+                      <Icons.FileWarningIcon className="w-4 h-4" />
                       <span>Términos y privacidad</span>
                     </a>
                     <a
@@ -426,7 +426,7 @@ const App = () => {
                         setShowLoginDropdown(false)
                       }}
                     >
-                      <Share2Icon className="w-4 h-4" />
+                      <Icons.Share2Icon className="w-4 h-4" />
                       <span>Compartir app</span>
                     </a>
                   </>
@@ -434,23 +434,25 @@ const App = () => {
               </div>
             )}
           </div>
-          <h1 className="text-2xl font-bold absolute left-1/2 transform -translate-x-1/2">Transit IA</h1>
-          <button
-            className="p-2 rounded-full bg-blue-700 hover:bg-blue-800 transition-colors duration-200 shadow-md"
-            onClick={() => {
-              if (!loggedIn) {
-                // require login to view notifications
-                showNotification('Debes iniciar sesión para ver notificaciones', 'info')
-                // redirect to Auth0 login
-                try { if (typeof window !== 'undefined') window.location.href = '/api/auth/login' } catch (e) {}
-                return
-              }
-              setActiveScreen("notifications")
-            }}
-            aria-label="View notifications"
-          >
-            <Icons.BellIcon className="w-5 h-5" />
-          </button>
+          <h1 className="text-2xl font-bold absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">Transit IA</h1>
+          <div className="flex items-center">
+            <button
+              className="p-2 rounded-full bg-blue-700 hover:bg-blue-800 transition-colors duration-200 shadow-md"
+              onClick={() => {
+                if (!loggedIn) {
+                  // require login to view notifications
+                  showNotification('Debes iniciar sesión para ver notificaciones', 'info')
+                  // redirect to Auth0 login
+                  try { if (typeof window !== 'undefined') window.location.href = '/api/auth/login' } catch (e) {}
+                  return
+                }
+                setActiveScreen("notifications")
+              }}
+              aria-label="View notifications"
+            >
+              <Icons.BellIcon className="w-5 h-5" />
+            </button>
+          </div>
         </div>
         <div
           className="flex-grow overflow-y-auto"
