@@ -14,7 +14,10 @@ import Notifications from "./notifications"
 import News from "./news"
 import PicoYPlaca from "./pico-y-placa"
 import UnderConstruction from "./under-construction"
+import Terms from './terms'
+import HelpContact from './help-contact'
 import * as Icons from './icons'
+import Toast from './toast'
 
 // Auth handled via Auth0; local login modal removed
 
@@ -188,9 +191,17 @@ const App = () => {
         return (
           <MyProfile
             setActiveScreen={setActiveScreen}
-            userId={userId}
+            user={user}
             showNotification={showNotification}
           />
+        )
+      case "terms":
+        return (
+          <Terms setActiveScreen={setActiveScreen} />
+        )
+      case "help-contact":
+        return (
+          <HelpContact setActiveScreen={setActiveScreen} />
         )
       case "quiz":
         return (
@@ -332,24 +343,23 @@ const App = () => {
                       href="#"
                       className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       onClick={() => {
-                        showNotification("Navegar a Ayuda/Contacto (simulado)", "info")
+                        setActiveScreen('help-contact')
                         setShowLoginDropdown(false)
                       }}
                     >
                       <Icons.InfoIcon className="w-4 h-4" />
                       <span>Ayuda/Contacto</span>
                     </a>
-                    <a
-                      href="#"
+                    <button
                       className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       onClick={() => {
-                        showNotification("Navegar a Términos y privacidad (simulado)", "info")
+                        setActiveScreen('terms')
                         setShowLoginDropdown(false)
                       }}
                     >
                       <Icons.FileWarningIcon className="w-4 h-4" />
                       <span>Términos y privacidad</span>
-                    </a>
+                    </button>
                     <a
                       href="#"
                       className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -389,11 +399,12 @@ const App = () => {
                       href="#"
                       className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       onClick={() => {
-                        showNotification("Navegar a Ayuda/Contacto (simulado)", "info")
+                        // Navigate to Help/Contact view (unauthenticated users may still view contact info)
+                        setActiveScreen('help-contact')
                         setShowLoginDropdown(false)
                       }}
                     >
-                      <InfoIcon className="w-4 h-4" />
+                      <Icons.InfoIcon className="w-4 h-4" />
                       <span>Ayuda/Contacto</span>
                     </a>
                     <a
@@ -477,13 +488,13 @@ const App = () => {
       </div>
       {/* local login modal removed; Auth0 handles auth */}
       {/* Global search removed */}
-      {notification.visible && (
-        <div
-          className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-full shadow-lg text-white z-50 transition-all duration-300 ${notification.type === "success" ? "bg-green-500" : "bg-blue-500"}`}
-        >
-          {notification.message}
-        </div>
-      )}
+      <Toast
+        message={notification.message}
+        type={notification.type}
+        visible={notification.visible}
+        onRequestClose={() => setNotification({ message: '', visible: false, type: '' })}
+        onHidden={() => { /* no-op */ }}
+      />
     </div>
   )
 }

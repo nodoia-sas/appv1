@@ -16,7 +16,7 @@ const XIcon = ({ className }) => (
   </svg>
 )
 
-export default function MyProfile({ setActiveScreen, showNotification, userId }) {
+export default function MyProfile({ setActiveScreen, showNotification, user }) {
   const [registeredVehicles, setRegisteredVehicles] = useState([])
   const [showRegisterVehicleForm, setShowRegisterVehicleForm] = useState(false)
   const [newVehicleLastTwoDigits, setNewVehicleLastTwoDigits] = useState("")
@@ -75,26 +75,22 @@ export default function MyProfile({ setActiveScreen, showNotification, userId })
   return (
     <div className="p-6">
       <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Mi Perfil</h2>
-      <button
-        onClick={() => setActiveScreen('home')}
-        className="mb-4 bg-gray-300 text-gray-800 py-2 px-4 rounded-full text-sm hover:bg-gray-400 transition-colors duration-200 shadow-md"
-      >
-        ← Volver al Inicio
-      </button>
       <div className="space-y-6">
         <div className="bg-white p-5 rounded-xl shadow-md border border-gray-200">
           <h3 className="font-semibold text-gray-800 text-lg mb-3">Mis Datos</h3>
-          {userId && (
+          {user?.picture && (
+            <div className="flex items-center space-x-3 mb-3">
+              <div>
+                {user?.name && <div className="font-semibold text-gray-800">{user.name}</div>}
+                {user?.email && <div className="text-sm text-gray-600">{user.email}</div>}
+              </div>
+            </div>
+          )}
+          {user?.sub && (
             <p className="text-gray-700 text-sm break-words">
-              ID de usuario: <span className="font-mono">{userId}</span>
+              ID de usuario: <span className="font-mono">{user.sub}</span>
             </p>
           )}
-          <button
-            onClick={() => showNotification && showNotification('Funcionalidad de edición de datos simulada', 'info')}
-            className="mt-4 w-full bg-blue-500 text-white py-2 px-4 rounded-full hover:bg-blue-600 transition-colors duration-200 text-sm shadow-md"
-          >
-            Editar Datos
-          </button>
         </div>
 
         <div className="bg-white p-5 rounded-xl shadow-md border border-gray-200">
