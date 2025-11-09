@@ -273,10 +273,10 @@ const App = () => {
   return (
     <div className="min-h-screen bg-gray-100 font-sans flex flex-col p-4">
       <div
-        className="relative w-full max-w-md bg-white rounded-xl shadow-lg overflow-hidden flex flex-col max-h-[calc(100vh-2rem)]"
+  className="relative w-full max-w-md md:max-w-2xl lg:max-w-3xl bg-white rounded-xl shadow-lg overflow-hidden flex flex-col max-h-[calc(100vh-2rem)] mx-auto"
       >
         <div
-          className="fixed top-0 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-blue-600 to-blue-800 text-white p-4 flex items-center justify-between rounded-t-xl shadow-md z-50 w-full max-w-md"
+          className="fixed top-0 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-blue-600 to-blue-800 text-white p-4 md:px-6 flex items-center justify-between rounded-t-xl shadow-md z-50 w-full max-w-md md:max-w-2xl lg:max-w-3xl"
           style={{ paddingTop: 'env(safe-area-inset-top)' }}
         >
           <div className="relative">
@@ -452,7 +452,7 @@ const App = () => {
         </div>
 
         <nav
-          className="fixed left-1/2 transform -translate-x-1/2 bottom-0 bg-white border-t border-gray-200 rounded-t-xl shadow-inner z-50 h-20 flex items-center justify-around px-2 w-full max-w-md"
+          className="fixed left-1/2 transform -translate-x-1/2 bottom-0 bg-white border-t border-gray-200 rounded-t-xl shadow-inner z-50 h-20 flex items-center justify-around px-2 w-full max-w-md md:max-w-2xl lg:max-w-3xl"
           style={{ paddingBottom: 'env(safe-area-inset-bottom)', WebkitTapHighlightColor: 'transparent' }}
         >
           {navItems.map((item) => (
