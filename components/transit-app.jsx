@@ -16,55 +16,7 @@ import PicoYPlaca from "./pico-y-placa"
 import UnderConstruction from "./under-construction"
 import * as Icons from './icons'
 
-const LoginModal = ({ onClose, showNotification, setLoggedIn }) => {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-
-  const handleLogin = () => {
-    if (email && password) {
-      setLoggedIn(true)
-      showNotification("¡Bienvenido a Transit IA!", "success")
-      onClose()
-    } else {
-      showNotification("Por favor completa todos los campos", "error")
-    }
-  }
-
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold text-gray-800">Iniciar Sesión</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
-            <Icons.XIcon className="w-6 h-6" />
-          </button>
-        </div>
-        <div className="space-y-4">
-          <input
-            type="email"
-            placeholder="Correo electrónico"
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <input
-            type="password"
-            placeholder="Contraseña"
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <button
-            onClick={handleLogin}
-            className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-200"
-          >
-            Iniciar Sesión
-          </button>
-        </div>
-      </div>
-    </div>
-  )
-}
+// Auth handled via Auth0; local login modal removed
 
 const App = () => {
   const [userId, setUserId] = useState("local-user-123")
@@ -85,7 +37,6 @@ const App = () => {
   // quiz progress moved to Quiz component
 
   const [activeScreen, setActiveScreen] = useState("home")
-  const [showLoginModal, setShowLoginModal] = useState(false)
   const [showLoginDropdown, setShowLoginDropdown] = useState(false)
   const loginButtonRef = useRef(null)
   const [notification, setNotification] = useState({ message: "", visible: false, type: "" })
@@ -311,8 +262,7 @@ const App = () => {
       try {
         if (typeof window !== 'undefined') window.location.href = '/api/auth/login'
       } catch (e) {
-        // fallback: open local login modal
-        setShowLoginModal(true)
+        // ignore
       }
       return
     }
@@ -427,7 +377,8 @@ const App = () => {
                       href="#"
                       className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       onClick={() => {
-                        setShowLoginModal(true)
+                        // redirect to Auth0 login
+                        try { if (typeof window !== 'undefined') window.location.href = '/api/auth/login' } catch (e) {}
                         setShowLoginDropdown(false)
                       }}
                     >
@@ -475,7 +426,16 @@ const App = () => {
           <h1 className="text-2xl font-bold absolute left-1/2 transform -translate-x-1/2">Transit IA</h1>
           <button
             className="p-2 rounded-full bg-blue-700 hover:bg-blue-800 transition-colors duration-200 shadow-md"
-            onClick={() => setActiveScreen("notifications")}
+            onClick={() => {
+              if (!loggedIn) {
+                // require login to view notifications
+                showNotification('Debes iniciar sesión para ver notificaciones', 'info')
+                // redirect to Auth0 login
+                try { if (typeof window !== 'undefined') window.location.href = '/api/auth/login' } catch (e) {}
+                return
+              }
+              setActiveScreen("notifications")
+            }}
             aria-label="View notifications"
           >
             <Icons.BellIcon className="w-5 h-5" />
@@ -515,13 +475,7 @@ const App = () => {
           ))}
         </nav>
       </div>
-      {showLoginModal && (
-        <LoginModal
-          onClose={() => setShowLoginModal(false)}
-          showNotification={showNotification}
-          setLoggedIn={setLoggedIn}
-        />
-      )}
+      {/* local login modal removed; Auth0 handles auth */}
       {/* Global search removed */}
       {notification.visible && (
         <div
