@@ -10,7 +10,19 @@ export default async function handler(req, res) {
 		const rel = url.replace(/^\/api\/auth/, '') || '/'
 
 		if (rel.startsWith('/login')) {
-			const qs = url.indexOf('?') >= 0 ? url.slice(url.indexOf('?')) : ''
+			// Preserve incoming querystring and optionally inject audience so an access token
+			// for the API is returned by Auth0. Set AUTH0_AUDIENCE in .env.local to the API
+			// identifier configured in Auth0 (e.g. "https://api.transitia.local" or the API's id).
+			let qs = url.indexOf('?') >= 0 ? url.slice(url.indexOf('?')) : ''
+			const audience = process.env.AUTH0_AUDIENCE
+			if (audience && !qs.includes('audience=')) {
+				qs = (qs ? qs + '&' : '?') + `audience=${encodeURIComponent(audience)}`
+			}
+			// Optionally add requested scopes (defaults to openid profile offline_access)
+			const scope = process.env.AUTH0_SCOPE || 'openid profile offline_access'
+			if (scope && !qs.includes('scope=')) {
+				qs = (qs ? qs + '&' : '?') + `scope=${encodeURIComponent(scope)}`
+			}
 			res.writeHead(307, { Location: `/auth/login${qs}` })
 			return res.end()
 		}

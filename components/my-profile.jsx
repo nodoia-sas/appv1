@@ -22,6 +22,8 @@ export default function MyProfile({ setActiveScreen, showNotification, user }) {
   const [newVehicleLastTwoDigits, setNewVehicleLastTwoDigits] = useState("")
   const [newVehicleType, setNewVehicleType] = useState("")
   const [newVehicleCity, setNewVehicleCity] = useState("")
+  const [apiProfile, setApiProfile] = useState(null)
+  const [loadingProfile, setLoadingProfile] = useState(false)
 
   useEffect(() => {
     try {
@@ -31,6 +33,27 @@ export default function MyProfile({ setActiveScreen, showNotification, user }) {
       setRegisteredVehicles([])
     }
   }, [])
+
+  // Call server-side proxy to fetch profile (will attach Auth0 token on server)
+  useEffect(() => {
+    let mounted = true
+    const controller = new AbortController()
+    const fetchProfile = async () => {
+      setLoadingProfile(true)
+      try {
+        const res = await fetch('/api/profile', { signal: controller.signal })
+        if (!res.ok) throw new Error(`Status ${res.status}`)
+        const data = await res.json()
+        if (mounted) setApiProfile(data)
+      } catch (err) {
+        if (mounted && showNotification) showNotification('No se pudo obtener el perfil desde el servidor', 'warning')
+      } finally {
+        if (mounted) setLoadingProfile(false)
+      }
+    }
+    fetchProfile()
+    return () => { mounted = false; controller.abort() }
+  }, [showNotification])
 
   const saveVehicles = (items) => {
     setRegisteredVehicles(items)
