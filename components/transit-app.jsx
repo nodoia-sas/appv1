@@ -36,6 +36,7 @@ const App = () => {
     phone: "300 123 4567",
     vehicles: [],
   })
+  const [loadingProfileFromApi, setLoadingProfileFromApi] = useState(false)
   
   // quiz progress moved to Quiz component
 
@@ -51,16 +52,48 @@ const App = () => {
   // Pico y Placa States (kept minimal in parent: registeredVehicles)
 
   // Firestore Initialization & Authentication
+  // No local persistence: always load authoritative profile from backend when authenticated
   useEffect(() => {
-    // Initialize user profile from localStorage
-    const savedProfile = localStorage.getItem("transit-user-profile")
-    if (savedProfile) {
-      setUserProfile(JSON.parse(savedProfile))
-    }
-
     // Other domain data (vehicles, learn content, infractions, news, quiz bank)
     // are loaded and managed by their respective components to avoid prop-drilling.
   }, [])
+
+  const showNotification = useCallback((message, type = "success") => {
+    setNotification({ message, visible: true, type })
+    setTimeout(() => {
+      setNotification((prev) => ({ ...prev, visible: false }))
+    }, 3000)
+  }, [])
+
+  // When Auth0 user is present fetch authoritative profile from backend (/api/profile)
+  useEffect(() => {
+    if (!user) return
+    let mounted = true
+    const controller = new AbortController()
+    const fetchProfile = async () => {
+      setLoadingProfileFromApi(true)
+      try {
+        const res = await fetch('/api/profile', { signal: controller.signal })
+        if (!res.ok) throw new Error(`Status ${res.status}`)
+        const json = await res.json()
+        const profile = json?.data || json
+        if (mounted) {
+          setUserProfile((prev) => ({
+            name: profile.name ?? prev.name,
+            email: profile.email ?? prev.email,
+            phone: profile.phone ?? prev.phone,
+            vehicles: profile.vehicles ?? prev.vehicles ?? []
+          }))
+        }
+      } catch (e) {
+        if (showNotification) showNotification('No se pudo obtener el perfil desde el servidor', 'warning')
+      } finally {
+        if (mounted) setLoadingProfileFromApi(false)
+      }
+    }
+    fetchProfile()
+    return () => { mounted = false; controller.abort() }
+  }, [user, showNotification])
 
   // If the app is opened with a ?screen=... query param or hash, navigate to that screen
   useEffect(() => {
@@ -84,12 +117,7 @@ const App = () => {
     }
   }, [])
 
-  const showNotification = useCallback((message, type = "success") => {
-    setNotification({ message, visible: true, type })
-    setTimeout(() => {
-      setNotification((prev) => ({ ...prev, visible: false }))
-    }, 3000)
-  }, [])
+  
 
   // Global search removed — related state and helpers cleaned up
 

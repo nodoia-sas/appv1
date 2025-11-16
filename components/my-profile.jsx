@@ -34,7 +34,7 @@ export default function MyProfile({ setActiveScreen, showNotification, user }) {
     }
   }, [])
 
-  // Call server-side proxy to fetch profile (will attach Auth0 token on server)
+  // Fetch profile from backend when user logs in. Use apiProfile over Auth0 user when available.
   useEffect(() => {
     let mounted = true
     const controller = new AbortController()
@@ -43,17 +43,25 @@ export default function MyProfile({ setActiveScreen, showNotification, user }) {
       try {
         const res = await fetch('/api/profile', { signal: controller.signal })
         if (!res.ok) throw new Error(`Status ${res.status}`)
-        const data = await res.json()
-        if (mounted) setApiProfile(data)
+        const json = await res.json()
+        // backend responds { data: { id, name, email } }
+        const profileData = json?.data || json
+        if (mounted) setApiProfile(profileData)
       } catch (err) {
         if (mounted && showNotification) showNotification('No se pudo obtener el perfil desde el servidor', 'warning')
       } finally {
         if (mounted) setLoadingProfile(false)
       }
     }
-    fetchProfile()
+
+    // Only fetch when an authenticated user exists
+    try {
+      const hasUser = typeof user !== 'undefined' && user !== null
+      if (hasUser) fetchProfile()
+    } catch (e) {}
+
     return () => { mounted = false; controller.abort() }
-  }, [showNotification])
+  }, [user, showNotification])
 
   const saveVehicles = (items) => {
     setRegisteredVehicles(items)
