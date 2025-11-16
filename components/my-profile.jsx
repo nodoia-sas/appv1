@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 
 // Icons removed for simplified profile view
 
-export default function MyProfile({ setActiveScreen, showNotification, user }) {
+export default function MyProfile({ setActiveScreen, showNotification }) {
   // Vehicles removed from profile; keep profile focused on user data
   const [apiProfile, setApiProfile] = useState(null)
   const [loadingProfile, setLoadingProfile] = useState(false)
@@ -31,14 +31,11 @@ export default function MyProfile({ setActiveScreen, showNotification, user }) {
       }
     }
 
-    // Only fetch when an authenticated user exists
-    try {
-      const hasUser = typeof user !== 'undefined' && user !== null
-      if (hasUser) fetchProfile()
-    } catch (e) {}
+      // Fetch on mount; server will return 401 if not authenticated
+      fetchProfile()
 
-    return () => { mounted = false; controller.abort() }
-  }, [user, showNotification])
+      return () => { mounted = false; controller.abort() }
+    }, [showNotification])
 
   // Vehicle helpers removed
 
@@ -48,18 +45,16 @@ export default function MyProfile({ setActiveScreen, showNotification, user }) {
       <div className="space-y-6">
         <div className="bg-white p-5 rounded-xl shadow-md border border-gray-200">
           <h3 className="font-semibold text-gray-800 text-lg mb-3">Mis Datos</h3>
-          {user?.picture && (
-            <div className="flex items-center space-x-3 mb-3">
-              <div>
-                {user?.name && <div className="font-semibold text-gray-800">{user.name}</div>}
-                {user?.email && <div className="text-sm text-gray-600">{user.email}</div>}
-              </div>
+          {loadingProfile ? (
+            <div className="text-sm text-gray-600">Cargando perfil...</div>
+          ) : (
+            <div>
+              {apiProfile?.name && <div className="font-semibold text-gray-800">{apiProfile.name}</div>}
+              {apiProfile?.email && <div className="text-sm text-gray-600">{apiProfile.email}</div>}
+              {apiProfile?.id && (
+                <p className="text-gray-700 text-sm break-words mt-2">ID de usuario: <span className="font-mono">{apiProfile.id}</span></p>
+              )}
             </div>
-          )}
-          {user?.sub && (
-            <p className="text-gray-700 text-sm break-words">
-              ID de usuario: <span className="font-mono">{user.sub}</span>
-            </p>
           )}
         </div>
           {/* Vehicles section removed */}

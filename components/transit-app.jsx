@@ -219,7 +219,6 @@ const App = () => {
         return (
           <MyProfile
             setActiveScreen={setActiveScreen}
-            user={user}
             showNotification={showNotification}
           />
         )
