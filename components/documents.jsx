@@ -1,7 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
-import { useRef } from "react"
+import React, { useState, useEffect, useCallback, useRef } from "react"
 
 export default function Documents() {
   const [showPersonalForm, setShowPersonalForm] = useState(false)
@@ -22,6 +21,41 @@ export default function Documents() {
   const [vehicleLine, setVehicleLine] = useState('')
   const [message, setMessage] = useState(null)
   const messageTimeoutRef = useRef(null)
+
+  const [vehicles, setVehicles] = useState(null)
+  const [vehiclesLoading, setVehiclesLoading] = useState(false)
+  const [deletingVehicleId, setDeletingVehicleId] = useState(null)
+
+  const fetchVehicles = useCallback(async (opts = {}) => {
+    setVehiclesLoading(true)
+    try {
+      // allow passing query overrides via opts.query
+      const query = opts.query || ''
+      const url = `/api/hooks/vehicles/list${query ? `?${query}` : ''}`
+      const res = await fetch(url)
+      if (!res.ok) {
+        const txt = await res.text().catch(() => '')
+        console.error('vehicleList error', res.status, txt)
+        showMessage({ type: 'error', text: `No fue posible cargar vehículos (${res.status})` })
+        setVehicles([])
+        return
+      }
+      const body = await res.json().catch(() => null)
+      // try common shapes: { data: [...] } or [...] directly
+      const list = body?.data ?? body ?? []
+      setVehicles(Array.isArray(list) ? list : [])
+    } catch (err) {
+      console.error('fetchVehicles failed', err)
+      showMessage({ type: 'error', text: 'Error al obtener vehículos' })
+      setVehicles([])
+    } finally {
+      setVehiclesLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchVehicles()
+  }, [fetchVehicles])
 
   const showMessage = (msgObj, duration = 5000) => {
     // clear existing timeout
@@ -95,7 +129,7 @@ export default function Documents() {
     }
 
     try {
-      const res = await fetch('/api/vehicleAdd', {
+      const res = await fetch('/api/hooks/vehicles/add', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -114,6 +148,12 @@ export default function Documents() {
       showMessage({ type: 'success', text: 'Vehículo guardado correctamente.' }, 4000)
       resetVehicleForm()
       setShowVehicleForm(false)
+      // refresh list after creating a vehicle
+      try {
+        await fetchVehicles()
+      } catch (e) {
+        console.error('refresh after add failed', e)
+      }
     } catch (err) {
       console.error('Vehicle submit failed', err)
       showMessage({ type: 'error', text: 'Error de comunicación con el servidor' })
@@ -134,7 +174,7 @@ export default function Documents() {
             </div>
           </div>
           <div>
-            <button onClick={() => setShowPersonalForm(true)} className="bg-green-600 text-white py-2 px-4 rounded-full text-sm">Agregar</button>
+            <button onClick={() => { setShowPersonalForm(true); setShowVehicleForm(false); }} className="bg-green-600 text-white py-2 px-4 rounded-full text-sm">Agregar</button>
           </div>
         </div>
 
@@ -147,11 +187,11 @@ export default function Documents() {
             </div>
           </div>
           <div>
-            <button onClick={() => setShowVehicleForm(true)} className="bg-green-600 text-white py-2 px-4 rounded-full text-sm">Agregar</button>
+            <button onClick={() => { setShowVehicleForm(true); setShowPersonalForm(false); }} className="bg-green-600 text-white py-2 px-4 rounded-full text-sm">Agregar</button>
           </div>
         </div>
       </div>
-
+      
       {/* Personal document form (inline) */}
       {showPersonalForm && (
         <div className="bg-white rounded-lg shadow-md w-full p-6 mt-6 border border-gray-200">
@@ -231,14 +271,14 @@ export default function Documents() {
             <div className="mb-3 grid grid-cols-1 md:grid-cols-3 gap-2">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Modelo</label>
-                <input type="text" value={vehicleModel} onChange={(e) => setVehicleModel(e.target.value)} className="w-full border rounded p-2" />
+                <input type="number" min="0" step="1" value={vehicleModel} onChange={(e) => setVehicleModel(String(e.target.value).replace(/[^0-9]/g, ''))} className="w-full border rounded p-2" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Marca</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Marca (opcional)</label>
                 <input type="text" value={vehicleBrand} onChange={(e) => setVehicleBrand(e.target.value)} className="w-full border rounded p-2" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Línea</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Línea (opcional)</label>
                 <input type="text" value={vehicleLine} onChange={(e) => setVehicleLine(e.target.value)} className="w-full border rounded p-2" />
               </div>
             </div>
@@ -250,6 +290,118 @@ export default function Documents() {
           </form>
         </div>
       )}
+
+      {/* Vehicles list */}
+      <div className="mt-6">
+        {vehiclesLoading && <div className="text-sm text-gray-600">Cargando vehículos...</div>}
+
+        {!vehiclesLoading && (!vehicles || vehicles.length === 0) && (
+          <div className="text-sm text-gray-600">No tienes vehículos registrados.</div>
+        )}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+          {vehicles && vehicles.map((v) => {
+            const id = v.id || v.vehicleId || v._id || v.identification || Math.random()
+            const deleteId = v.id || v.vehicleId || v._id || null
+            const name = v.name || v.displayName || `${v.brand || ''} ${v.model || ''}`
+            const identification = v.identification || v.license || ''
+
+            // documents may be in v.documents or v.documentsList
+            const docs = v.documents || v.documentsList || v.documentsDto || []
+            const findDoc = (typeKeywords) => {
+              if (!Array.isArray(docs)) return null
+              const key = (t) => t.toString().toLowerCase()
+              return docs.find(d => {
+                const target = (d.type || d.name || d.documentType || '') .toString().toLowerCase()
+                return typeKeywords.some(k => target.includes(k))
+              }) || null
+            }
+
+            const soat = findDoc(['soat'])
+            const tarjeta = findDoc(['tarjeta', 'propiedad'])
+            const tecnico = findDoc(['tecnico', 'tecnic', 'tecnico-mecanica', 'tecnico mecanica'])
+
+            const renderDoc = (doc) => {
+              if (!doc) return <div className="text-sm text-gray-500">Sin registro</div>
+              const txt = doc.expiryDate || doc.expiration || doc.validUntil || doc.date || doc.nombre || ''
+              return (
+                <div className="text-sm">
+                  <div className="font-medium">{doc.type || doc.name || doc.documentType || 'Documento'}</div>
+                  {txt && <div className="text-xs text-gray-600">Vence: {String(txt)}</div>}
+                </div>
+              )
+            }
+
+            // determine icon based on vehicle category/type
+            const categoryId = v.vehicleCategory?.id || v.vehicleCategoryId || v.vehicleCategoryId || ''
+            const categoryName = (v.vehicleCategory?.name || v.vehicleCategoryName || '').toString().toLowerCase()
+            let icon = '🚗'
+            if (categoryName.includes('moto') || categoryId === MOTO_CATEGORY_ID) icon = '🏍️'
+            else if (categoryName.includes('car') || categoryName.includes('carro') || categoryName.includes('auto')) icon = '🚗'
+
+            return (
+              <div key={id} className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="font-semibold">{name}</div>
+                    <div className="text-sm text-gray-600">Placa/ID: {identification}</div>
+                    <div className="text-sm text-gray-600">{v.brand ? `${v.brand} • ${v.model || ''} • ${v.line || ''}` : ''}</div>
+                  </div>
+                  <div className="flex flex-col items-end space-y-2">
+                    <div className="text-2xl">{icon}</div>
+                    {deleteId && (
+                      <button
+                        onClick={async () => {
+                          // confirmation
+                          const ok = window.confirm('¿Estás seguro de eliminar este vehículo? Esta acción es irreversible.')
+                          if (!ok) return
+                          try {
+                            setDeletingVehicleId(deleteId)
+                            const res = await fetch(`/api/hooks/vehicles/delete?id=${encodeURIComponent(deleteId)}`, { method: 'DELETE' })
+                            if (!res.ok) {
+                              const txt = await res.text().catch(() => '')
+                              console.error('vehicleDelete error', res.status, txt)
+                              showMessage({ type: 'error', text: `No se pudo eliminar (${res.status})${txt ? ' - ' + txt : ''}` })
+                              return
+                            }
+                            showMessage({ type: 'success', text: 'Vehículo eliminado.' })
+                            // remove from list
+                            setVehicles((prev) => (Array.isArray(prev) ? prev.filter(it => (it.id || it.vehicleId || it._id) !== deleteId) : prev))
+                          } catch (err) {
+                            console.error('delete failed', err)
+                            showMessage({ type: 'error', text: 'Error al eliminar vehículo' })
+                          } finally {
+                            setDeletingVehicleId(null)
+                          }
+                        }}
+                        disabled={deletingVehicleId === deleteId}
+                        className="text-sm text-red-600 hover:underline"
+                      >
+                        {deletingVehicleId === deleteId ? 'Eliminando...' : 'Eliminar'}
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-1 gap-3 mt-3">
+                  <div className="p-3 bg-gray-50 rounded">
+                    <div className="text-xs text-gray-500">SOAT</div>
+                    {renderDoc(soat)}
+                  </div>
+                  <div className="p-3 bg-gray-50 rounded">
+                    <div className="text-xs text-gray-500">Tarjeta de propiedad</div>
+                    {renderDoc(tarjeta)}
+                  </div>
+                  <div className="p-3 bg-gray-50 rounded">
+                    <div className="text-xs text-gray-500">Técnico mecánica</div>
+                    {renderDoc(tecnico)}
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
 
       {message && (
         <div className={`fixed bottom-24 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-full shadow-lg text-white z-50 ${message.type === 'success' ? 'bg-green-600' : 'bg-red-500'}`}>
