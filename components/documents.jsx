@@ -1,134 +1,259 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
-import {
-  loadDocuments,
-  saveDocuments,
-  addDocument as addDocumentUtil,
-  deleteDocument as deleteDocumentUtil,
-  restoreDefaults as restoreDefaultsUtil,
-} from "../lib/documents-utils"
+import React, { useState } from "react"
+import { useRef } from "react"
 
-export default function Documents({ setActiveScreen }) {
-  const [documents, setDocuments] = useState([])
-  const [notification, setNotification] = useState({ message: "", visible: false, type: "" })
+export default function Documents() {
+  const [showPersonalForm, setShowPersonalForm] = useState(false)
+  const [docType, setDocType] = useState('Cedula')
+  const [documentName, setDocumentName] = useState('Cédula')
+  const [licenseType, setLicenseType] = useState('A1')
+  const [expiryDate, setExpiryDate] = useState('')
+  const [file, setFile] = useState(null)
+  const [showVehicleForm, setShowVehicleForm] = useState(false)
+  // Vehicle category ids (example). Replace with real ids from your system if needed.
+  const CAR_CATEGORY_ID = '8cea5918-63d0-4037-a14f-09d066b5a336'
+  const MOTO_CATEGORY_ID = '9cbb096b-a2ef-40b2-bed4-9e5c398c1ef5'
+  const [vehicleCategoryId, setVehicleCategoryId] = useState(CAR_CATEGORY_ID)
+  const [vehicleLastTwo, setVehicleLastTwo] = useState('')
+  const [vehicleName, setVehicleName] = useState('')
+  const [vehicleModel, setVehicleModel] = useState('')
+  const [vehicleBrand, setVehicleBrand] = useState('')
+  const [vehicleLine, setVehicleLine] = useState('')
+  const [message, setMessage] = useState(null)
+  const messageTimeoutRef = useRef(null)
 
-  useEffect(() => {
-    const docs = loadDocuments()
-    setDocuments(docs)
-  }, [])
-
-  const showNotification = (message, type = "info") => {
-    setNotification({ message, visible: true, type })
-    setTimeout(() => setNotification({ message: "", visible: false, type: "" }), 3000)
+  const showMessage = (msgObj, duration = 5000) => {
+    // clear existing timeout
+    if (messageTimeoutRef.current) {
+      clearTimeout(messageTimeoutRef.current)
+      messageTimeoutRef.current = null
+    }
+    setMessage(msgObj)
+    messageTimeoutRef.current = setTimeout(() => {
+      setMessage(null)
+      messageTimeoutRef.current = null
+    }, duration)
   }
 
-  const calculateDaysRemaining = (dueDate) => {
-    const today = new Date()
-    const due = new Date(dueDate)
-    const diffTime = due - today
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-    return diffDays
+  const licenseOptions = ['A1','A2','B1','B2','C1','C2']
+
+  const resetForm = () => {
+    setDocType('Cedula')
+    setDocumentName('Cédula')
+    setLicenseType('A1')
+    setExpiryDate('')
+    setFile(null)
   }
 
-  const handleDocumentUpload = (id) => {
-    const updated = documents.map((doc) => (doc.id === id ? { ...doc, uploaded: !doc.uploaded } : doc))
-    setDocuments(updated)
-    saveDocuments(updated)
+  const resetVehicleForm = () => {
+    setVehicleCategoryId(CAR_CATEGORY_ID)
+    setVehicleLastTwo('')
+    setVehicleName('')
+    setVehicleModel('')
+    setVehicleBrand('')
+    setVehicleLine('')
   }
 
-  const deleteDocument = (id) => {
-    const updated = deleteDocumentUtil(id)
-    setDocuments(updated)
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    // Basic validation
+    if (!docType) { setMessage({ type: 'error', text: 'Selecciona el tipo de documento' }); return }
+    if ((docType === 'Licencia' || docType === 'Pasaporte') && !expiryDate) { setMessage({ type: 'error', text: 'Ingresa la fecha de expiración' }); return }
+    if (!file) { setMessage({ type: 'error', text: 'Adjunta un archivo (imagen o pdf)' }); return }
+    // For now just log and show success — actual upload/persist not implemented
+    const payload = {
+      type: docType,
+      name: documentName,
+      licenseType: docType === 'Licencia' ? licenseType : undefined,
+      expiryDate: (docType === 'Licencia' || docType === 'Pasaporte') ? expiryDate : undefined,
+      fileName: file.name,
+      fileType: file.type,
+      size: file.size,
+    }
+    console.log('Personal document submit:', payload)
+    setMessage({ type: 'success', text: 'Documento preparado (sin subida real).' })
+    resetForm()
+    setShowPersonalForm(false)
   }
 
-  const addDocument = async ({ name, dueDate, uploaded = false }) => {
-    const newDoc = addDocumentUtil({ name, dueDate, uploaded })
-    // addDocumentUtil already persists; update local state to reflect saved doc
-    setDocuments((prev) => [...prev, newDoc])
-    return newDoc
-  }
+  const handleVehicleSubmit = async (e) => {
+    e.preventDefault()
+    // validate last two digits: optional but if provided must be 2 numeric chars
+    if (vehicleLastTwo && (!/^[0-9]{2}$/.test(vehicleLastTwo))) {
+      setMessage({ type: 'error', text: 'Los últimos 2 dígitos deben ser numéricos y tener 2 dígitos' })
+      return
+    }
 
-  const restoreDefaults = () => {
-    const defaults = restoreDefaultsUtil()
-    setDocuments(defaults)
-    showNotification("Documentos restaurados (simulado)", "info")
+    const payload = {
+      vehicleCategoryId: vehicleCategoryId,
+      name: vehicleName || 'Sin nombre',
+      identification: vehicleLastTwo || '',
+      model: vehicleModel ? Number(vehicleModel) : 0,
+      brand: vehicleBrand || '',
+      line: vehicleLine || '',
+    }
+
+    try {
+      const res = await fetch('/api/vehicleAdd', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+
+      if (!res.ok) {
+        const txt = await res.text()
+        console.error('Vehicle API error', res.status, txt)
+        const detail = txt ? ` - ${txt}` : ''
+        showMessage({ type: 'error', text: `Error al guardar vehículo: ${res.status}${detail}` })
+        return
+      }
+
+      const data = await res.json().catch(() => null)
+      console.log('Vehicle API response', data)
+      showMessage({ type: 'success', text: 'Vehículo guardado correctamente.' }, 4000)
+      resetVehicleForm()
+      setShowVehicleForm(false)
+    } catch (err) {
+      console.error('Vehicle submit failed', err)
+      showMessage({ type: 'error', text: 'Error de comunicación con el servidor' })
+    }
   }
 
   return (
     <div className="p-6">
       <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Mis Documentos</h2>
 
-      <div className="space-y-4 max-h-[calc(100vh-200px)] overflow-y-auto pr-2">
-        {documents && documents.length === 0 && (
-          <p className="text-gray-600 text-center">Aún no tienes documentos registrados.</p>
-        )}
-
-        {documents.map((doc) => {
-          const daysRemaining = calculateDaysRemaining(doc.dueDate)
-          const statusColor = daysRemaining <= 30 ? "text-red-500" : daysRemaining <= 90 ? "text-orange-500" : "text-green-500"
-          return (
-            <div
-              key={doc.id}
-              className="bg-white p-4 rounded-xl shadow-md border border-gray-200 flex items-center justify-between"
-            >
-              <div>
-                <h3 className="font-semibold text-gray-800">{doc.name}</h3>
-                <p className="text-sm text-gray-600">Vencimiento: {doc.dueDate}</p>
-                <p className={`text-sm font-bold ${statusColor}`}>{daysRemaining > 0 ? `Faltan ${daysRemaining} días` : "Vencido"}</p>
-                <p className="text-xs text-gray-500 mt-1">{doc.uploaded ? "Estado: Subido" : "Estado: No subido"}</p>
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <button
-                  onClick={() => handleDocumentUpload(doc.id)}
-                  className="bg-blue-600 text-white py-2 px-3 rounded-full text-sm hover:bg-blue-700 transition-colors duration-200 shadow-md"
-                >
-                  {doc.uploaded ? "Marcar no subido" : "Marcar subido"}
-                </button>
-                <button
-                  onClick={() => {
-                    if (confirm("¿Eliminar documento?")) {
-                      deleteDocument(doc.id)
-                      showNotification("Documento eliminado", "info")
-                    }
-                  }}
-                  className="bg-red-100 text-red-600 py-2 px-3 rounded-full text-sm hover:bg-red-200 transition-colors duration-200 shadow-sm"
-                >
-                  Eliminar
-                </button>
-              </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <span className="text-2xl">📋</span>
+            <div>
+              <div className="font-semibold text-gray-800">Mis documentos</div>
+              <div className="text-sm text-gray-600">Gestiona tus documentos personales</div>
             </div>
-          )
-        })}
+          </div>
+          <div>
+            <button onClick={() => setShowPersonalForm(true)} className="bg-green-600 text-white py-2 px-4 rounded-full text-sm">Agregar</button>
+          </div>
+        </div>
 
-        <div className="bg-white p-4 rounded-xl shadow-md border border-gray-200">
-          <h3 className="font-semibold text-gray-800 mb-3">Agregar documento</h3>
-          <p className="text-sm text-gray-600 mb-3">Puedes agregar un documento rápidamente desde aquí.</p>
-          <div className="flex space-x-2">
-            <button
-              onClick={async () => {
-                const name = prompt("Nombre del documento (ej: Licencia de Conducción):")
-                if (!name) return
-                const dueDate = prompt("Fecha de vencimiento (YYYY-MM-DD):")
-                if (!dueDate) return
-                await addDocument({ name, dueDate, uploaded: false })
-                showNotification("Documento agregado", "success")
-              }}
-              className="bg-green-600 text-white py-2 px-4 rounded-full text-sm hover:bg-green-700 transition-colors duration-200 shadow-md"
-            >
-              Agregar Documento
-            </button>
-            <button onClick={restoreDefaults} className="bg-gray-100 text-gray-700 py-2 px-4 rounded-full text-sm hover:bg-gray-200 transition-colors duration-200 shadow-sm">
-              Restaurar por defecto
-            </button>
+        <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <span className="text-2xl">🚗</span>
+            <div>
+              <div className="font-semibold text-gray-800">Mis Vehículos</div>
+              <div className="text-sm text-gray-600">Registra tus vehículos y documentación</div>
+            </div>
+          </div>
+          <div>
+            <button onClick={() => setShowVehicleForm(true)} className="bg-green-600 text-white py-2 px-4 rounded-full text-sm">Agregar</button>
           </div>
         </div>
       </div>
 
-      {notification.visible && (
-        <div className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-full shadow-lg text-white z-50 transition-all duration-300 ${notification.type === "success" ? "bg-green-500" : "bg-blue-500"}`}>
-          {notification.message}
+      {/* Personal document form (inline) */}
+      {showPersonalForm && (
+        <div className="bg-white rounded-lg shadow-md w-full p-6 mt-6 border border-gray-200">
+          <h3 className="text-lg font-semibold mb-4">Agregar documento personal</h3>
+          <form onSubmit={handleSubmit}>
+            <div className="mb-3">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Tipo</label>
+              <select value={docType} onChange={(e) => {
+                const v = e.target.value
+                setDocType(v)
+                if (v === 'Cedula') setDocumentName('Cédula')
+                else if (v === 'Pasaporte') setDocumentName('Pasaporte')
+                else if (v === 'Licencia') setDocumentName('Licencia de Conducción')
+              }} className="w-full border rounded p-2">
+                <option value="Cedula">Cédula</option>
+                <option value="Pasaporte">Pasaporte</option>
+                <option value="Licencia">Licencia</option>
+              </select>
+            </div>
+            
+            <div className="mb-3">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Nombre del documento</label>
+              <input type="text" value={documentName} onChange={(e) => setDocumentName(e.target.value)} className="w-full border rounded p-2" />
+            </div>
+            {docType === 'Licencia' && (
+              <div className="mb-3">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de licencia</label>
+                <select value={licenseType} onChange={(e) => setLicenseType(e.target.value)} className="w-full border rounded p-2">
+                  {licenseOptions.map((opt) => <option key={opt} value={opt}>{opt}</option>)}
+                </select>
+              </div>
+            )}
+
+            {(docType === 'Licencia' || docType === 'Pasaporte') && (
+              <div className="mb-3">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Fecha de expiración</label>
+                <input type="date" value={expiryDate} onChange={(e) => setExpiryDate(e.target.value)} className="w-full border rounded p-2" />
+              </div>
+            )}
+
+            <div className="mb-3">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Archivo (imagen o PDF)</label>
+              <input accept="image/*,application/pdf" type="file" onChange={(e) => setFile(e.target.files?.[0] ?? null)} className="w-full" />
+            </div>
+
+            <div className="flex justify-end space-x-2 mt-4">
+              <button type="button" onClick={() => { setShowPersonalForm(false); resetForm() }} className="px-4 py-2 rounded bg-gray-100">Cancelar</button>
+              <button type="submit" className="px-4 py-2 rounded bg-blue-600 text-white">Guardar</button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* Vehicle form (inline) */}
+      {showVehicleForm && (
+        <div className="bg-white rounded-lg shadow-md w-full p-6 mt-6 border border-gray-200">
+          <h3 className="text-lg font-semibold mb-4">Agregar vehículo</h3>
+          <form onSubmit={handleVehicleSubmit}>
+            <div className="mb-3">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Tipo</label>
+              <select value={vehicleCategoryId} onChange={(e) => setVehicleCategoryId(e.target.value)} className="w-full border rounded p-2">
+                <option value={CAR_CATEGORY_ID}>Carro</option>
+                <option value={MOTO_CATEGORY_ID}>Moto</option>
+              </select>
+            </div>
+
+            <div className="mb-3">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Últimos 2 dígitos de la placa</label>
+              <input type="text" value={vehicleLastTwo} onChange={(e) => setVehicleLastTwo(e.target.value.replace(/[^0-9]/g, '').slice(0,2))} className="w-full border rounded p-2" />
+            </div>
+
+            <div className="mb-3">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
+              <input type="text" value={vehicleName} onChange={(e) => setVehicleName(e.target.value)} className="w-full border rounded p-2" />
+            </div>
+
+            <div className="mb-3 grid grid-cols-1 md:grid-cols-3 gap-2">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Modelo</label>
+                <input type="text" value={vehicleModel} onChange={(e) => setVehicleModel(e.target.value)} className="w-full border rounded p-2" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Marca</label>
+                <input type="text" value={vehicleBrand} onChange={(e) => setVehicleBrand(e.target.value)} className="w-full border rounded p-2" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Línea</label>
+                <input type="text" value={vehicleLine} onChange={(e) => setVehicleLine(e.target.value)} className="w-full border rounded p-2" />
+              </div>
+            </div>
+
+            <div className="flex justify-end space-x-2 mt-4">
+              <button type="button" onClick={() => { setShowVehicleForm(false); resetVehicleForm() }} className="px-4 py-2 rounded bg-gray-100">Cancelar</button>
+              <button type="submit" className="px-4 py-2 rounded bg-blue-600 text-white">Guardar</button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {message && (
+        <div className={`fixed bottom-24 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-full shadow-lg text-white z-50 ${message.type === 'success' ? 'bg-green-600' : 'bg-red-500'}`}>
+          {message.text}
         </div>
       )}
     </div>

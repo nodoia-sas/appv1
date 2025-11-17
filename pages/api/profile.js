@@ -14,7 +14,7 @@ export default async function handler(req, res) {
     let token = null
     try {
       const tokenResponse = await auth0.getAccessToken(req, res)
-      // console.log('tokenResponse:', tokenResponse)
+      console.log('tokenResponse: ', tokenResponse.token)
       token = tokenResponse?.token || tokenResponse?.access_token || null
     } catch (e) {
       console.log('[api/profile] getAccessToken failed:', String(e?.message || e))
