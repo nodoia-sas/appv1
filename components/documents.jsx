@@ -2,6 +2,124 @@
 
 import React, { useState, useEffect, useCallback, useRef } from "react"
 
+const VehicleDocument = ({ label, doc, vehicleId, onUpload, showMessage, hideExpiry = false }) => {
+  const [file, setFile] = useState(null)
+  const [expiryDate, setExpiryDate] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (doc && (doc.expiryDate || doc.expiration || doc.expirationAt)) {
+      const d = doc.expiryDate || doc.expiration || doc.expirationAt
+      if (d) setExpiryDate(String(d).split('T')[0])
+    }
+  }, [doc])
+
+  const hasPath = doc && (doc.path || doc.url)
+
+  const handleUpload = async () => {
+    if (!file) {
+      if (showMessage) showMessage({ type: 'error', text: 'Por favor selecciona un archivo' })
+      else alert('Por favor selecciona un archivo')
+      return
+    }
+    if (!expiryDate && !hideExpiry) {
+      if (showMessage) showMessage({ type: 'error', text: 'Por favor selecciona la fecha de expiración' })
+      else alert('Por favor selecciona la fecha de expiración')
+      return
+    }
+
+    setLoading(true)
+    try {
+      const docId = doc?.id
+      if (!docId) {
+        throw new Error('No se encontró ID del documento. El documento debe existir previamente.')
+      }
+
+      const formData = new FormData()
+      formData.append('file', file)
+      if (expiryDate) {
+        // Ensure we send a valid ISO string
+        formData.append('expirationAt', new Date(expiryDate).toISOString())
+      }
+
+      const res = await fetch(`/api/hooks/documents/edit?id=${docId}`, {
+        method: 'PATCH',
+        body: formData,
+      })
+
+      if (!res.ok) {
+        const txt = await res.text()
+        console.error('Upload error response:', txt)
+        throw new Error('Falló la subida del archivo')
+      }
+
+      if (showMessage) showMessage({ type: 'success', text: 'Documento subido correctamente' })
+      if (onUpload) onUpload()
+    } catch (error) {
+      console.error('Upload failed', error)
+      if (showMessage) showMessage({ type: 'error', text: error.message || 'Error al subir documento' })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (hasPath) {
+    const txt = doc.expirationAt || '--'
+    return (
+      <div className="text-sm">
+        <div className="font-medium text-gray-800">{doc.name}</div>
+        <div className="text-xs text-gray-600">Vence: {doc.expirationAt || '--'}</div>
+        <a
+          href={doc.path || doc.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 hover:underline text-xs mt-1 inline-block"
+        >
+          Ver documento
+        </a>
+      </div>
+    )
+  }
+
+  return (
+    <div className="text-sm">
+      <div className="font-medium text-gray-800 mb-1">{label}</div>
+      {doc && <div className="text-xs text-orange-600 mb-2">Documento registrado sin archivo</div>}
+      {!doc && <div className="text-xs text-gray-500 mb-2">No registrado</div>}
+
+      <div className="space-y-2 mt-2 border-t pt-2 border-gray-100">
+        {!hideExpiry && (
+          <div>
+            <label className="block text-xs text-gray-500 mb-1">Fecha de expiración</label>
+            <input
+              type="date"
+              value={expiryDate}
+              onChange={(e) => setExpiryDate(e.target.value)}
+              className="w-full text-xs border border-gray-300 rounded p-1"
+            />
+          </div>
+        )}
+        <div>
+          <label className="block text-xs text-gray-500 mb-1">Subir archivo</label>
+          <input
+            type="file"
+            accept="image/*,application/pdf"
+            onChange={(e) => setFile(e.target.files?.[0] || null)}
+            className="w-full text-xs text-gray-500"
+          />
+        </div>
+        <button
+          onClick={handleUpload}
+          disabled={loading}
+          className="w-full bg-blue-600 text-white text-xs py-1.5 rounded hover:bg-blue-700 disabled:opacity-50 transition-colors"
+        >
+          {loading ? 'Subiendo...' : 'Guardar y Subir'}
+        </button>
+      </div>
+    </div>
+  )
+}
+
 export default function Documents() {
   const [showPersonalForm, setShowPersonalForm] = useState(false)
   const [docType, setDocType] = useState('Cedula')
@@ -70,7 +188,7 @@ export default function Documents() {
     }, duration)
   }
 
-  const licenseOptions = ['A1','A2','B1','B2','C1','C2']
+  const licenseOptions = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2']
 
   const resetForm = () => {
     setDocType('Cedula')
@@ -191,7 +309,7 @@ export default function Documents() {
           </div>
         </div>
       </div>
-      
+
       {/* Personal document form (inline) */}
       {showPersonalForm && (
         <div className="bg-white rounded-lg shadow-md w-full p-6 mt-6 border border-gray-200">
@@ -211,7 +329,7 @@ export default function Documents() {
                 <option value="Licencia">Licencia</option>
               </select>
             </div>
-            
+
             <div className="mb-3">
               <label className="block text-sm font-medium text-gray-700 mb-1">Nombre del documento</label>
               <input type="text" value={documentName} onChange={(e) => setDocumentName(e.target.value)} className="w-full border rounded p-2" />
@@ -260,7 +378,7 @@ export default function Documents() {
 
             <div className="mb-3">
               <label className="block text-sm font-medium text-gray-700 mb-1">Últimos 2 dígitos de la placa</label>
-              <input type="text" value={vehicleLastTwo} onChange={(e) => setVehicleLastTwo(e.target.value.replace(/[^0-9]/g, '').slice(0,2))} className="w-full border rounded p-2" />
+              <input type="text" value={vehicleLastTwo} onChange={(e) => setVehicleLastTwo(e.target.value.replace(/[^0-9]/g, '').slice(0, 2))} className="w-full border rounded p-2" />
             </div>
 
             <div className="mb-3">
@@ -305,32 +423,17 @@ export default function Documents() {
             const deleteId = v.id || v.vehicleId || v._id || null
             const name = v.name || v.displayName || `${v.brand || ''} ${v.model || ''}`
             const identification = v.identification || v.license || ''
-
             // documents may be in v.documents or v.documentsList
-            const docs = v.documents || v.documentsList || v.documentsDto || []
-            const findDoc = (typeKeywords) => {
+            const docs = v.documents || []
+            const findDocByType = (typeId) => {
               if (!Array.isArray(docs)) return null
-              const key = (t) => t.toString().toLowerCase()
-              return docs.find(d => {
-                const target = (d.type || d.name || d.documentType || '') .toString().toLowerCase()
-                return typeKeywords.some(k => target.includes(k))
-              }) || null
+              // Check for numeric type match (handle string/number difference)
+              return docs.find(d => d.type == typeId) || null
             }
 
-            const soat = findDoc(['soat'])
-            const tarjeta = findDoc(['tarjeta', 'propiedad'])
-            const tecnico = findDoc(['tecnico', 'tecnic', 'tecnico-mecanica', 'tecnico mecanica'])
-
-            const renderDoc = (doc) => {
-              if (!doc) return <div className="text-sm text-gray-500">Sin registro</div>
-              const txt = doc.expiryDate || doc.expiration || doc.validUntil || doc.date || doc.nombre || ''
-              return (
-                <div className="text-sm">
-                  <div className="font-medium">{doc.type || doc.name || doc.documentType || 'Documento'}</div>
-                  {txt && <div className="text-xs text-gray-600">Vence: {String(txt)}</div>}
-                </div>
-              )
-            }
+            const soat = findDocByType(1)
+            const tarjeta = findDocByType(2)
+            const tecnico = findDocByType(3)
 
             // determine icon based on vehicle category/type
             const categoryId = v.vehicleCategory?.id || v.vehicleCategoryId || v.vehicleCategoryId || ''
@@ -385,16 +488,32 @@ export default function Documents() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-1 gap-3 mt-3">
                   <div className="p-3 bg-gray-50 rounded">
-                    <div className="text-xs text-gray-500">SOAT</div>
-                    {renderDoc(soat)}
+                    <VehicleDocument
+                      label="SOAT"
+                      doc={soat}
+                      vehicleId={id}
+                      onUpload={fetchVehicles}
+                      showMessage={showMessage}
+                    />
                   </div>
                   <div className="p-3 bg-gray-50 rounded">
-                    <div className="text-xs text-gray-500">Tarjeta de propiedad</div>
-                    {renderDoc(tarjeta)}
+                    <VehicleDocument
+                      label="Tarjeta de propiedad"
+                      doc={tarjeta}
+                      vehicleId={id}
+                      onUpload={fetchVehicles}
+                      showMessage={showMessage}
+                      hideExpiry={true}
+                    />
                   </div>
                   <div className="p-3 bg-gray-50 rounded">
-                    <div className="text-xs text-gray-500">Técnico mecánica</div>
-                    {renderDoc(tecnico)}
+                    <VehicleDocument
+                      label="Técnico mecánica"
+                      doc={tecnico}
+                      vehicleId={id}
+                      onUpload={fetchVehicles}
+                      showMessage={showMessage}
+                    />
                   </div>
                 </div>
               </div>

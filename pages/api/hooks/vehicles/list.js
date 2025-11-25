@@ -37,7 +37,8 @@ export default async function handler(req, res) {
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     }
 
-    console.log('[hooks/vehicles/list] proxy ->', upstreamUrl.toString(), 'hasToken?', !!token)
+    console.log('[hooks/vehicles/list] proxy ->', upstreamUrl.toString())
+    console.log('token: ', token)
     const upstreamRes = await fetch(upstreamUrl.toString(), { method: 'GET', headers })
     console.log('[hooks/vehicles/list] upstream status', upstreamRes.status)
 
