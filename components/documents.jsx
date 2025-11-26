@@ -6,6 +6,7 @@ const VehicleDocument = ({ label, doc, vehicleId, onUpload, showMessage, hideExp
   const [file, setFile] = useState(null)
   const [expiryDate, setExpiryDate] = useState('')
   const [loading, setLoading] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
 
   useEffect(() => {
     if (doc && (doc.expiryDate || doc.expiration || doc.expirationAt)) {
@@ -54,6 +55,7 @@ const VehicleDocument = ({ label, doc, vehicleId, onUpload, showMessage, hideExp
       }
 
       if (showMessage) showMessage({ type: 'success', text: 'Documento subido correctamente' })
+      setIsEditing(false)
       if (onUpload) onUpload()
     } catch (error) {
       console.error('Upload failed', error)
@@ -63,20 +65,31 @@ const VehicleDocument = ({ label, doc, vehicleId, onUpload, showMessage, hideExp
     }
   }
 
-  if (hasPath) {
-    const txt = doc.expirationAt || '--'
+  if (hasPath && !isEditing) {
     return (
       <div className="text-sm">
-        <div className="font-medium text-gray-800">{doc.name}</div>
-        <div className="text-xs text-gray-600">Vence: {doc.expirationAt || '--'}</div>
-        <a
-          href={doc.path || doc.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-blue-600 hover:underline text-xs mt-1 inline-block"
-        >
-          Ver documento
-        </a>
+        <div className="font-medium text-gray-800">{doc.name || label}</div>
+        {doc.expirationAt && <div className="text-xs text-gray-600">Vence: {new Date(doc.expirationAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })}</div>}
+
+        <div className="flex items-center mt-2 justify-between">
+          <a
+            href={"https://transt-ia-filestore.s3.us-east-1.amazonaws.com/" + doc.path}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center text-blue-600 hover:text-blue-800 transition-colors group"
+            title="Ver/Descargar documento"
+          >
+            <span className="text-xl mr-1 group-hover:scale-110 transition-transform">📄</span>
+            <span className="text-sm">⬇️</span>
+          </a>
+
+          <button
+            onClick={() => setIsEditing(true)}
+            className="text-xs bg-white hover:bg-gray-50 text-blue-600 px-3 py-1 rounded border border-blue-200 transition-colors shadow-sm"
+          >
+            Cambiar documento
+          </button>
+        </div>
       </div>
     )
   }
@@ -84,8 +97,9 @@ const VehicleDocument = ({ label, doc, vehicleId, onUpload, showMessage, hideExp
   return (
     <div className="text-sm">
       <div className="font-medium text-gray-800 mb-1">{label}</div>
-      {doc && <div className="text-xs text-orange-600 mb-2">Documento registrado sin archivo</div>}
+      {doc && !hasPath && <div className="text-xs text-orange-600 mb-2">Documento registrado sin archivo</div>}
       {!doc && <div className="text-xs text-gray-500 mb-2">No registrado</div>}
+      {isEditing && <div className="text-xs text-blue-600 mb-2">Actualizando documento...</div>}
 
       <div className="space-y-2 mt-2 border-t pt-2 border-gray-100">
         {!hideExpiry && (
@@ -108,13 +122,23 @@ const VehicleDocument = ({ label, doc, vehicleId, onUpload, showMessage, hideExp
             className="w-full text-xs text-gray-500"
           />
         </div>
-        <button
-          onClick={handleUpload}
-          disabled={loading}
-          className="w-full bg-blue-600 text-white text-xs py-1.5 rounded hover:bg-blue-700 disabled:opacity-50 transition-colors"
-        >
-          {loading ? 'Subiendo...' : 'Guardar y Subir'}
-        </button>
+        <div className="flex space-x-2">
+          <button
+            onClick={handleUpload}
+            disabled={loading}
+            className="flex-1 bg-blue-600 text-white text-xs py-1.5 rounded hover:bg-blue-700 disabled:opacity-50 transition-colors"
+          >
+            {loading ? 'Subiendo...' : 'Guardar y Subir'}
+          </button>
+          {isEditing && (
+            <button
+              onClick={() => setIsEditing(false)}
+              className="px-3 py-1.5 bg-gray-100 text-gray-600 text-xs rounded hover:bg-gray-200 border border-gray-200"
+            >
+              Cancelar
+            </button>
+          )}
+        </div>
       </div>
     </div>
   )
