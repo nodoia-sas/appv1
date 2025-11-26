@@ -231,26 +231,63 @@ export default function Documents() {
     setVehicleLine('')
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     // Basic validation
     if (!docType) { setMessage({ type: 'error', text: 'Selecciona el tipo de documento' }); return }
     if ((docType === 'Licencia' || docType === 'Pasaporte') && !expiryDate) { setMessage({ type: 'error', text: 'Ingresa la fecha de expiración' }); return }
     if (!file) { setMessage({ type: 'error', text: 'Adjunta un archivo (imagen o pdf)' }); return }
-    // For now just log and show success — actual upload/persist not implemented
-    const payload = {
-      type: docType,
-      name: documentName,
-      licenseType: docType === 'Licencia' ? licenseType : undefined,
-      expiryDate: (docType === 'Licencia' || docType === 'Pasaporte') ? expiryDate : undefined,
-      fileName: file.name,
-      fileType: file.type,
-      size: file.size,
+
+    // Map docType to ID
+    // 4: Cedula (User specified)
+    // 5: Pasaporte (Assumed)
+    // 6: Licencia (Assumed)
+    let typeId = 0
+    if (docType === 'Cedula') typeId = 4
+    else if (docType === 'Pasaporte') typeId = 5
+    else if (docType === 'Licencia') typeId = 6
+
+    if (typeId === 0) {
+      setMessage({ type: 'error', text: 'Tipo de documento no válido para envío.' })
+      return
     }
-    console.log('Personal document submit:', payload)
-    setMessage({ type: 'success', text: 'Documento preparado (sin subida real).' })
-    resetForm()
-    setShowPersonalForm(false)
+
+    try {
+      const formData = new FormData()
+      formData.append('type', typeId)
+      formData.append('name', documentName)
+      formData.append('file', file)
+
+      if (expiryDate) {
+        formData.append('expirationAt', new Date(expiryDate).toISOString())
+      }
+      if (typeId === 6) {
+        formData.append('description', licenseType)
+      }
+
+      setMessage({ type: 'info', text: 'Subiendo documento...' })
+
+      const res = await fetch('/api/hooks/documents/add', {
+        method: 'POST',
+        body: formData,
+      })
+
+      if (!res.ok) {
+        const txt = await res.text()
+        console.error('Document add error:', txt)
+        throw new Error('Error al subir el documento')
+      }
+
+      const data = await res.json()
+      console.log('Document added:', data)
+      setMessage({ type: 'success', text: 'Documento agregado correctamente.' })
+      resetForm()
+      setShowPersonalForm(false)
+      // Optionally refresh list if there is a list of personal documents
+    } catch (err) {
+      console.error('Submit failed', err)
+      setMessage({ type: 'error', text: err.message || 'Error al guardar documento' })
+    }
   }
 
   const handleVehicleSubmit = async (e) => {
