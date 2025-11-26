@@ -1,82 +1,91 @@
-# V0
-
-*Automatically synced with your [v0.app](https://v0.app) deployments*
-
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/duvanquilindobolanos-7651-4545a885/v0-v0)
-[![Built with v0](https://img.shields.io/badge/Built%20with-v0.app-black?style=for-the-badge)](https://v0.app/chat/projects/qDXesNcFfab)
-
 # Transitia - Transit IA
 
-Front-end construido con Next.js + React (App Router). Aplicación cliente con UI basada en TailwindCSS. Este README explica cómo instalar y ejecutar el proyecto en desarrollo y producción.
+Plataforma integral para la gestión de tránsito, documentos y vehículos, potenciada por Inteligencia Artificial.
 
-## 📦 Requisitos previos
-- Node.js >= 18.x (comprobar con `node -v`)
-- npm (recomendado, por la presencia de `package-lock.json`) — viene incluido con Node.js
-- Git
+Este proyecto es una aplicación web moderna construida con **Next.js 15**, diseñada para ofrecer una experiencia de usuario fluida y eficiente en la administración de trámites de tránsito.
 
-## 🔧 Clonar el repositorio
+## 🚀 Características Principales
 
-Opciones:
+- **Gestión de Documentos Personales**: Visualización, carga y descarga de documentos personales en una interfaz organizada por pestañas.
+- **Gestión de Vehículos**: Administración completa de vehículos (carros y motocicletas).
+- **Documentación Vehicular**:
+  - Carga y gestión de SOAT, Revisión Técnico Mecánica y Tarjeta de Propiedad.
+  - Detección inteligente de documentos faltantes.
+  - Soporte para fechas de vencimiento y alertas.
+- **Interfaz Moderna**: UI responsiva y elegante construida con TailwindCSS y Radix UI.
+- **Integración Backend**: Conexión con API REST para persistencia y gestión de datos.
+- **Soporte PWA**: Optimizado para funcionar como una Progressive Web App.
 
-- SSH:
+## 🛠️ Stack Tecnológico
 
-	git clone git@github.com:Duvan88/Transitia-Duvan.git
+- **Framework**: [Next.js 15](https://nextjs.org/) (App Router & Pages Router)
+- **Lenguaje**: JavaScript / React 19
+- **Estilos**: [TailwindCSS 4](https://tailwindcss.com/)
+- **Componentes UI**: [Radix UI](https://www.radix-ui.com/), [Lucide React](https://lucide.dev/) (Iconos)
+- **Formularios**: React Hook Form + Zod
+- **Gráficos**: Recharts
+- **Autenticación**: Auth0 (Configurado)
 
-- HTTPS:
+## 📦 Requisitos Previos
 
-	git clone https://github.com/Duvan88/Transitia-Duvan.git
+- **Node.js**: Versión 18 o superior.
+- **npm**: Gestor de paquetes (incluido con Node.js).
 
-Entra en el directorio del proyecto:
+## 🔧 Instalación
 
-	cd Transitia-Duvan
+1. **Clonar el repositorio**:
+   ```bash
+   git clone https://github.com/nodoia-sas/appv1.git
+   cd Transitia-Duvan
+   ```
 
-## ⚙️ Instalación de dependencias
+2. **Instalar dependencias**:
+   ```bash
+   npm install
+   ```
 
-En PowerShell (Windows):
+## ⚙️ Configuración
 
-	npm install
+Crea un archivo `.env.local` en la raíz del proyecto para las variables de entorno necesarias. Ejemplo:
 
-Esto instalará todas las dependencias definidas en `package.json`.
+```env
+# Ejemplo de variables (ajustar según necesidad)
+NEXT_PUBLIC_API_URL=http://localhost:8010/transitia/api/v1
+AUTH0_SECRET=...
+AUTH0_BASE_URL=...
+```
 
-## 🚀 Ejecutar en modo desarrollo
+## ▶️ Ejecución
 
-	npm run dev
+### Modo Desarrollo
+Para iniciar el servidor de desarrollo con recarga en caliente:
 
-Abrirá la app en modo dev (por defecto Next.js en http://localhost:3000). Actualizaciones en caliente habilitadas.
+```bash
+npm run dev
+```
+La aplicación estará disponible en `http://localhost:3000`.
 
-## 🏗️ Construir y ejecutar en producción (local)
+### Modo Producción
+Para construir y ejecutar la versión optimizada:
 
-1. Construir:
+```bash
+npm run build
+npm start
+```
 
-	 npm run build
+## 📱 PWA (Progressive Web App)
 
-2. Ejecutar producción:
+El proyecto incluye configuración básica para PWA.
+- Los iconos de la aplicación se encuentran en `public/`.
+- `next-pwa` se encarga de generar el Service Worker durante el build.
 
-	 pnpm start
+## 📂 Estructura del Proyecto
 
-## 🔎 Linter
+- `/app`: Rutas y layouts del App Router.
+- `/pages`: Rutas API y páginas legacy.
+- `/components`: Componentes reutilizables de la UI.
+- `/public`: Archivos estáticos (imágenes, iconos).
+- `/styles`: Estilos globales.
 
-	pnpm lint
-
-## Notas importantes
-- El proyecto usa `Next.js` (App Router) y la UI está mayormente contenida en `components/transit-app.jsx`.
-- La app utiliza `localStorage` para persistencia local; no hay backend ni base de datos configurados por defecto.
-- Hay una llamada de ejemplo al servicio generativo (Google Gemini) en `components/transit-app.jsx` donde la variable `apiKey` está vacía. No se recomienda exponer claves en el cliente.
- - PWA: se añadió soporte básico PWA. Para producción se recomienda usar `next-pwa` (configurado en `next.config.mjs`) y generar el service worker durante el build.
-
-### Pasos PWA (producción)
-1. Asegúrate de tener `next-pwa` en `devDependencies` (ya está incluido).
-2. Reemplaza los iconos en `public/icons/` por versiones PNG 192x192 y 512x512 si quieres compatibilidad máxima.
-3. Construye para producción (genera SW):
-
-	pnpm build
-
-	next-pwa generará el service worker y lo colocará en `public/`.
-4. Inicia la app en modo producción local:
-
-	pnpm start
-
-5. Verifica en Chrome DevTools → Application → Service Workers y Manifest.
-
-Si quieres que automatice la generación de iconos o gestione notificaciones de nueva versión de SW, puedo implementarlo.
-
+---
+*Desarrollado con ❤️ por el equipo de Transitia.*
