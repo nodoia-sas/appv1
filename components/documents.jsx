@@ -8,6 +8,15 @@ const VehicleDocument = ({ label, doc, vehicleId, onUpload, showMessage, hideExp
   const [loading, setLoading] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
 
+  const getExpiryColor = (dateString) => {
+    if (!dateString) return 'text-gray-600'
+    const date = new Date(dateString)
+    const now = new Date()
+    const oneMonthFromNow = new Date()
+    oneMonthFromNow.setMonth(now.getMonth() + 1)
+    return date < oneMonthFromNow ? 'text-red-600' : 'text-green-600'
+  }
+
   useEffect(() => {
     if (doc && (doc.expiryDate || doc.expiration || doc.expirationAt)) {
       const d = doc.expiryDate || doc.expiration || doc.expirationAt
@@ -66,21 +75,25 @@ const VehicleDocument = ({ label, doc, vehicleId, onUpload, showMessage, hideExp
   }
 
   if (hasPath && !isEditing) {
+    const isExpired = doc.expirationAt ? new Date(doc.expirationAt) < new Date() : false
+    const expiryLabel = isExpired ? "Ya venció el:" : "Vence:"
+
     return (
       <div className="text-sm">
         <div className="font-medium text-gray-800">{doc.name || label}</div>
-        {doc.expirationAt && <div className="text-xs text-gray-600">Vence: {new Date(doc.expirationAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })}</div>}
+        {doc.expirationAt && <div className={`text-xs ${getExpiryColor(doc.expirationAt)}`}>{expiryLabel} {new Date(doc.expirationAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })}</div>}
 
         <div className="flex items-center mt-2 justify-between">
           <a
             href={"https://transt-ia-filestore.s3.us-east-1.amazonaws.com/" + doc.path}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center text-blue-600 hover:text-blue-800 transition-colors group"
+            className="flex items-center justify-center w-9 h-9 rounded-full border border-gray-200 text-green-600 hover:text-green-800 hover:bg-green-50 transition-all group shadow-sm"
             title="Ver/Descargar documento"
           >
-            <span className="text-xl mr-1 group-hover:scale-110 transition-transform">📄</span>
-            <span className="text-sm">⬇️</span>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 group-hover:scale-110 transition-transform">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M7.5 10.5l4.5 4.5m0 0l4.5-4.5m-4.5 4.5v-12" />
+            </svg>
           </a>
 
           <button
