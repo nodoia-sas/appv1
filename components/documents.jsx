@@ -186,6 +186,7 @@ export default function Documents() {
 
   const [personalDocs, setPersonalDocs] = useState(null)
   const [personalDocsLoading, setPersonalDocsLoading] = useState(false)
+  const [deletingDocId, setDeletingDocId] = useState(null)
 
   const showMessage = (msgObj, duration = 5000) => {
     if (messageTimeoutRef.current) {
@@ -517,7 +518,29 @@ export default function Documents() {
                     <div key={doc.id || Math.random()} className="bg-white p-5 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
                       <div className="flex items-start justify-between mb-3">
                         <div className="p-2 bg-blue-50 rounded-lg text-2xl">📄</div>
-                        {/* Optional: Add delete button here if API supports it */}
+                        <button
+                          onClick={async () => {
+                            if (!doc.id) return
+                            if (!window.confirm('¿Estás seguro de eliminar este documento?')) return
+                            setDeletingDocId(doc.id)
+                            try {
+                              const res = await fetch(`/api/hooks/documents/delete?id=${doc.id}`, { method: 'DELETE' })
+                              if (!res.ok) throw new Error('Error al eliminar')
+                              showMessage({ type: 'success', text: 'Documento eliminado' })
+                              setPersonalDocs(prev => prev.filter(d => d.id !== doc.id))
+                            } catch (e) {
+                              console.error(e)
+                              showMessage({ type: 'error', text: 'No se pudo eliminar el documento' })
+                            } finally {
+                              setDeletingDocId(null)
+                            }
+                          }}
+                          disabled={deletingDocId === doc.id}
+                          className="text-gray-400 hover:text-red-500 transition-colors p-1"
+                          title="Eliminar documento"
+                        >
+                          {deletingDocId === doc.id ? '...' : '🗑️'}
+                        </button>
                       </div>
                       <VehicleDocument
                         label={doc.name}
