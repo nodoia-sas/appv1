@@ -37,7 +37,7 @@ const App = () => {
     vehicles: [],
   })
   const [loadingProfileFromApi, setLoadingProfileFromApi] = useState(false)
-  
+
   // quiz progress moved to Quiz component
 
   const [activeScreen, setActiveScreen] = useState("home")
@@ -117,13 +117,13 @@ const App = () => {
     }
   }, [])
 
-  
+
 
   // Global search removed — related state and helpers cleaned up
 
   // Quiz selection logic moved to Quiz component
 
-  const [selectedRegulation, setSelectedRegulation] = useState(null) 
+  const [selectedRegulation, setSelectedRegulation] = useState(null)
 
   const renderContent = () => {
     switch (activeScreen) {
@@ -145,19 +145,17 @@ const App = () => {
               </div>
               <div
                 className="flex flex-col items-center justify-center p-3 rounded-xl shadow-lg cursor-pointer transition-all duration-200 transform hover:scale-105 bg-gradient-to-br from-orange-500 to-orange-700 text-white"
-                onClick={() => setActiveScreen("under-construction")} // "pico-y-placa"
+                onClick={() => window.open("https://www.pyphoy.com/bogota", "_blank")}
               >
                 <Icons.CalendarCheckIcon className="w-8 h-8 mb-2" />
                 <span className="text-base font-semibold text-center">Pico y Placa</span>
-                <span className="mt-2 text-xs bg-yellow-200 text-yellow-800 px-2 py-1 rounded-full">Próximamente</span>
               </div>
               <div
                 className="flex flex-col items-center justify-center p-3 rounded-xl shadow-lg cursor-pointer transition-all duration-200 transform hover:scale-105 bg-gradient-to-br from-red-500 to-red-700 text-white"
-                onClick={() => setActiveScreen("under-construction")} // no screen yet
+                onClick={() => window.open("https://www.fcm.org.co/simit/#/estado-cuenta", "_blank")}
               >
                 <Icons.ReceiptTextIcon className="w-8 h-8 mb-2" />
                 <span className="text-base font-semibold text-center">Consulta Multas</span>
-                <span className="mt-2 text-xs bg-yellow-200 text-yellow-800 px-2 py-1 rounded-full">Próximamente</span>
               </div>
               <div
                 className="flex flex-col items-center justify-center p-3 rounded-xl shadow-lg cursor-pointer transition-all duration-200 transform hover:scale-105 bg-gradient-to-br from-purple-500 to-purple-700 text-white"
@@ -200,9 +198,9 @@ const App = () => {
                 <span className="mt-2 text-xs bg-yellow-200 text-yellow-800 px-2 py-1 rounded-full">Próximamente</span>
               </div>
             </div>
-          </div>
+          </div >
         )
-        
+
       case "under-construction":
         return (
           <UnderConstruction setActiveScreen={setActiveScreen} showNotification={showNotification} />
@@ -285,7 +283,7 @@ const App = () => {
   }
 
   const navItems = [
-  { name: "Perfil", icon: Icons.UserIcon, screen: "my-profile" },
+    { name: "Perfil", icon: Icons.UserIcon, screen: "my-profile" },
     { name: "Docs", icon: Icons.FileTextIcon, screen: "documents" },
     { name: "Inicio", icon: Icons.HomeIcon, screen: "home" },
     { name: "Favs", icon: Icons.StarIcon, screen: "favorites" },
@@ -311,7 +309,7 @@ const App = () => {
   return (
     <div className="min-h-screen bg-gray-100 font-sans flex flex-col p-4">
       <div
-  className="relative w-full max-w-md md:max-w-2xl lg:max-w-3xl bg-white rounded-xl shadow-lg overflow-hidden flex flex-col max-h-[calc(100vh-2rem)] mx-auto"
+        className="relative w-full max-w-md md:max-w-2xl lg:max-w-3xl bg-white rounded-xl shadow-lg overflow-hidden flex flex-col max-h-[calc(100vh-2rem)] mx-auto"
       >
         <div
           className="fixed top-0 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-blue-600 to-blue-800 text-white p-4 md:px-6 flex items-center justify-between rounded-t-xl shadow-md z-50 w-full max-w-md md:max-w-2xl lg:max-w-3xl"
@@ -415,7 +413,7 @@ const App = () => {
                       className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       onClick={() => {
                         // redirect to Auth0 login
-                        try { if (typeof window !== 'undefined') window.location.href = '/api/auth/login' } catch (e) {}
+                        try { if (typeof window !== 'undefined') window.location.href = '/api/auth/login' } catch (e) { }
                         setShowLoginDropdown(false)
                       }}
                     >
@@ -470,7 +468,7 @@ const App = () => {
                   // require login to view notifications
                   showNotification('Debes iniciar sesión para ver notificaciones', 'info')
                   // redirect to Auth0 login
-                  try { if (typeof window !== 'undefined') window.location.href = '/api/auth/login' } catch (e) {}
+                  try { if (typeof window !== 'undefined') window.location.href = '/api/auth/login' } catch (e) { }
                   return
                 }
                 setActiveScreen("notifications")
@@ -500,11 +498,10 @@ const App = () => {
               key={item.name}
               className={`relative flex flex-col items-center justify-center flex-1 h-full py-2
                           rounded-xl transition-all duration-300 ease-in-out
-                          ${
-                            activeScreen === item.screen
-                              ? "bg-blue-500 text-white transform -translate-y-2 shadow-lg"
-                              : "bg-white text-gray-600 hover:bg-gray-100"
-                          }
+                          ${activeScreen === item.screen
+                  ? "bg-blue-500 text-white transform -translate-y-2 shadow-lg"
+                  : "bg-white text-gray-600 hover:bg-gray-100"
+                }
                           focus:outline-none focus:ring-2 focus:ring-blue-300`}
               onClick={() => handleNavClick(item.screen)}
               aria-label={`Go to ${item.name}`}
