@@ -183,11 +183,10 @@ const App = () => {
               </div>
               <div
                 className="flex flex-col items-center justify-center p-3 rounded-xl shadow-lg cursor-pointer transition-all duration-200 transform hover:scale-105 bg-gradient-to-br from-cyan-500 to-cyan-700 text-white"
-                onClick={() => setActiveScreen("under-construction")} // "glossary"
+                onClick={() => setActiveScreen("glossary")}
               >
                 <Icons.BookIcon className="w-8 h-8 mb-2" />
                 <span className="text-base font-semibold text-center">Glosario</span>
-                <span className="mt-2 text-xs bg-yellow-200 text-yellow-800 px-2 py-1 rounded-full">Próximamente</span>
               </div>
               <div
                 className="flex flex-col items-center justify-center p-3 rounded-xl shadow-lg cursor-pointer transition-all duration-200 transform hover:scale-105 bg-gradient-to-br from-pink-500 to-pink-700 text-white"

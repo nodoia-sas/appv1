@@ -17,11 +17,16 @@ export default function GlossaryMain({ setActiveScreen }) {
     return () => (mounted = false)
   }, [])
 
-  const filteredGlossaryTerms = glossaryTerms.filter(
-    (term) =>
-      term.term.toLowerCase().includes(glossarySearchTerm.toLowerCase()) ||
-      term.explanation.toLowerCase().includes(glossarySearchTerm.toLowerCase()),
-  )
+  const normalize = (str) =>
+    str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
+
+  const filteredGlossaryTerms = glossaryTerms.filter((term) => {
+    const search = normalize(glossarySearchTerm)
+    return (
+      normalize(term.term).includes(search) ||
+      normalize(term.explanation).includes(search)
+    )
+  })
 
   const handleSetActive = useCallback((screen) => setActiveScreen(screen), [setActiveScreen])
 
