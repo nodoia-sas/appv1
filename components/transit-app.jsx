@@ -16,6 +16,7 @@ import PicoYPlaca from "./pico-y-placa"
 import UnderConstruction from "./under-construction"
 import Terms from './terms'
 import HelpContact from './help-contact'
+import EnvironmentInfo from './environment-info'
 import * as Icons from './icons'
 import Toast from './toast'
 
@@ -42,6 +43,7 @@ const App = () => {
 
   const [activeScreen, setActiveScreen] = useState("home")
   const [showLoginDropdown, setShowLoginDropdown] = useState(false)
+  const [showEnvironmentInfo, setShowEnvironmentInfo] = useState(false)
   const loginButtonRef = useRef(null)
   const [notification, setNotification] = useState({ message: "", visible: false, type: "" })
 
@@ -395,6 +397,16 @@ const App = () => {
                       <Icons.Share2Icon className="w-4 h-4" />
                       <span>Compartir app</span>
                     </a>
+                    <button
+                      className="w-full flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={() => {
+                        setShowEnvironmentInfo(true)
+                        setShowLoginDropdown(false)
+                      }}
+                    >
+                      <Icons.SettingsIcon className="w-4 h-4" />
+                      <span>Configuración API</span>
+                    </button>
                     <div className="border-t border-gray-200 my-1"></div>
                     <a
                       href="/api/auth/logout"
@@ -513,6 +525,13 @@ const App = () => {
       </div>
       {/* local login modal removed; Auth0 handles auth */}
       {/* Global search removed */}
+      
+      {/* Environment Info Modal */}
+      <EnvironmentInfo
+        isVisible={showEnvironmentInfo}
+        onClose={() => setShowEnvironmentInfo(false)}
+      />
+      
       <Toast
         message={notification.message}
         type={notification.type}
