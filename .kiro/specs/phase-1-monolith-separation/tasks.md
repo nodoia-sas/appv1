@@ -147,7 +147,7 @@ Este plan implementa la separación del componente monolítico `transit-app.jsx`
     - not unit test
     - _Requirements: 1.1_
 
-  - [ ] 6.2 Create DocumentsScreen component
+  - [x] 6.2 Create DocumentsScreen component
 
     - Extract documents screen logic from transit-app.jsx
     - Maintain existing Documents component integration
