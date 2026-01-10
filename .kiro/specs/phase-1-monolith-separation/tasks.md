@@ -171,7 +171,7 @@ Este plan implementa la separación del componente monolítico `transit-app.jsx`
     - not unit test
     - _Requirements: 1.4_
 
-  - [ ] 6.5 Create GlossaryScreen component
+  - [x] 6.5 Create GlossaryScreen component
 
     - Extract glossary screen logic from transit-app.jsx
     - Maintain existing GlossaryMain component integration
