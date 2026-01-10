@@ -163,7 +163,7 @@ Este plan implementa la separación del componente monolítico `transit-app.jsx`
     - not unit test
     - _Requirements: 1.3_
 
-  - [ ] 6.4 Create RegulationsScreen component
+  - [x] 6.4 Create RegulationsScreen component
 
     - Extract regulations screen logic from transit-app.jsx
     - Maintain existing RegulationsMain component integration
