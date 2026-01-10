@@ -139,7 +139,7 @@ Este plan implementa la separación del componente monolítico `transit-app.jsx`
 
 - [ ] 6. Implement screen components
 
-  - [ ] 6.1 Create ProfileScreen component
+  - [x] 6.1 Create ProfileScreen component
 
     - Extract profile screen logic from transit-app.jsx
     - Integrate with useProfile hook
@@ -151,42 +151,56 @@ Este plan implementa la separación del componente monolítico `transit-app.jsx`
 
     - Extract documents screen logic from transit-app.jsx
     - Maintain existing Documents component integration
+    - MVP Mode Enforcer
+    - not unit test
     - _Requirements: 1.2_
 
   - [ ] 6.3 Create NewsScreen component
 
     - Extract news screen logic from transit-app.jsx
     - Maintain existing News component integration
+    - MVP Mode Enforcer
+    - not unit test
     - _Requirements: 1.3_
 
   - [ ] 6.4 Create RegulationsScreen component
 
     - Extract regulations screen logic from transit-app.jsx
     - Maintain existing RegulationsMain component integration
+    - MVP Mode Enforcer
+    - not unit test
     - _Requirements: 1.4_
 
   - [ ] 6.5 Create GlossaryScreen component
 
     - Extract glossary screen logic from transit-app.jsx
     - Maintain existing GlossaryMain component integration
+    - MVP Mode Enforcer
+    - not unit test
     - _Requirements: 1.5_
 
   - [ ] 6.6 Create QuizScreen component
 
     - Extract quiz screen logic from transit-app.jsx
     - Maintain existing Quiz component integration
+    - MVP Mode Enforcer
+    - not unit test
     - _Requirements: 1.6_
 
   - [ ] 6.7 Create PQRScreen component
 
     - Extract PQR screen logic from transit-app.jsx
     - Maintain existing PqrMain component integration
+    - MVP Mode Enforcer
+    - not unit test
     - _Requirements: 1.7_
 
   - [ ] 6.8 Create AIAssistScreen component
 
     - Extract AI assist screen logic from transit-app.jsx
     - Maintain existing AiAssist component integration
+    - MVP Mode Enforcer
+    - not unit test
     - _Requirements: 1.8_
 
   - [ ]\* 6.9 Write property test for screen navigation
@@ -199,6 +213,8 @@ Este plan implementa la separación del componente monolítico `transit-app.jsx`
 
     - Implement as layout orchestrator (under 150 lines)
     - Integrate all hooks and delegate screen rendering
+    - MVP Mode Enforcer
+    - not unit test
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.6_
 
   - [ ]\* 7.2 Write property test for component delegation
@@ -221,6 +237,8 @@ Este plan implementa la separación del componente monolítico `transit-app.jsx`
 
     - Implement persistence for critical state (user, navigation)
     - Handle localStorage unavailability gracefully
+    - MVP Mode Enforcer
+    - not unit test
     - _Requirements: 2.5, 2.6_
 
   - [ ]\* 9.2 Write property test for state persistence
@@ -233,12 +251,16 @@ Este plan implementa la separación del componente monolítico `transit-app.jsx`
 
     - Replace old transit-app.jsx with new MainApp
     - Ensure all imports and exports are correct
+    - MVP Mode Enforcer
+    - not unit test
     - _Requirements: 7.1, 7.2, 7.3, 7.4_
 
   - [ ] 10.2 Handle URL parameters and deep linking
 
     - Migrate existing URL parameter handling
     - Ensure screen query parameters work correctly
+    - MVP Mode Enforcer
+    - not unit test
     - _Requirements: 7.2_
 
   - [ ]\* 10.3 Write integration tests for functionality preservation
@@ -256,6 +278,8 @@ Este plan implementa la separación del componente monolítico `transit-app.jsx`
   - Verify all existing functionality works identically
   - Check bundle size and performance metrics
   - Ensure all tests pass, ask the user if questions arise.
+  - MVP Mode Enforcer
+    - not unit test
 
 ## Notes
 
