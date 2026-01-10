@@ -1,0 +1,20 @@
+{
+  "enabled": true,
+  "name": "MVP Mode Enforcer",
+  "description": "Monitors code changes and reminds the agent to follow MVP guidelines: prioritize functional code over tests, skip unit tests unless requested, focus on happy-path implementation, and avoid mocks/coverage/edge cases",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "*.js",
+      "*.jsx",
+      "*.ts",
+      "*.tsx",
+      "*.json"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Project Mode: MVP / Proof of Concept. Guidelines: Prioritize functional code over tests. Do NOT generate unit tests unless explicitly requested. Focus on happy-path implementation. Skip mocks, coverage, edge cases. Code is expected to change frequently. Review the recent changes and ensure they align with MVP development principles."
+  }
+}

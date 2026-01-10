@@ -37,7 +37,7 @@ Este proyecto es una aplicación web moderna construida con **Next.js 15**, dise
 
    ```bash
    git clone https://github.com/nodoia-sas/appv1.git
-   cd Transitia-Duvan
+   cd appv1
    ```
 
 2. **Instalar dependencias**:
