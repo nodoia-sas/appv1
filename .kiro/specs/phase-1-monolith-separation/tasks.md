@@ -155,7 +155,7 @@ Este plan implementa la separación del componente monolítico `transit-app.jsx`
     - not unit test
     - _Requirements: 1.2_
 
-  - [ ] 6.3 Create NewsScreen component
+  - [x] 6.3 Create NewsScreen component
 
     - Extract news screen logic from transit-app.jsx
     - Maintain existing News component integration
