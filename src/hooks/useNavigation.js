@@ -173,8 +173,9 @@ export const useNavigation = () => {
    * @returns {string[]} - Array of screen identifiers in history
    */
   const getNavigationHistory = useCallback(() => {
-    return [...history];
-  }, [history]);
+    // Ensure history is always an array, even if undefined from persistence
+    return Array.isArray(history) ? [...history] : [activeScreen];
+  }, [history, activeScreen]);
 
   /**
    * Check if currently on a specific screen

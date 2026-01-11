@@ -247,7 +247,7 @@ Este plan implementa la separación del componente monolítico `transit-app.jsx`
 
 - [ ] 10. Migration and integration
 
-  - [ ] 10.1 Update main app entry point
+  - [x] 10.1 Update main app entry point
 
     - Replace old transit-app.jsx with new MainApp
     - Ensure all imports and exports are correct

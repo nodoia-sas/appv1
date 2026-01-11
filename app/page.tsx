@@ -1,13 +1,13 @@
-"use client"
+"use client";
 
-import TransitApp from "@/components/transit-app"
-import RegisterSW from "@/components/register-sw"
+import MainApp from "@/src/components/MainApp";
+import RegisterSW from "@/components/register-sw";
 
 export default function Home() {
   return (
     <>
-      <TransitApp />
+      <MainApp />
       <RegisterSW />
     </>
-  )
+  );
 }

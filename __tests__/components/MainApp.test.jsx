@@ -9,6 +9,15 @@ import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import MainApp from "../../src/components/MainApp";
 
+// Mock Auth0
+jest.mock("@auth0/nextjs-auth0/client", () => ({
+  useUser: () => ({
+    user: null,
+    error: null,
+    isLoading: false,
+  }),
+}));
+
 // Mock the hooks to avoid complex dependencies in basic tests
 jest.mock("../../src/hooks/useAuth", () => ({
   useAuth: () => ({
@@ -41,9 +50,17 @@ jest.mock("../../src/components/screens/ProfileScreen", () => {
   };
 });
 
+jest.mock("../../src/components/screens/HomeScreen", () => {
+  return function MockHomeScreen() {
+    return <div data-testid="screen-home">Home Screen</div>;
+  };
+});
+
 jest.mock("../../components/under-construction", () => {
   return function MockUnderConstruction() {
-    return <div data-testid="screen-home">Under Construction</div>;
+    return (
+      <div data-testid="screen-under-construction">Under Construction</div>
+    );
   };
 });
 

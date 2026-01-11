@@ -12,6 +12,7 @@ export const SCREENS = {
   HELP_CONTACT: "help-contact",
   TERMS: "terms",
   PICO_Y_PLACA: "pico-y-placa",
+  UNDER_CONSTRUCTION: "under-construction",
 };
 
 // Notification types

@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useUser } from "@auth0/nextjs-auth0/client";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigation } from "../hooks/useNavigation";
 import { useNotifications } from "../hooks/useNotifications";
@@ -15,6 +16,7 @@ import GlossaryScreen from "./screens/GlossaryScreen";
 import QuizScreen from "./screens/QuizScreen";
 import PQRScreen from "./screens/PQRScreen";
 import AIAssistScreen from "./screens/AIAssistScreen";
+import HomeScreen from "./screens/HomeScreen";
 
 // Legacy Components (for screens not yet extracted)
 import PicoYPlaca from "../../components/pico-y-placa";
@@ -41,22 +43,53 @@ import { SCREENS } from "../utils/constants";
  * Requirements: 4.1, 4.2, 4.3, 4.4, 4.6
  */
 const MainApp = () => {
+  // Get Auth0 state
+  const {
+    user: auth0User,
+    error: auth0Error,
+    isLoading: auth0Loading,
+  } = useUser();
+
   // Integrate all custom hooks
   const { user, isAuthenticated, isLoading, initializeAuth } = useAuth();
   const { activeScreen, navigate, handleNavClick } = useNavigation();
   const { showNotification, notification } = useNotifications();
 
-  // Initialize authentication on mount
+  // Initialize authentication with Auth0 state
   useEffect(() => {
-    // Initialize with Auth0 state if available
-    if (typeof window !== "undefined" && window.auth0) {
-      initializeAuth(
-        window.auth0.user,
-        window.auth0.isLoading,
-        window.auth0.error
-      );
-    }
-  }, [initializeAuth]);
+    initializeAuth(auth0User, auth0Loading, auth0Error);
+  }, [auth0User, auth0Loading, auth0Error, initializeAuth]);
+
+  // Add a timeout for loading state to prevent infinite loading
+  const [loadingTimeout, setLoadingTimeout] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoadingTimeout(true);
+    }, 10000); // 10 second timeout
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Debug logging (remove in production)
+  useEffect(() => {
+    console.log("MainApp Debug:", {
+      auth0Loading,
+      isLoading,
+      auth0User: !!auth0User,
+      user: !!user,
+      isAuthenticated,
+      activeScreen,
+      loadingTimeout,
+    });
+  }, [
+    auth0Loading,
+    isLoading,
+    auth0User,
+    user,
+    isAuthenticated,
+    activeScreen,
+    loadingTimeout,
+  ]);
 
   /**
    * Renders the appropriate screen component based on activeScreen
@@ -67,12 +100,7 @@ const MainApp = () => {
 
     switch (activeScreen) {
       case SCREENS.HOME:
-        return (
-          <UnderConstruction
-            setActiveScreen={navigate}
-            showNotification={showNotification}
-          />
-        );
+        return <HomeScreen onNavigate={navigate} />;
 
       case SCREENS.MY_PROFILE:
         return <ProfileScreen {...screenProps} />;
@@ -107,14 +135,17 @@ const MainApp = () => {
       case SCREENS.TERMS:
         return <Terms setActiveScreen={navigate} />;
 
-      default:
-        // Default to home screen for unknown routes
+      case SCREENS.UNDER_CONSTRUCTION:
         return (
           <UnderConstruction
             setActiveScreen={navigate}
             showNotification={showNotification}
           />
         );
+
+      default:
+        // Default to home screen for unknown routes
+        return <HomeScreen onNavigate={navigate} />;
     }
   };
 
@@ -148,13 +179,17 @@ const MainApp = () => {
     }
   };
 
-  // Show loading state while authentication is initializing
-  if (isLoading) {
+  // Show loading state while authentication is initializing (with timeout)
+  if (isLoading && !loadingTimeout) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
           <p className="text-gray-600">Cargando aplicación...</p>
+          <p className="text-xs text-gray-400 mt-2">
+            Auth0: {auth0Loading ? "Cargando..." : "Listo"} | App:{" "}
+            {isLoading ? "Cargando..." : "Listo"}
+          </p>
         </div>
       </div>
     );

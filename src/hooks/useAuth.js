@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useAppStore } from "../store/appStore";
 import authService from "../services/AuthService";
 
@@ -99,9 +99,9 @@ export const useAuth = () => {
     return authService.handleNavAuth(screen, showNotification);
   };
 
-  const initializeAuth = (auth0User, auth0Loading, auth0Error) => {
+  const initializeAuth = useCallback((auth0User, auth0Loading, auth0Error) => {
     authService.initializeAuth(auth0User, auth0Loading, auth0Error);
-  };
+  }, []);
 
   // Computed values
   const userId = authService.getUserId();

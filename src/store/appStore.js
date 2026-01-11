@@ -55,7 +55,11 @@ export const useAppStore = create(
       // Navigation actions
       navigate: (screen) =>
         set((state) => {
-          const newHistory = [...state.navigation.history, screen];
+          // Ensure history is always an array (handle persistence edge cases)
+          const currentHistory = Array.isArray(state.navigation.history)
+            ? state.navigation.history
+            : [state.navigation.activeScreen];
+          const newHistory = [...currentHistory, screen];
           return {
             navigation: {
               activeScreen: screen,
@@ -67,7 +71,11 @@ export const useAppStore = create(
 
       goBack: () =>
         set((state) => {
-          const newHistory = state.navigation.history.slice(0, -1);
+          // Ensure history is always an array (handle persistence edge cases)
+          const currentHistory = Array.isArray(state.navigation.history)
+            ? state.navigation.history
+            : [state.navigation.activeScreen];
+          const newHistory = currentHistory.slice(0, -1);
           const previousScreen = newHistory[newHistory.length - 1] || "home";
           return {
             navigation: {
@@ -152,8 +160,9 @@ export const useAppStore = create(
         isAuthenticated: state.isAuthenticated,
         navigation: {
           activeScreen: state.navigation.activeScreen,
-          // Don't persist full history to avoid deep navigation on reload
-          // but preserve the current screen for better UX
+          // Include a minimal history to avoid undefined issues
+          history: [state.navigation.activeScreen],
+          canGoBack: false, // Reset canGoBack on reload for better UX
         },
       }),
     }
