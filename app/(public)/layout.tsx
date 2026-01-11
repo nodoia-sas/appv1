@@ -1,5 +1,8 @@
+"use client";
+
 import type React from "react";
 import Header from "@/src/components/layout/Header";
+import { useNavigationCompat } from "@/lib/navigation";
 
 interface PublicLayoutProps {
   children: React.ReactNode;
@@ -16,15 +19,38 @@ interface PublicLayoutProps {
  * Requirements: 4.5, 4.6
  */
 export default function PublicLayout({ children }: PublicLayoutProps) {
-  // Mock handlers for now - these will be replaced with proper navigation hooks
+  const { navigate } = useNavigationCompat();
+
+  // Proper navigation handlers using the new navigation system
   const handleMenuClick = (action: string) => {
     console.log("Public menu action:", action);
-    // TODO: Implement proper navigation handling
+
+    // Handle navigation actions
+    switch (action) {
+      case "terms":
+        navigate("terms");
+        break;
+      case "help-contact":
+        navigate("help-contact");
+        break;
+      case "login":
+        // Redirect to Auth0 login
+        if (typeof window !== "undefined") {
+          window.location.href = "/api/auth/login";
+        }
+        break;
+      default:
+        console.log("Unhandled menu action:", action);
+        break;
+    }
   };
 
   const handleNotificationClick = () => {
     console.log("Public notification click");
-    // TODO: Implement proper notification handling
+    // For public users, redirect to login
+    if (typeof window !== "undefined") {
+      window.location.href = "/api/auth/login";
+    }
   };
 
   return (
@@ -56,13 +82,13 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
             </p>
             <div className="flex justify-center space-x-4">
               <button
-                onClick={() => handleMenuClick("terms")}
+                onClick={() => navigate("terms")}
                 className="text-blue-600 hover:text-blue-800 transition-colors"
               >
                 Términos y Privacidad
               </button>
               <button
-                onClick={() => handleMenuClick("help-contact")}
+                onClick={() => navigate("help-contact")}
                 className="text-blue-600 hover:text-blue-800 transition-colors"
               >
                 Ayuda y Contacto

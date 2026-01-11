@@ -45,7 +45,6 @@ export default function RegulationsPage() {
   return (
     <RegulationsComponent
       regulationsData={regulationsData}
-      setActiveScreen={() => {}}
       setSelectedRegulation={setSelectedRegulation}
     />
   );

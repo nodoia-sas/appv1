@@ -1,8 +1,5 @@
-"use client";
 import type React from "react";
-import { useEffect, useState } from "react";
 import GlossaryComponent from "@/components/glossary";
-import { fetchGlossaryTerms } from "@/lib/glossary-utils";
 
 interface GlossaryTerm {
   term: string;
@@ -17,38 +14,49 @@ interface GlossaryTerm {
  *
  * Requirements: 1.8, 3.4
  */
-export default function GlossaryPage() {
-  const [glossaryTerms, setGlossaryTerms] = useState<GlossaryTerm[]>([]);
-  const [glossarySearchTerm, setGlossarySearchTerm] = useState("");
+export default async function GlossaryPage() {
+  // For now, use default terms to avoid server-side fetch issues
+  // The client component can handle dynamic loading if needed
+  const glossaryTerms: GlossaryTerm[] = [
+    {
+      term: "SOAT",
+      explanation: "Seguro Obligatorio de Accidentes de Tránsito.",
+    },
+    {
+      term: "Revisión Técnico-Mecánica",
+      explanation: "Inspección periódica de seguridad vehicular.",
+    },
+    {
+      term: "Cédula",
+      explanation:
+        "Documento de identificación personal utilizado en Colombia.",
+    },
+    {
+      term: "Licencia de Conducción",
+      explanation:
+        "Documento que autoriza a una persona para conducir vehículos.",
+    },
+    {
+      term: "Pico y Placa",
+      explanation:
+        "Medida de restricción vehicular basada en el último dígito de la placa.",
+    },
+    {
+      term: "Comparendo",
+      explanation: "Orden de comparecencia por infracción de tránsito.",
+    },
+    {
+      term: "Inmovilización",
+      explanation: "Retención temporal de un vehículo por infracciones graves.",
+    },
+    {
+      term: "Embriaguez",
+      explanation:
+        "Estado de alteración por consumo de alcohol que afecta la conducción.",
+    },
+  ];
 
-  useEffect(() => {
-    const loadGlossaryTerms = async () => {
-      try {
-        const terms = await fetchGlossaryTerms();
-        setGlossaryTerms(terms);
-      } catch (error) {
-        console.error("Error loading glossary terms:", error);
-      }
-    };
-
-    loadGlossaryTerms();
-  }, []);
-
-  // Filter terms based on search
-  const filteredGlossaryTerms = glossaryTerms.filter(
-    (term) =>
-      term.term.toLowerCase().includes(glossarySearchTerm.toLowerCase()) ||
-      term.explanation.toLowerCase().includes(glossarySearchTerm.toLowerCase())
-  );
-
-  return (
-    <GlossaryComponent
-      glossarySearchTerm={glossarySearchTerm}
-      setGlossarySearchTerm={setGlossarySearchTerm}
-      filteredGlossaryTerms={filteredGlossaryTerms}
-      setActiveScreen={() => {}}
-    />
-  );
+  return <GlossaryComponent initialTerms={glossaryTerms} />;
 }
 
 export async function generateMetadata() {

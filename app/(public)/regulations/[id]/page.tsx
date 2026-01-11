@@ -1,10 +1,6 @@
-"use client";
-
 import type React from "react";
-import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { fetchRegulations } from "@/lib/regulations-utils";
 import { notFound } from "next/navigation";
+import { fetchRegulations } from "@/lib/regulations-utils";
 import { validateAndSanitizeId } from "@/lib/route-validation";
 
 interface RegulationArticle {
@@ -22,131 +18,110 @@ interface Regulation {
 /**
  * Dynamic Regulation Detail Page - Public route for specific regulation
  *
- * This page displays detailed information about a specific regulation
- * identified by the [id] parameter. Accessible without authentication.
+ * This page displays the full content of a specific regulation
+ * identified by the dynamic [id] parameter. It validates the ID
+ * and shows a 404 page if the regulation doesn't exist.
  *
  * Requirements: 6.2, 6.5
  */
-export default function RegulationDetailPage() {
-  const params = useParams();
-  const router = useRouter();
-  const [regulation, setRegulation] = useState<Regulation | null>(null);
-  const [loading, setLoading] = useState(true);
+export default async function RegulationDetailPage({
+  params,
+}: {
+  params: { id: string };
+}) {
+  try {
+    // Validate the ID parameter
+    const validation = validateAndSanitizeId(params.id, {
+      type: "string",
+    });
 
-  useEffect(() => {
-    const loadRegulation = async () => {
-      try {
-        // Check if params and params.id exist
-        if (!params?.id) {
-          notFound();
-          return;
-        }
+    if (!validation.isValid) {
+      console.error("Invalid regulation ID:", validation.error);
+      notFound();
+    }
 
-        // Validate the ID parameter
-        const validation = validateAndSanitizeId(params.id, {
-          type: "string",
-          pattern: /^[a-zA-Z0-9_-]+$/,
-        });
+    const regulations = await fetchRegulations();
+    const regulation = regulations.find(
+      (reg: Regulation) => reg.id === validation.sanitizedId
+    );
 
-        if (!validation.isValid) {
-          console.error("Invalid regulation ID:", validation.error);
-          notFound();
-          return;
-        }
+    if (!regulation) {
+      notFound();
+    }
 
-        const regulations = await fetchRegulations();
-        const foundRegulation = regulations.find(
-          (reg) => reg.id === validation.sanitizedId
-        );
-
-        if (!foundRegulation) {
-          notFound();
-          return;
-        }
-
-        setRegulation(foundRegulation);
-      } catch (error) {
-        console.error("Error loading regulation:", error);
-        notFound();
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadRegulation();
-  }, [params?.id]);
-
-  if (loading) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <div className="animate-pulse">
-          <div className="h-8 bg-gray-200 rounded w-3/4 mb-4"></div>
-          <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
-          <div className="h-4 bg-gray-200 rounded w-5/6 mb-4"></div>
-          <div className="space-y-3">
-            <div className="h-4 bg-gray-200 rounded"></div>
-            <div className="h-4 bg-gray-200 rounded"></div>
-            <div className="h-4 bg-gray-200 rounded"></div>
+        <div className="max-w-4xl mx-auto">
+          {/* Back button */}
+          <div className="mb-6">
+            <a
+              href="/regulations"
+              className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              <svg
+                className="w-4 h-4 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+              Volver a Regulaciones
+            </a>
           </div>
+
+          {/* Regulation content */}
+          <article className="bg-white rounded-lg shadow-lg overflow-hidden">
+            <div className="p-6">
+              <h1 className="text-3xl font-bold text-gray-900 mb-4">
+                {regulation.title}
+              </h1>
+
+              <div className="text-lg text-gray-600 mb-8">
+                {regulation.summary}
+              </div>
+
+              {/* Articles */}
+              {regulation.articles && regulation.articles.length > 0 && (
+                <div className="space-y-6">
+                  <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+                    Artículos
+                  </h2>
+                  {regulation.articles.map((article, index) => (
+                    <div
+                      key={index}
+                      className="border-l-4 border-blue-500 pl-4 py-2"
+                    >
+                      <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                        Artículo {article.number}
+                      </h3>
+                      <p className="text-gray-700">{article.summary}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </article>
         </div>
       </div>
     );
+  } catch (error) {
+    console.error("Error loading regulation:", error);
+    notFound();
   }
-
-  if (!regulation) {
-    return null; // notFound() will handle this
-  }
-
-  return (
-    <div className="container mx-auto px-4 py-8">
-      <nav className="mb-6">
-        <button
-          onClick={() => router.back()}
-          className="text-blue-600 hover:text-blue-800 flex items-center gap-2"
-        >
-          ← Volver a Regulaciones
-        </button>
-      </nav>
-
-      <article className="max-w-4xl">
-        <header className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">
-            {regulation.title}
-          </h1>
-          <p className="text-lg text-gray-700 leading-relaxed">
-            {regulation.summary}
-          </p>
-        </header>
-
-        <section>
-          <h2 className="text-2xl font-semibold text-gray-900 mb-6">
-            Artículos Principales
-          </h2>
-          <div className="space-y-6">
-            {regulation.articles.map((article) => (
-              <div
-                key={article.number}
-                className="border-l-4 border-blue-500 pl-6 py-4 bg-gray-50 rounded-r-lg"
-              >
-                <h3 className="text-xl font-medium text-gray-900 mb-2">
-                  Artículo {article.number}
-                </h3>
-                <p className="text-gray-700 leading-relaxed">
-                  {article.summary}
-                </p>
-              </div>
-            ))}
-          </div>
-        </section>
-      </article>
-    </div>
-  );
 }
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
   try {
     const regulations = await fetchRegulations();
-    const regulation = regulations.find((reg) => reg.id === params.id);
+    const regulation = regulations.find(
+      (reg: Regulation) => reg.id === params.id
+    );
 
     if (!regulation) {
       return {

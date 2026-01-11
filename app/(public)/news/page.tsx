@@ -10,7 +10,7 @@ import NewsComponent from "@/components/news";
  * Requirements: 1.6, 3.2
  */
 export default function NewsPage() {
-  return <NewsComponent setActiveScreen={() => {}} />;
+  return <NewsComponent />;
 }
 
 export async function generateMetadata() {

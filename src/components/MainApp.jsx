@@ -105,7 +105,7 @@ const MainApp = () => {
 
     switch (activeScreen) {
       case SCREENS.HOME:
-        return <HomeScreen onNavigate={navigate} />;
+        return <HomeScreen />;
 
       case SCREENS.MY_PROFILE:
         return <ProfileScreen {...screenProps} />;
@@ -167,7 +167,7 @@ const MainApp = () => {
 
       default:
         // Default to home screen for unknown routes
-        return <HomeScreen onNavigate={navigate} />;
+        return <HomeScreen />;
     }
   };
 

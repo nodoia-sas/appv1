@@ -2,9 +2,13 @@ import { useEffect, useCallback } from "react";
 import { useAppStore } from "../store/appStore";
 import { useAuth } from "./useAuth";
 import { SCREENS, NAVIGATION_ITEMS } from "../utils/constants";
+import { useNavigationCompat } from "../../lib/navigation";
 
 /**
  * useNavigation Hook - Manages navigation state and screen transitions
+ *
+ * MIGRATION NOTE: This hook now uses the new Next.js router-based navigation system
+ * while maintaining backward compatibility with existing components.
  *
  * This hook provides a clean interface for components to:
  * - Navigate between screens with authentication checks
@@ -15,19 +19,14 @@ import { SCREENS, NAVIGATION_ITEMS } from "../utils/constants";
  * Requirements: 3.5, 3.6
  */
 export const useNavigation = () => {
-  // Get navigation state and actions from Zustand store
-  const {
-    navigation,
-    navigate: storeNavigate,
-    goBack: storeGoBack,
-    showNotification,
-  } = useAppStore();
+  // Use the new navigation system
+  const newNavigation = useNavigationCompat();
+
+  // Get legacy store actions for notifications
+  const { showNotification } = useAppStore();
 
   // Get authentication state
   const { isAuthenticated, handleNavAuth } = useAuth();
-
-  // Extract navigation state for easier access
-  const { activeScreen, history, canGoBack } = navigation;
 
   /**
    * Navigate to a specific screen with authentication checks
@@ -38,165 +37,85 @@ export const useNavigation = () => {
    */
   const navigate = useCallback(
     (screen, options = {}) => {
-      const { requireAuth = null, skipAuthCheck = false } = options;
-
-      // Validate screen exists
-      if (!Object.values(SCREENS).includes(screen)) {
-        console.warn(`Invalid screen: ${screen}. Defaulting to home.`);
-        screen = SCREENS.HOME;
-      }
-
-      // Check if screen requires authentication
-      const navigationItem = NAVIGATION_ITEMS.find(
-        (item) => item.id === screen
-      );
-      const screenRequiresAuth =
-        requireAuth !== null
-          ? requireAuth
-          : navigationItem?.requiresAuth || false;
-
-      // Handle authentication requirements for protected routes
-      if (!skipAuthCheck && screenRequiresAuth && !isAuthenticated) {
-        showNotification(
-          "Debes iniciar sesión para acceder a esta sección",
-          "info"
-        );
-
-        // Use Auth service to handle navigation authentication
-        handleNavAuth(screen);
-        return false; // Navigation was blocked
-      }
-
-      // Perform navigation
-      storeNavigate(screen);
-      return true; // Navigation was successful
+      // Delegate to the new navigation system
+      return newNavigation.navigate(screen, options);
     },
-    [isAuthenticated, storeNavigate, showNotification, handleNavAuth]
+    [newNavigation]
   );
 
   /**
    * Navigate back to the previous screen
    */
   const goBack = useCallback(() => {
-    if (canGoBack) {
-      storeGoBack();
-      return true;
-    }
-    return false;
-  }, [canGoBack, storeGoBack]);
+    return newNavigation.goBack();
+  }, [newNavigation]);
 
   /**
    * Navigate to home screen
    */
   const goHome = useCallback(() => {
-    navigate(SCREENS.HOME, { skipAuthCheck: true });
-  }, [navigate]);
+    newNavigation.goHome();
+  }, [newNavigation]);
 
   /**
    * Check if a screen requires authentication
    * @param {string} screen - The screen identifier to check
    * @returns {boolean} - Whether the screen requires authentication
    */
-  const isProtectedRoute = useCallback((screen) => {
-    const navigationItem = NAVIGATION_ITEMS.find((item) => item.id === screen);
-    return navigationItem?.requiresAuth || false;
-  }, []);
+  const isProtectedRoute = useCallback(
+    (screen) => {
+      return newNavigation.isProtectedRoute(screen);
+    },
+    [newNavigation]
+  );
 
   /**
    * Get the current screen's navigation item configuration
    * @returns {Object|null} - The navigation item configuration or null
    */
   const getCurrentScreenConfig = useCallback(() => {
-    return NAVIGATION_ITEMS.find((item) => item.id === activeScreen) || null;
-  }, [activeScreen]);
+    return newNavigation.getCurrentScreenConfig();
+  }, [newNavigation]);
 
   /**
    * Handle URL parameters and deep linking on app initialization
    * Migrated from original transit-app.jsx URL parameter handling
+   * NOTE: This is now handled automatically by Next.js routing
    */
   const handleDeepLinking = useCallback(() => {
-    try {
-      if (typeof window !== "undefined") {
-        const params = new URLSearchParams(window.location.search);
-        const qScreen = params.get("screen");
-        const hashScreen = window.location.hash
-          ? window.location.hash.replace(/^#/, "")
-          : null;
-        const targetScreen = qScreen || hashScreen;
-
-        if (targetScreen && Object.values(SCREENS).includes(targetScreen)) {
-          // Navigate to the target screen (with auth checks)
-          navigate(targetScreen);
-
-          // Clean up URL parameters to keep URL clean (preserve original behavior)
-          const url = new URL(window.location.href);
-          url.searchParams.delete("screen");
-          // Keep hash if present (preserve original behavior)
-          window.history.replaceState(
-            null,
-            "",
-            url.pathname + (window.location.hash || "")
-          );
-        }
-      }
-    } catch (error) {
-      // Silently ignore errors (preserve original behavior)
-      console.warn("Error handling deep linking:", error);
-    }
-  }, [navigate]);
+    // Deep linking is now handled automatically by Next.js routing
+    // This function is kept for backward compatibility
+    console.log("Deep linking is now handled automatically by Next.js routing");
+  }, []);
 
   /**
    * Set URL parameters for deep linking
+   * NOTE: This is now handled automatically by Next.js routing
    * @param {string} screen - The screen to set in URL parameters
    * @param {boolean} useHash - Whether to use hash instead of query parameter
    */
-  const setUrlParameter = useCallback((screen, useHash = false) => {
-    try {
-      if (
-        typeof window !== "undefined" &&
-        Object.values(SCREENS).includes(screen)
-      ) {
-        const url = new URL(window.location.href);
-
-        if (useHash) {
-          // Set hash parameter
-          url.hash = screen;
-          url.searchParams.delete("screen");
-        } else {
-          // Set query parameter
-          url.searchParams.set("screen", screen);
-          url.hash = "";
-        }
-
-        window.history.replaceState(null, "", url.toString());
-      }
-    } catch (error) {
-      console.warn("Error setting URL parameter:", error);
-    }
-  }, []);
+  const setUrlParameter = useCallback(
+    (screen, useHash = false) => {
+      return newNavigation.setUrlParameter(screen, useHash);
+    },
+    [newNavigation]
+  );
 
   /**
    * Clear URL parameters
+   * NOTE: This is now handled automatically by Next.js routing
    */
   const clearUrlParameters = useCallback(() => {
-    try {
-      if (typeof window !== "undefined") {
-        const url = new URL(window.location.href);
-        url.searchParams.delete("screen");
-        url.hash = "";
-        window.history.replaceState(null, "", url.pathname);
-      }
-    } catch (error) {
-      console.warn("Error clearing URL parameters:", error);
-    }
-  }, []);
+    return newNavigation.clearUrlParameters();
+  }, [newNavigation]);
 
   /**
    * Initialize deep linking on mount
+   * NOTE: This is now handled automatically by Next.js routing
    */
   useEffect(() => {
-    handleDeepLinking();
-  }, [handleDeepLinking]);
+    // No longer needed as Next.js handles routing automatically
+  }, []);
 
   /**
    * Navigation handler specifically for bottom navigation items
@@ -205,16 +124,9 @@ export const useNavigation = () => {
    */
   const handleNavClick = useCallback(
     (screen) => {
-      // Home screen doesn't require authentication
-      if (screen === SCREENS.HOME) {
-        navigate(screen, { skipAuthCheck: true });
-        return;
-      }
-
-      // All other screens require authentication check
-      navigate(screen, { requireAuth: true });
+      return newNavigation.handleNavClick(screen);
     },
-    [navigate]
+    [newNavigation]
   );
 
   /**
@@ -222,9 +134,8 @@ export const useNavigation = () => {
    * @returns {string[]} - Array of screen identifiers in history
    */
   const getNavigationHistory = useCallback(() => {
-    // Ensure history is always an array, even if undefined from persistence
-    return Array.isArray(history) ? [...history] : [activeScreen];
-  }, [history, activeScreen]);
+    return newNavigation.history;
+  }, [newNavigation.history]);
 
   /**
    * Check if currently on a specific screen
@@ -233,16 +144,16 @@ export const useNavigation = () => {
    */
   const isCurrentScreen = useCallback(
     (screen) => {
-      return activeScreen === screen;
+      return newNavigation.isCurrentScreen(screen);
     },
-    [activeScreen]
+    [newNavigation]
   );
 
   return {
-    // State
-    activeScreen,
+    // State (mapped from new navigation system)
+    activeScreen: newNavigation.activeScreen,
     history: getNavigationHistory(),
-    canGoBack,
+    canGoBack: newNavigation.canGoBack,
 
     // Navigation actions
     navigate,
@@ -250,7 +161,7 @@ export const useNavigation = () => {
     goHome,
     handleNavClick,
 
-    // URL parameter handling
+    // URL parameter handling (legacy compatibility)
     handleDeepLinking,
     setUrlParameter,
     clearUrlParameters,
@@ -261,8 +172,13 @@ export const useNavigation = () => {
     getCurrentScreenConfig,
 
     // Computed values
-    isOnHomeScreen: activeScreen === SCREENS.HOME,
+    isOnHomeScreen: newNavigation.activeScreen === SCREENS.HOME,
     currentScreenConfig: getCurrentScreenConfig(),
+
+    // New navigation system properties (for components that want to use them)
+    currentPath: newNavigation.currentPath,
+    breadcrumbs: newNavigation.breadcrumbs,
+    isNavigating: newNavigation.isNavigating,
   };
 };
 

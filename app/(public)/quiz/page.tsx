@@ -10,7 +10,7 @@ import QuizComponent from "@/components/quiz";
  * Requirements: 1.9, 3.5
  */
 export default function QuizPage() {
-  return <QuizComponent setActiveScreen={() => {}} />;
+  return <QuizComponent />;
 }
 
 export async function generateMetadata() {

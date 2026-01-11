@@ -1,10 +1,6 @@
-"use client";
-
 import type React from "react";
-import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { fetchNews } from "@/lib/news-utils";
 import { notFound } from "next/navigation";
+import { fetchNews } from "@/lib/news-utils";
 import { validateAndSanitizeId } from "@/lib/route-validation";
 
 interface NewsItem {
@@ -18,136 +14,100 @@ interface NewsItem {
 /**
  * Dynamic News Detail Page - Public route for specific news article
  *
- * This page displays detailed information about a specific news article
- * identified by the [id] parameter. Accessible without authentication.
+ * This page displays the full content of a specific news article
+ * identified by the dynamic [id] parameter. It validates the ID
+ * and shows a 404 page if the article doesn't exist.
  *
  * Requirements: 6.3, 6.5
  */
-export default function NewsDetailPage() {
-  const params = useParams();
-  const router = useRouter();
-  const [newsItem, setNewsItem] = useState<NewsItem | null>(null);
-  const [loading, setLoading] = useState(true);
+export default async function NewsDetailPage({
+  params,
+}: {
+  params: { id: string };
+}) {
+  try {
+    // Validate the ID parameter
+    const validation = validateAndSanitizeId(params.id, {
+      type: "numeric",
+    });
 
-  useEffect(() => {
-    const loadNewsItem = async () => {
-      try {
-        // Check if params and params.id exist
-        if (!params?.id) {
-          notFound();
-          return;
-        }
+    if (!validation.isValid) {
+      console.error("Invalid news ID:", validation.error);
+      notFound();
+    }
 
-        // Validate the ID parameter
-        const validation = validateAndSanitizeId(params.id, {
-          type: "numeric",
-        });
+    const newsItems = await fetchNews();
+    const newsItem = newsItems.find(
+      (item: NewsItem) => item.id.toString() === validation.sanitizedId
+    );
 
-        if (!validation.isValid) {
-          console.error("Invalid news ID:", validation.error);
-          notFound();
-          return;
-        }
+    if (!newsItem) {
+      notFound();
+    }
 
-        const newsItems = await fetchNews();
-        const foundNewsItem = newsItems.find(
-          (item: NewsItem) => item.id.toString() === validation.sanitizedId
-        );
-
-        if (!foundNewsItem) {
-          notFound();
-          return;
-        }
-
-        setNewsItem(foundNewsItem);
-      } catch (error) {
-        console.error("Error loading news item:", error);
-        notFound();
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadNewsItem();
-  }, [params?.id]);
-
-  if (loading) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <div className="animate-pulse">
-          <div className="h-8 bg-gray-200 rounded w-3/4 mb-4"></div>
-          <div className="h-64 bg-gray-200 rounded mb-6"></div>
-          <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
-          <div className="h-4 bg-gray-200 rounded w-5/6 mb-4"></div>
-          <div className="space-y-3">
-            <div className="h-4 bg-gray-200 rounded"></div>
-            <div className="h-4 bg-gray-200 rounded"></div>
-            <div className="h-4 bg-gray-200 rounded"></div>
+        <div className="max-w-4xl mx-auto">
+          {/* Back button */}
+          <div className="mb-6">
+            <a
+              href="/news"
+              className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              <svg
+                className="w-4 h-4 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+              Volver a Noticias
+            </a>
           </div>
+
+          {/* News article */}
+          <article className="bg-white rounded-lg shadow-lg overflow-hidden">
+            {newsItem.imageUrl && (
+              <div className="aspect-video w-full">
+                <img
+                  src={newsItem.imageUrl}
+                  alt={newsItem.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
+
+            <div className="p-6">
+              <h1 className="text-3xl font-bold text-gray-900 mb-4">
+                {newsItem.title}
+              </h1>
+
+              <div className="text-lg text-gray-600 mb-6">
+                {newsItem.summary}
+              </div>
+
+              <div className="prose prose-lg max-w-none">
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: newsItem.fullContent.replace(/\n/g, "<br />"),
+                  }}
+                />
+              </div>
+            </div>
+          </article>
         </div>
       </div>
     );
+  } catch (error) {
+    console.error("Error loading news item:", error);
+    notFound();
   }
-
-  if (!newsItem) {
-    return null; // notFound() will handle this
-  }
-
-  return (
-    <div className="container mx-auto px-4 py-8">
-      <nav className="mb-6">
-        <button
-          onClick={() => router.back()}
-          className="text-blue-600 hover:text-blue-800 flex items-center gap-2"
-        >
-          ← Volver a Noticias
-        </button>
-      </nav>
-
-      <article className="max-w-4xl">
-        <header className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">
-            {newsItem.title}
-          </h1>
-          {newsItem.imageUrl && (
-            <div className="mb-6">
-              <img
-                src={newsItem.imageUrl}
-                alt={newsItem.title}
-                className="w-full h-64 object-cover rounded-lg"
-              />
-            </div>
-          )}
-          <p className="text-lg text-gray-600 leading-relaxed mb-6">
-            {newsItem.summary}
-          </p>
-        </header>
-
-        <section className="prose prose-lg max-w-none">
-          <div className="text-gray-700 leading-relaxed whitespace-pre-line">
-            {newsItem.fullContent}
-          </div>
-        </section>
-
-        <footer className="mt-8 pt-6 border-t border-gray-200">
-          <div className="flex justify-between items-center">
-            <button
-              onClick={() => router.push("/news")}
-              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Ver más noticias
-            </button>
-            <button
-              onClick={() => router.back()}
-              className="text-gray-600 hover:text-gray-800"
-            >
-              Volver
-            </button>
-          </div>
-        </footer>
-      </article>
-    </div>
-  );
 }
 
 export async function generateMetadata({ params }: { params: { id: string } }) {

@@ -1,25 +1,43 @@
 "use client";
 
+import Link from "next/link";
+import { useNavigationCompat } from "../../../lib/navigation";
 import * as Icons from "../../../components/icons";
 
 const BottomNavigation = ({ activeScreen, onNavigate, isAuthenticated }) => {
+  const { handleNavClick } = useNavigationCompat();
+
   const navItems = [
-    { name: "Perfil", icon: Icons.UserIcon, screen: "my-profile" },
-    { name: "Docs", icon: Icons.FileTextIcon, screen: "documents" },
-    { name: "Inicio", icon: Icons.HomeIcon, screen: "home" },
-    { name: "Favs", icon: Icons.StarIcon, screen: "favorites" },
-    { name: "Asesoría", icon: Icons.LightbulbIcon, screen: "ai-assist" },
+    {
+      name: "Perfil",
+      icon: Icons.UserIcon,
+      screen: "my-profile",
+      href: "/profile",
+    },
+    {
+      name: "Docs",
+      icon: Icons.FileTextIcon,
+      screen: "documents",
+      href: "/documents",
+    },
+    { name: "Inicio", icon: Icons.HomeIcon, screen: "home", href: "/" },
+    {
+      name: "Favs",
+      icon: Icons.StarIcon,
+      screen: "favorites",
+      href: "/favorites",
+    },
+    {
+      name: "Asesoría",
+      icon: Icons.LightbulbIcon,
+      screen: "ai-assist",
+      href: "/ai-assist",
+    },
   ];
 
-  // Navigation handler that requires authentication for routes different than 'home'
-  const handleNavClick = (screen) => {
-    if (screen !== "home" && !isAuthenticated) {
-      // Notify parent component about authentication requirement
-      onNavigate(screen, { requiresAuth: true });
-      return;
-    }
-
-    onNavigate(screen);
+  // Use the new navigation system with authentication checks
+  const handleNavigation = (screen) => {
+    handleNavClick(screen);
   };
 
   return (
@@ -41,7 +59,7 @@ const BottomNavigation = ({ activeScreen, onNavigate, isAuthenticated }) => {
                           : "bg-white text-gray-600 hover:bg-gray-100"
                       }
                       focus:outline-none focus:ring-2 focus:ring-blue-300`}
-          onClick={() => handleNavClick(item.screen)}
+          onClick={() => handleNavigation(item.screen)}
           aria-label={`Go to ${item.name}`}
           data-testid={`nav-${item.screen}`}
         >
