@@ -1,5 +1,10 @@
 import type React from "react";
+import type { Metadata } from "next";
 import QuizComponent from "@/components/quiz";
+import {
+  generatePageMetadata,
+  PAGE_METADATA_CONFIGS,
+} from "@/lib/metadata-utils";
 
 /**
  * Quiz Page - Public route for traffic knowledge quiz
@@ -7,28 +12,13 @@ import QuizComponent from "@/components/quiz";
  * This page provides an interactive quiz to test traffic knowledge
  * accessible without authentication as per requirements.
  *
- * Requirements: 1.9, 3.5
+ * Requirements: 1.9, 3.5, 7.2, 7.3, 7.4, 7.5
  */
+
+export const metadata: Metadata = generatePageMetadata(
+  PAGE_METADATA_CONFIGS.quiz
+);
+
 export default function QuizPage() {
   return <QuizComponent />;
-}
-
-export async function generateMetadata() {
-  return {
-    title: "Quiz de Tránsito - TransitIA",
-    description:
-      "Pon a prueba tus conocimientos sobre normatividad de tránsito con nuestro quiz interactivo.",
-    openGraph: {
-      title: "Quiz de Tránsito - TransitIA",
-      description:
-        "Pon a prueba tus conocimientos sobre normatividad de tránsito con nuestro quiz interactivo.",
-      type: "website",
-    },
-    twitter: {
-      card: "summary",
-      title: "Quiz de Tránsito - TransitIA",
-      description:
-        "Pon a prueba tus conocimientos sobre normatividad de tránsito con nuestro quiz interactivo.",
-    },
-  };
 }

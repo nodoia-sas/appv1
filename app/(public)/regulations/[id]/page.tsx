@@ -1,7 +1,12 @@
 import type React from "react";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { fetchRegulations } from "@/lib/regulations-utils";
 import { validateAndSanitizeId } from "@/lib/route-validation";
+import {
+  generateDynamicMetadata,
+  PAGE_METADATA_CONFIGS,
+} from "@/lib/metadata-utils";
 
 interface RegulationArticle {
   number: string;
@@ -22,7 +27,7 @@ interface Regulation {
  * identified by the dynamic [id] parameter. It validates the ID
  * and shows a 404 page if the regulation doesn't exist.
  *
- * Requirements: 6.2, 6.5
+ * Requirements: 6.2, 6.5, 7.1, 7.6
  */
 export default async function RegulationDetailPage({
   params,
@@ -116,7 +121,11 @@ export default async function RegulationDetailPage({
   }
 }
 
-export async function generateMetadata({ params }: { params: { id: string } }) {
+export async function generateMetadata({
+  params,
+}: {
+  params: { id: string };
+}): Promise<Metadata> {
   try {
     const regulations = await fetchRegulations();
     const regulation = regulations.find(
@@ -124,30 +133,31 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
     );
 
     if (!regulation) {
-      return {
-        title: "Regulación no encontrada - TransitIA",
-        description: "La regulación solicitada no existe.",
-      };
+      return generateDynamicMetadata(
+        PAGE_METADATA_CONFIGS.regulations,
+        "Regulación no encontrada",
+        "La regulación solicitada no existe.",
+        params.id
+      );
     }
 
-    return {
-      title: `${regulation.title} - TransitIA`,
-      description: regulation.summary,
-      openGraph: {
-        title: `${regulation.title} - TransitIA`,
-        description: regulation.summary,
-        type: "article",
+    return generateDynamicMetadata(
+      {
+        ...PAGE_METADATA_CONFIGS.regulations,
+        author: "Ministerio de Transporte",
+        section: "Regulaciones",
       },
-      twitter: {
-        card: "summary",
-        title: `${regulation.title} - TransitIA`,
-        description: regulation.summary,
-      },
-    };
+      regulation.title,
+      regulation.summary,
+      params.id
+    );
   } catch (error) {
-    return {
-      title: "Error - TransitIA",
-      description: "Error al cargar la regulación.",
-    };
+    console.error("Error generating metadata for regulation:", error);
+    return generateDynamicMetadata(
+      PAGE_METADATA_CONFIGS.regulations,
+      "Error",
+      "Error al cargar la regulación.",
+      params.id
+    );
   }
 }

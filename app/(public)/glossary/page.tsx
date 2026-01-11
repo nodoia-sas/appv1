@@ -1,5 +1,10 @@
 import type React from "react";
+import type { Metadata } from "next";
 import GlossaryComponent from "@/components/glossary";
+import {
+  generatePageMetadata,
+  PAGE_METADATA_CONFIGS,
+} from "@/lib/metadata-utils";
 
 interface GlossaryTerm {
   term: string;
@@ -12,8 +17,13 @@ interface GlossaryTerm {
  * This page displays a searchable glossary of traffic terms and definitions
  * accessible without authentication as per requirements.
  *
- * Requirements: 1.8, 3.4
+ * Requirements: 1.8, 3.4, 7.2, 7.3, 7.4, 7.5
  */
+
+export const metadata: Metadata = generatePageMetadata(
+  PAGE_METADATA_CONFIGS.glossary
+);
+
 export default async function GlossaryPage() {
   // For now, use default terms to avoid server-side fetch issues
   // The client component can handle dynamic loading if needed
@@ -57,24 +67,4 @@ export default async function GlossaryPage() {
   ];
 
   return <GlossaryComponent initialTerms={glossaryTerms} />;
-}
-
-export async function generateMetadata() {
-  return {
-    title: "Glosario de Tránsito - TransitIA",
-    description:
-      "Consulta definiciones y términos importantes relacionados con el tránsito y la normatividad vial en Colombia.",
-    openGraph: {
-      title: "Glosario de Tránsito - TransitIA",
-      description:
-        "Consulta definiciones y términos importantes relacionados con el tránsito y la normatividad vial en Colombia.",
-      type: "website",
-    },
-    twitter: {
-      card: "summary",
-      title: "Glosario de Tránsito - TransitIA",
-      description:
-        "Consulta definiciones y términos importantes relacionados con el tránsito y la normatividad vial en Colombia.",
-    },
-  };
 }

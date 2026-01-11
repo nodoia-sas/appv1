@@ -1,7 +1,12 @@
 import type React from "react";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { fetchNews } from "@/lib/news-utils";
 import { validateAndSanitizeId } from "@/lib/route-validation";
+import {
+  generateDynamicMetadata,
+  PAGE_METADATA_CONFIGS,
+} from "@/lib/metadata-utils";
 
 interface NewsItem {
   id: number;
@@ -18,7 +23,7 @@ interface NewsItem {
  * identified by the dynamic [id] parameter. It validates the ID
  * and shows a 404 page if the article doesn't exist.
  *
- * Requirements: 6.3, 6.5
+ * Requirements: 6.3, 6.5, 7.1, 7.6
  */
 export default async function NewsDetailPage({
   params,
@@ -110,7 +115,11 @@ export default async function NewsDetailPage({
   }
 }
 
-export async function generateMetadata({ params }: { params: { id: string } }) {
+export async function generateMetadata({
+  params,
+}: {
+  params: { id: string };
+}): Promise<Metadata> {
   try {
     const newsItems = await fetchNews();
     const newsItem = newsItems.find(
@@ -118,32 +127,33 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
     );
 
     if (!newsItem) {
-      return {
-        title: "Noticia no encontrada - TransitIA",
-        description: "La noticia solicitada no existe.",
-      };
+      return generateDynamicMetadata(
+        PAGE_METADATA_CONFIGS.news,
+        "Noticia no encontrada",
+        "La noticia solicitada no existe.",
+        params.id
+      );
     }
 
-    return {
-      title: `${newsItem.title} - TransitIA`,
-      description: newsItem.summary,
-      openGraph: {
-        title: `${newsItem.title} - TransitIA`,
-        description: newsItem.summary,
-        type: "article",
-        images: newsItem.imageUrl ? [newsItem.imageUrl] : [],
+    return generateDynamicMetadata(
+      {
+        ...PAGE_METADATA_CONFIGS.news,
+        image: newsItem.imageUrl || PAGE_METADATA_CONFIGS.news.image,
+        publishedTime: new Date().toISOString(), // In real app, use actual publish date
+        author: "TransitIA Team",
+        section: "Noticias",
       },
-      twitter: {
-        card: newsItem.imageUrl ? "summary_large_image" : "summary",
-        title: `${newsItem.title} - TransitIA`,
-        description: newsItem.summary,
-        images: newsItem.imageUrl ? [newsItem.imageUrl] : [],
-      },
-    };
+      newsItem.title,
+      newsItem.summary,
+      params.id
+    );
   } catch (error) {
-    return {
-      title: "Error - TransitIA",
-      description: "Error al cargar la noticia.",
-    };
+    console.error("Error generating metadata for news:", error);
+    return generateDynamicMetadata(
+      PAGE_METADATA_CONFIGS.news,
+      "Error",
+      "Error al cargar la noticia.",
+      params.id
+    );
   }
 }

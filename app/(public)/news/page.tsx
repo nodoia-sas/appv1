@@ -1,5 +1,10 @@
 import type React from "react";
+import type { Metadata } from "next";
 import NewsComponent from "@/components/news";
+import {
+  generatePageMetadata,
+  PAGE_METADATA_CONFIGS,
+} from "@/lib/metadata-utils";
 
 /**
  * News Page - Public route for news and updates
@@ -7,28 +12,13 @@ import NewsComponent from "@/components/news";
  * This page displays news and updates about traffic regulations and system changes.
  * It's accessible without authentication as per requirements.
  *
- * Requirements: 1.6, 3.2
+ * Requirements: 1.6, 3.2, 7.2, 7.3, 7.4, 7.5
  */
+
+export const metadata: Metadata = generatePageMetadata(
+  PAGE_METADATA_CONFIGS.news
+);
+
 export default function NewsPage() {
   return <NewsComponent />;
-}
-
-export async function generateMetadata() {
-  return {
-    title: "Noticias y Novedades - TransitIA",
-    description:
-      "Mantente informado sobre las últimas noticias y actualizaciones en normatividad de tránsito en Colombia.",
-    openGraph: {
-      title: "Noticias y Novedades - TransitIA",
-      description:
-        "Mantente informado sobre las últimas noticias y actualizaciones en normatividad de tránsito en Colombia.",
-      type: "website",
-    },
-    twitter: {
-      card: "summary",
-      title: "Noticias y Novedades - TransitIA",
-      description:
-        "Mantente informado sobre las últimas noticias y actualizaciones en normatividad de tránsito en Colombia.",
-    },
-  };
 }

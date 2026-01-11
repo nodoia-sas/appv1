@@ -1,20 +1,10 @@
-"use client";
 import type React from "react";
-import { useEffect, useState } from "react";
-import RegulationsComponent from "@/components/regulations";
-import { fetchRegulations } from "@/lib/regulations-utils";
-
-interface RegulationArticle {
-  number: string;
-  summary: string;
-}
-
-interface Regulation {
-  id: string;
-  title: string;
-  summary: string;
-  articles: RegulationArticle[];
-}
+import type { Metadata } from "next";
+import {
+  generatePageMetadata,
+  PAGE_METADATA_CONFIGS,
+} from "@/lib/metadata-utils";
+import RegulationsClientPage from "./client-page";
 
 /**
  * Regulations Page - Public route for traffic regulations
@@ -22,30 +12,13 @@ interface Regulation {
  * This page displays traffic regulations and laws that users can access
  * without authentication as per requirements.
  *
- * Requirements: 1.7, 3.3
+ * Requirements: 1.7, 3.3, 7.2, 7.3, 7.4, 7.5
  */
+
+export const metadata: Metadata = generatePageMetadata(
+  PAGE_METADATA_CONFIGS.regulations
+);
+
 export default function RegulationsPage() {
-  const [regulationsData, setRegulationsData] = useState<Regulation[]>([]);
-  const [selectedRegulation, setSelectedRegulation] =
-    useState<Regulation | null>(null);
-
-  useEffect(() => {
-    const loadRegulations = async () => {
-      try {
-        const data = await fetchRegulations();
-        setRegulationsData(data);
-      } catch (error) {
-        console.error("Error loading regulations:", error);
-      }
-    };
-
-    loadRegulations();
-  }, []);
-
-  return (
-    <RegulationsComponent
-      regulationsData={regulationsData}
-      setSelectedRegulation={setSelectedRegulation}
-    />
-  );
+  return <RegulationsClientPage />;
 }
