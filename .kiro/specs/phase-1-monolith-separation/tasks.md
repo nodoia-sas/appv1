@@ -179,7 +179,7 @@ Este plan implementa la separación del componente monolítico `transit-app.jsx`
     - not unit test
     - _Requirements: 1.5_
 
-  - [ ] 6.6 Create QuizScreen component
+  - [x] 6.6 Create QuizScreen component
 
     - Extract quiz screen logic from transit-app.jsx
     - Maintain existing Quiz component integration
@@ -187,7 +187,7 @@ Este plan implementa la separación del componente monolítico `transit-app.jsx`
     - not unit test
     - _Requirements: 1.6_
 
-  - [ ] 6.7 Create PQRScreen component
+  - [x] 6.7 Create PQRScreen component
 
     - Extract PQR screen logic from transit-app.jsx
     - Maintain existing PqrMain component integration
@@ -195,7 +195,7 @@ Este plan implementa la separación del componente monolítico `transit-app.jsx`
     - not unit test
     - _Requirements: 1.7_
 
-  - [ ] 6.8 Create AIAssistScreen component
+  - [x] 6.8 Create AIAssistScreen component
 
     - Extract AI assist screen logic from transit-app.jsx
     - Maintain existing AiAssist component integration
