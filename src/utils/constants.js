@@ -4,11 +4,13 @@ export const SCREENS = {
   MY_PROFILE: "my-profile",
   DOCUMENTS: "documents",
   NEWS: "news",
-  REGULATIONS: "regulations",
+  REGULATIONS: "regulations-main", // Updated to match original
+  REGULATION_DETAIL: "regulation-detail", // Added missing screen
   GLOSSARY: "glossary",
   QUIZ: "quiz",
   PQR: "pqr",
   AI_ASSIST: "ai-assist",
+  NOTIFICATIONS: "notifications", // Added missing screen
   HELP_CONTACT: "help-contact",
   TERMS: "terms",
   PICO_Y_PLACA: "pico-y-placa",
@@ -56,6 +58,12 @@ export const NAVIGATION_ITEMS = [
     requiresAuth: false,
   },
   {
+    id: SCREENS.REGULATION_DETAIL,
+    label: "Detalle Regulación",
+    icon: "BookOpen",
+    requiresAuth: false,
+  },
+  {
     id: SCREENS.GLOSSARY,
     label: "Glosario",
     icon: "BookOpen",
@@ -78,6 +86,12 @@ export const NAVIGATION_ITEMS = [
     label: "IA Asistente",
     icon: "Bot",
     requiresAuth: false,
+  },
+  {
+    id: SCREENS.NOTIFICATIONS,
+    label: "Notificaciones",
+    icon: "Bell",
+    requiresAuth: true,
   },
   {
     id: SCREENS.HELP_CONTACT,

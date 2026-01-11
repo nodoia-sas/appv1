@@ -23,6 +23,8 @@ import PicoYPlaca from "../../components/pico-y-placa";
 import HelpContact from "../../components/help-contact";
 import Terms from "../../components/terms";
 import UnderConstruction from "../../components/under-construction";
+import RegulationDetail from "../../components/regulation-detail";
+import Notifications from "../../components/notifications";
 
 import { SCREENS } from "../utils/constants";
 
@@ -54,6 +56,9 @@ const MainApp = () => {
   const { user, isAuthenticated, isLoading, initializeAuth } = useAuth();
   const { activeScreen, navigate, handleNavClick } = useNavigation();
   const { showNotification, notification } = useNotifications();
+
+  // State for regulation detail (migrated from original transit-app.jsx)
+  const [selectedRegulation, setSelectedRegulation] = useState(null);
 
   // Initialize authentication with Auth0 state
   useEffect(() => {
@@ -112,7 +117,21 @@ const MainApp = () => {
         return <NewsScreen {...screenProps} />;
 
       case SCREENS.REGULATIONS:
-        return <RegulationsScreen {...screenProps} />;
+        return (
+          <RegulationsScreen
+            {...screenProps}
+            setSelectedRegulation={setSelectedRegulation}
+          />
+        );
+
+      case SCREENS.REGULATION_DETAIL:
+        return (
+          <RegulationDetail
+            selectedRegulation={selectedRegulation}
+            setActiveScreen={navigate}
+            setSelectedRegulation={setSelectedRegulation}
+          />
+        );
 
       case SCREENS.GLOSSARY:
         return <GlossaryScreen {...screenProps} />;
@@ -125,6 +144,9 @@ const MainApp = () => {
 
       case SCREENS.AI_ASSIST:
         return <AIAssistScreen {...screenProps} />;
+
+      case SCREENS.NOTIFICATIONS:
+        return <Notifications setActiveScreen={navigate} />;
 
       case SCREENS.PICO_Y_PLACA:
         return <PicoYPlaca setActiveScreen={navigate} />;

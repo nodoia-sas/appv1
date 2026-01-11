@@ -16,9 +16,20 @@ import RegulationDetail from "../../../components/regulation-detail";
  *
  * Requirements: 1.4 - Regulations screen as independent component
  */
-const RegulationsScreen = ({ onNavigate }) => {
-  const [selectedRegulation, setSelectedRegulation] = useState(null);
+const RegulationsScreen = ({
+  onNavigate,
+  selectedRegulation: externalSelectedRegulation,
+  setSelectedRegulation: externalSetSelectedRegulation,
+}) => {
+  const [internalSelectedRegulation, setInternalSelectedRegulation] =
+    useState(null);
   const [currentView, setCurrentView] = useState("main"); // "main" or "detail"
+
+  // Use external state if provided, otherwise use internal state
+  const selectedRegulation =
+    externalSelectedRegulation ?? internalSelectedRegulation;
+  const setSelectedRegulation =
+    externalSetSelectedRegulation ?? setInternalSelectedRegulation;
 
   // Handle regulation selection - navigate to detail view
   const handleSelectRegulation = (regulation) => {

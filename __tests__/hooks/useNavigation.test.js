@@ -319,6 +319,67 @@ describe("useNavigation Hook", () => {
         expect.stringContaining("localhost:3000")
       );
     });
+
+    it("should set URL query parameter", () => {
+      const { result } = renderHook(() => useNavigation());
+
+      act(() => {
+        result.current.setUrlParameter(SCREENS.DOCUMENTS);
+      });
+
+      expect(mockWindow.history.replaceState).toHaveBeenCalledWith(
+        null,
+        "",
+        expect.stringContaining("screen=documents")
+      );
+    });
+
+    it("should set URL hash parameter", () => {
+      const { result } = renderHook(() => useNavigation());
+
+      act(() => {
+        result.current.setUrlParameter(SCREENS.NEWS, true);
+      });
+
+      expect(mockWindow.history.replaceState).toHaveBeenCalledWith(
+        null,
+        "",
+        expect.stringContaining("#news")
+      );
+    });
+
+    it("should clear URL parameters", () => {
+      mockWindow.location.search = "?screen=documents";
+      mockWindow.location.hash = "#test";
+
+      const { result } = renderHook(() => useNavigation());
+
+      act(() => {
+        result.current.clearUrlParameters();
+      });
+
+      expect(mockWindow.history.replaceState).toHaveBeenCalledWith(
+        null,
+        "",
+        expect.not.stringContaining("screen=")
+      );
+    });
+
+    it("should preserve hash when cleaning query parameters (original behavior)", () => {
+      mockWindow.location.search = "?screen=documents";
+      mockWindow.location.hash = "#section1";
+      mockWindow.location.href =
+        "http://localhost:3000?screen=documents#section1";
+
+      renderHook(() => useNavigation());
+
+      // Should preserve hash while removing query parameter
+      expect(mockWindow.history.replaceState).toHaveBeenCalledWith(
+        null,
+        "",
+        expect.stringContaining("#section1")
+      );
+    });
   });
 
   describe("Requirements Validation", () => {

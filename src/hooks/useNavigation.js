@@ -112,6 +112,7 @@ export const useNavigation = () => {
 
   /**
    * Handle URL parameters and deep linking on app initialization
+   * Migrated from original transit-app.jsx URL parameter handling
    */
   const handleDeepLinking = useCallback(() => {
     try {
@@ -127,9 +128,10 @@ export const useNavigation = () => {
           // Navigate to the target screen (with auth checks)
           navigate(targetScreen);
 
-          // Clean up URL parameters
+          // Clean up URL parameters to keep URL clean (preserve original behavior)
           const url = new URL(window.location.href);
           url.searchParams.delete("screen");
+          // Keep hash if present (preserve original behavior)
           window.history.replaceState(
             null,
             "",
@@ -138,9 +140,56 @@ export const useNavigation = () => {
         }
       }
     } catch (error) {
+      // Silently ignore errors (preserve original behavior)
       console.warn("Error handling deep linking:", error);
     }
   }, [navigate]);
+
+  /**
+   * Set URL parameters for deep linking
+   * @param {string} screen - The screen to set in URL parameters
+   * @param {boolean} useHash - Whether to use hash instead of query parameter
+   */
+  const setUrlParameter = useCallback((screen, useHash = false) => {
+    try {
+      if (
+        typeof window !== "undefined" &&
+        Object.values(SCREENS).includes(screen)
+      ) {
+        const url = new URL(window.location.href);
+
+        if (useHash) {
+          // Set hash parameter
+          url.hash = screen;
+          url.searchParams.delete("screen");
+        } else {
+          // Set query parameter
+          url.searchParams.set("screen", screen);
+          url.hash = "";
+        }
+
+        window.history.replaceState(null, "", url.toString());
+      }
+    } catch (error) {
+      console.warn("Error setting URL parameter:", error);
+    }
+  }, []);
+
+  /**
+   * Clear URL parameters
+   */
+  const clearUrlParameters = useCallback(() => {
+    try {
+      if (typeof window !== "undefined") {
+        const url = new URL(window.location.href);
+        url.searchParams.delete("screen");
+        url.hash = "";
+        window.history.replaceState(null, "", url.pathname);
+      }
+    } catch (error) {
+      console.warn("Error clearing URL parameters:", error);
+    }
+  }, []);
 
   /**
    * Initialize deep linking on mount
@@ -201,11 +250,15 @@ export const useNavigation = () => {
     goHome,
     handleNavClick,
 
+    // URL parameter handling
+    handleDeepLinking,
+    setUrlParameter,
+    clearUrlParameters,
+
     // Utility functions
     isProtectedRoute,
     isCurrentScreen,
     getCurrentScreenConfig,
-    handleDeepLinking,
 
     // Computed values
     isOnHomeScreen: activeScreen === SCREENS.HOME,
