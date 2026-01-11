@@ -209,7 +209,7 @@ Este plan implementa la separación del componente monolítico `transit-app.jsx`
 
 - [ ] 7. Implement MainApp component
 
-  - [ ] 7.1 Create new MainApp component
+  - [x] 7.1 Create new MainApp component
 
     - Implement as layout orchestrator (under 150 lines)
     - Integrate all hooks and delegate screen rendering
