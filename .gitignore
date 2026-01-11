@@ -25,6 +25,9 @@ yarn-error.log*
 # VSCODE
 .vscode
 
+# Kiro
+.Kiro/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
