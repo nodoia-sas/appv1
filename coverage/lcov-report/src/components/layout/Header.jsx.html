@@ -25,14 +25,14 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/29</span>
+                <span class='fraction'>0/42</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/6</span>
+                <span class='fraction'>0/11</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/27</span>
+                <span class='fraction'>0/40</span>
             </div>
         
             
@@ -238,8 +238,32 @@
 <a name='L173'></a><a href='#L173'>173</a>
 <a name='L174'></a><a href='#L174'>174</a>
 <a name='L175'></a><a href='#L175'>175</a>
-<a name='L176'></a><a href='#L176'>176</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L176'></a><a href='#L176'>176</a>
+<a name='L177'></a><a href='#L177'>177</a>
+<a name='L178'></a><a href='#L178'>178</a>
+<a name='L179'></a><a href='#L179'>179</a>
+<a name='L180'></a><a href='#L180'>180</a>
+<a name='L181'></a><a href='#L181'>181</a>
+<a name='L182'></a><a href='#L182'>182</a>
+<a name='L183'></a><a href='#L183'>183</a>
+<a name='L184'></a><a href='#L184'>184</a>
+<a name='L185'></a><a href='#L185'>185</a>
+<a name='L186'></a><a href='#L186'>186</a>
+<a name='L187'></a><a href='#L187'>187</a>
+<a name='L188'></a><a href='#L188'>188</a>
+<a name='L189'></a><a href='#L189'>189</a>
+<a name='L190'></a><a href='#L190'>190</a>
+<a name='L191'></a><a href='#L191'>191</a>
+<a name='L192'></a><a href='#L192'>192</a>
+<a name='L193'></a><a href='#L193'>193</a>
+<a name='L194'></a><a href='#L194'>194</a>
+<a name='L195'></a><a href='#L195'>195</a>
+<a name='L196'></a><a href='#L196'>196</a>
+<a name='L197'></a><a href='#L197'>197</a>
+<a name='L198'></a><a href='#L198'>198</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -261,10 +285,30 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -416,11 +460,13 @@
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">"use client";
 &nbsp;
 import { useState, useRef } from <span class="cstat-no" title="statement not covered" >"react";</span>
+import Link from <span class="cstat-no" title="statement not covered" >"next/link";</span>
+import { useNavigationCompat } from <span class="cstat-no" title="statement not covered" >"../../../lib/navigation";</span>
 import * as Icons from <span class="cstat-no" title="statement not covered" >"../../../components/icons";</span>
 &nbsp;
 /**
  * Header component that displays the app title, user menu, and notifications button
- * Extracted from the monolithic transit-app.jsx component
+ * Updated to use Next.js navigation and the new navigation system
  *
  * @param {Object} props - Component props
  * @param {Object|null} props.user - Current user object (null if not authenticated)
@@ -436,10 +482,30 @@ const Header = <span class="cstat-no" title="statement not covered" ><span class
 }) =&gt; {
   const [showLoginDropdown, setShowLoginDropdown] = <span class="cstat-no" title="statement not covered" >useState(false);</span>
   const loginButtonRef = <span class="cstat-no" title="statement not covered" >useRef(null);</span>
+  const { navigate } = <span class="cstat-no" title="statement not covered" >useNavigationCompat();</span>
 &nbsp;
   const handleMenuItemClick = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(a</span>ction) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    setShowLoginDropdown(false);</span>
-<span class="cstat-no" title="statement not covered" >    onMenuClick(action);</span>
+&nbsp;
+    // Handle navigation actions using the new navigation system
+<span class="cstat-no" title="statement not covered" >    switch (action) {</span>
+      case "my-profile":
+<span class="cstat-no" title="statement not covered" >        navigate("my-profile");</span>
+<span class="cstat-no" title="statement not covered" >        break;</span>
+      case "documents":
+<span class="cstat-no" title="statement not covered" >        navigate("documents");</span>
+<span class="cstat-no" title="statement not covered" >        break;</span>
+      case "help-contact":
+<span class="cstat-no" title="statement not covered" >        navigate("help-contact");</span>
+<span class="cstat-no" title="statement not covered" >        break;</span>
+      case "terms":
+<span class="cstat-no" title="statement not covered" >        navigate("terms");</span>
+<span class="cstat-no" title="statement not covered" >        break;</span>
+      default:
+        // For non-navigation actions, delegate to parent
+<span class="cstat-no" title="statement not covered" >        onMenuClick(action);</span>
+<span class="cstat-no" title="statement not covered" >        break;</span>
+    }
   };
 &nbsp;
   const handleNotificationClick = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >() =&gt; {</span></span>
@@ -467,7 +533,7 @@ const Header = <span class="cstat-no" title="statement not covered" ><span class
             &lt;span&gt;Mi cuenta&lt;/span&gt;
           &lt;/button&gt;
         ) : (
-          &lt;a
+          &lt;Link
             ref={loginButtonRef}
             href="/api/auth/login"
             className="flex items-center space-x-2 px-3 py-2 rounded-full bg-blue-700 hover:bg-blue-800 transition-colors duration-200 text-sm font-semibold shadow-md"
@@ -475,7 +541,7 @@ const Header = <span class="cstat-no" title="statement not covered" ><span class
           &gt;
             &lt;Icons.LogInIcon className="w-5 h-5" /&gt;
             &lt;span&gt;Login&lt;/span&gt;
-          &lt;/a&gt;
+          &lt;/Link&gt;
         )}
         {<span class="branch-0 cbranch-no" title="branch not covered" >showLoginDropdown &amp;&amp; (</span>
           &lt;div
@@ -527,14 +593,14 @@ const Header = <span class="cstat-no" title="statement not covered" ><span class
                   &lt;span&gt;Configuración API&lt;/span&gt;
                 &lt;/button&gt;
                 &lt;div className="border-t border-gray-200 my-1"&gt;&lt;/div&gt;
-                &lt;a
+                &lt;Link
                   href="/api/auth/logout"
                   className="w-full flex items-center space-x-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50"
                   onClick={<span class="fstat-no" title="function not covered" >() =&gt; <span class="cstat-no" title="statement not covered" >s</span>etShowLoginDropdown(false)}</span>
                 &gt;
                   &lt;Icons.LogInIcon className="w-4 h-4 transform rotate-180" /&gt;
                   &lt;span&gt;Cerrar Sesión&lt;/span&gt;
-                &lt;/a&gt;
+                &lt;/Link&gt;
               &lt;/&gt;
             ) : (
               &lt;&gt;
@@ -595,7 +661,7 @@ const Header = <span class="cstat-no" title="statement not covered" ><span class
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-01-11T15:55:40.449Z
+                at 2026-01-11T19:39:55.260Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

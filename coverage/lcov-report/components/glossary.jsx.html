@@ -25,14 +25,14 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/5</span>
+                <span class='fraction'>0/8</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/2</span>
+                <span class='fraction'>0/5</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/5</span>
+                <span class='fraction'>0/8</span>
             </div>
         
             
@@ -136,7 +136,19 @@
 <a name='L71'></a><a href='#L71'>71</a>
 <a name='L72'></a><a href='#L72'>72</a>
 <a name='L73'></a><a href='#L73'>73</a>
-<a name='L74'></a><a href='#L74'>74</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L74'></a><a href='#L74'>74</a>
+<a name='L75'></a><a href='#L75'>75</a>
+<a name='L76'></a><a href='#L76'>76</a>
+<a name='L77'></a><a href='#L77'>77</a>
+<a name='L78'></a><a href='#L78'>78</a>
+<a name='L79'></a><a href='#L79'>79</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -150,8 +162,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -210,25 +220,30 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">"use client";
-import React from <span class="cstat-no" title="statement not covered" >"react";</span>
+import React, { useState } from <span class="cstat-no" title="statement not covered" >"react";</span>
+import Link from <span class="cstat-no" title="statement not covered" >"next/link";</span>
 &nbsp;
-export default function <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >Glossary({</span></span>
-  glossarySearchTerm,
-  setGlossarySearchTerm,
-  filteredGlossaryTerms,
-  setActiveScreen,
-}) {
+export default function <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >Glossary({</span></span> initialTerms = <span class="branch-0 cbranch-no" title="branch not covered" >[] </span>}) {
+  const [glossarySearchTerm, setGlossarySearchTerm] = <span class="cstat-no" title="statement not covered" >useState("");</span>
+&nbsp;
+  // Filter terms based on search
+  const filteredGlossaryTerms = <span class="cstat-no" title="statement not covered" >initialTerms.filter(</span>
+<span class="fstat-no" title="function not covered" >    (t</span>erm) =&gt;
+<span class="cstat-no" title="statement not covered" >      term.term.toLowerCase().includes(glossarySearchTerm.toLowerCase()) ||</span>
+      term.explanation.toLowerCase().includes(glossarySearchTerm.toLowerCase())
+  );
+&nbsp;
   return (
     &lt;div className="p-6"&gt;
       &lt;h2 className="text-2xl font-bold text-gray-800 mb-6 text-center"&gt;
         Glosario de Tránsito
       &lt;/h2&gt;
-      &lt;button
-        onClick={<span class="fstat-no" title="function not covered" >() =&gt; <span class="cstat-no" title="statement not covered" >s</span>etActiveScreen("home")}</span>
-        className="mb-4 bg-gray-300 text-gray-800 py-2 px-4 rounded-full text-sm hover:bg-gray-400 transition-colors duration-200 shadow-md"
+      &lt;Link
+        href="/"
+        className="mb-4 bg-gray-300 text-gray-800 py-2 px-4 rounded-full text-sm hover:bg-gray-400 transition-colors duration-200 shadow-md inline-block"
       &gt;
         ← Volver al Inicio
-      &lt;/button&gt;
+      &lt;/Link&gt;
       &lt;div className="relative mb-6"&gt;
         &lt;input
           type="text"
@@ -289,7 +304,7 @@ export default function <span class="cstat-no" title="statement not covered" ><s
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-01-11T15:55:40.449Z
+                at 2026-01-11T19:39:55.260Z
             </div>
         <script src="../prettify.js"></script>
         <script>

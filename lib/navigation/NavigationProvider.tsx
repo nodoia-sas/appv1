@@ -45,6 +45,26 @@ const SCREEN_TO_ROUTE_MAP: Record<string, string> = {
   [SCREENS.TERMS]: "/terms",
   [SCREENS.PICO_Y_PLACA]: "/pico-y-placa",
   [SCREENS.UNDER_CONSTRUCTION]: "/under-construction",
+
+  // Additional legacy screen names for compatibility
+  home: "/",
+  "my-profile": "/profile",
+  documents: "/documents",
+  news: "/news",
+  "regulations-main": "/regulations",
+  "regulation-detail": "/regulations",
+  glossary: "/glossary",
+  quiz: "/quiz",
+  pqr: "/pqr",
+  "ai-assist": "/ai-assist",
+  notifications: "/notifications",
+  "help-contact": "/help-contact",
+  terms: "/terms",
+  "pico-y-placa": "/pico-y-placa",
+  "under-construction": "/under-construction",
+  profile: "/profile",
+  regulations: "/regulations",
+  favorites: "/", // Favorites was mapped to home in legacy system
 };
 
 // Route to screen mapping for reverse compatibility

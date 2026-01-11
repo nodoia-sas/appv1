@@ -5,6 +5,7 @@ import { useUser } from "@auth0/nextjs-auth0/client";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigation } from "../hooks/useNavigation";
 import { useNotifications } from "../hooks/useNotifications";
+import { useLegacyMigration } from "../../lib/migration";
 import Layout from "./layout/Layout";
 
 // Screen Components
@@ -36,13 +37,17 @@ import { SCREENS } from "../utils/constants";
  * specialized screen components. It replaces the monolithic transit-app.jsx
  * while maintaining all existing functionality.
  *
+ * MIGRATION NOTE: Enhanced with legacy migration support to handle the transition
+ * from state-based navigation to route-based navigation seamlessly.
+ *
  * Key responsibilities:
  * - Integrate authentication, navigation, and notification hooks
+ * - Handle legacy navigation migration and compatibility
  * - Delegate screen rendering to appropriate components
  * - Handle layout composition through Layout component
  * - Maintain under 150 lines of code as layout orchestrator
  *
- * Requirements: 4.1, 4.2, 4.3, 4.4, 4.6
+ * Requirements: 4.1, 4.2, 4.3, 4.4, 4.6, 10.5, 10.6
  */
 const MainApp = () => {
   // Get Auth0 state
@@ -54,8 +59,12 @@ const MainApp = () => {
 
   // Integrate all custom hooks
   const { user, isAuthenticated, isLoading, initializeAuth } = useAuth();
-  const { activeScreen, navigate, handleNavClick } = useNavigation();
+  const { activeScreen, navigate, handleNavClick, legacyMigration } =
+    useNavigation();
   const { showNotification, notification } = useNotifications();
+
+  // Legacy migration hook for enhanced compatibility
+  const migration = useLegacyMigration();
 
   // State for regulation detail (migrated from original transit-app.jsx)
   const [selectedRegulation, setSelectedRegulation] = useState(null);
@@ -64,6 +73,12 @@ const MainApp = () => {
   useEffect(() => {
     initializeAuth(auth0User, auth0Loading, auth0Error);
   }, [auth0User, auth0Loading, auth0Error, initializeAuth]);
+
+  // Initialize legacy migration system
+  useEffect(() => {
+    // Handle any legacy URL parameters or state migration
+    migration.handleUrlParameterMigration();
+  }, [migration]);
 
   // Add a timeout for loading state to prevent infinite loading
   const [loadingTimeout, setLoadingTimeout] = useState(false);
@@ -85,6 +100,7 @@ const MainApp = () => {
       isAuthenticated,
       activeScreen,
       loadingTimeout,
+      migrationState: migration.migrationState,
     });
   }, [
     auth0Loading,
@@ -94,14 +110,20 @@ const MainApp = () => {
     isAuthenticated,
     activeScreen,
     loadingTimeout,
+    migration.migrationState,
   ]);
 
   /**
    * Renders the appropriate screen component based on activeScreen
+   * Enhanced with legacy migration support
    * Delegates all screen rendering to specialized components
    */
   const renderScreen = () => {
-    const screenProps = { onNavigate: navigate };
+    const screenProps = {
+      onNavigate: navigate,
+      // Provide legacy compatibility functions
+      setActiveScreen: migration.setActiveScreen,
+    };
 
     switch (activeScreen) {
       case SCREENS.HOME:
@@ -128,7 +150,7 @@ const MainApp = () => {
         return (
           <RegulationDetail
             selectedRegulation={selectedRegulation}
-            setActiveScreen={navigate}
+            setActiveScreen={migration.setActiveScreen} // Use migration-compatible function
             setSelectedRegulation={setSelectedRegulation}
           />
         );
@@ -146,21 +168,21 @@ const MainApp = () => {
         return <AIAssistScreen {...screenProps} />;
 
       case SCREENS.NOTIFICATIONS:
-        return <Notifications setActiveScreen={navigate} />;
+        return <Notifications setActiveScreen={migration.setActiveScreen} />;
 
       case SCREENS.PICO_Y_PLACA:
-        return <PicoYPlaca setActiveScreen={navigate} />;
+        return <PicoYPlaca setActiveScreen={migration.setActiveScreen} />;
 
       case SCREENS.HELP_CONTACT:
-        return <HelpContact setActiveScreen={navigate} />;
+        return <HelpContact setActiveScreen={migration.setActiveScreen} />;
 
       case SCREENS.TERMS:
-        return <Terms setActiveScreen={navigate} />;
+        return <Terms setActiveScreen={migration.setActiveScreen} />;
 
       case SCREENS.UNDER_CONSTRUCTION:
         return (
           <UnderConstruction
-            setActiveScreen={navigate}
+            setActiveScreen={migration.setActiveScreen}
             showNotification={showNotification}
           />
         );
