@@ -58,19 +58,31 @@ const HomeScreen = () => {
           </span>
         </div>
         <Link
-          href="/news"
+          //href="/news"
+          href="/under-construction"
           className="flex flex-col items-center justify-center p-3 rounded-xl shadow-lg cursor-pointer transition-all duration-200 transform hover:scale-105 bg-gradient-to-br from-purple-500 to-purple-700 text-white"
+          aria-label="Noticias - Próximamente"
+          title="Noticias - Próximamente"
         >
           <Icons.NewspaperIcon className="w-8 h-8 mb-2" />
           <span className="text-base font-semibold text-center">Noticias</span>
+          <span className="mt-2 text-xs bg-yellow-200 text-yellow-800 px-2 py-1 rounded-full">
+            Próximamente
+          </span>
         </Link>
         <Link
-          href="/quiz"
+          //href="/quiz"
+          href="/under-construction"
           className="flex flex-col items-center justify-center p-3 rounded-xl shadow-lg cursor-pointer transition-all duration-200 transform hover:scale-105 bg-gradient-to-br from-teal-500 to-teal-700 text-white"
+          aria-label="Quiz - Próximamente"
+          title="Quiz - Próximamente"
         >
           <Icons.ListChecksIcon className="w-8 h-8 mb-2" />
           <span className="text-base font-semibold text-center">
             Quiz de Tránsito
+          </span>
+          <span className="mt-2 text-xs bg-yellow-200 text-yellow-800 px-2 py-1 rounded-full">
+            Próximamente
           </span>
         </Link>
         <Link
@@ -90,11 +102,17 @@ const HomeScreen = () => {
           <span className="text-base font-semibold text-center">Glosario</span>
         </Link>
         <Link
-          href="/pqr"
+          //href="/pqr"
+          href="/under-construction"
           className="flex flex-col items-center justify-center p-3 rounded-xl shadow-lg cursor-pointer transition-all duration-200 transform hover:scale-105 bg-gradient-to-br from-pink-500 to-pink-700 text-white"
+          aria-label="PQR - Próximamente"
+          title="PQR - Próximamente"
         >
           <Icons.MessageSquareTextIcon className="w-8 h-8 mb-2" />
           <span className="text-base font-semibold text-center">PQR</span>
+          <span className="mt-2 text-xs bg-yellow-200 text-yellow-800 px-2 py-1 rounded-full">
+            Próximamente
+          </span>
         </Link>
       </div>
     </div>

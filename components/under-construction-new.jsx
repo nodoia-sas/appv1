@@ -84,26 +84,28 @@ const UnderConstructionComponent = () => {
         {/* Quick links to available features */}
         <div className="flex flex-wrap justify-center gap-3">
           <Link
-            href="/news"
-            className="px-4 py-2 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+            //href="/news"
+            href="/under-construction"
+            className="px-2 py-1 bg-purple-500 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-200 min-w-[140px]"
           >
             📰 Noticias
           </Link>
           <Link
             href="/regulations"
-            className="px-4 py-2 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+            className="px-4 py-2 bg-indigo-500 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-200 min-w-[140px]"
           >
             📋 Normatividad
           </Link>
           <Link
             href="/glossary"
-            className="px-4 py-2 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+            className="px-4 py-2 bg-cyan-500 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-200 min-w-[140px]"
           >
             📖 Glosario
           </Link>
           <Link
-            href="/quiz"
-            className="px-4 py-2 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+            //href="/quiz"
+            href="/under-construction"
+            className="px-4 py-2 text-sm bg-teal-500 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-200 min-w-[140px]"
           >
             🎯 Quiz
           </Link>
