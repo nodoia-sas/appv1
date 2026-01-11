@@ -120,22 +120,40 @@ export const useAppStore = create(
       storage: createJSONStorage(() => {
         // Gracefully handle localStorage unavailability
         try {
+          // Test if localStorage is available and working
+          const testKey = "__transitia_storage_test__";
+          localStorage.setItem(testKey, "test");
+          localStorage.removeItem(testKey);
           return localStorage;
         } catch (error) {
-          console.warn("localStorage not available, using memory storage");
+          console.warn(
+            "localStorage not available, using memory storage:",
+            error.message
+          );
+          // Return a memory-based storage fallback
+          const memoryStorage = new Map();
           return {
-            getItem: () => null,
-            setItem: () => {},
-            removeItem: () => {},
+            getItem: (key) => {
+              const value = memoryStorage.get(key);
+              return value !== undefined ? value : null;
+            },
+            setItem: (key, value) => {
+              memoryStorage.set(key, value);
+            },
+            removeItem: (key) => {
+              memoryStorage.delete(key);
+            },
           };
         }
       }),
-      // Only persist critical state
+      // Only persist critical state (user and navigation)
       partialize: (state) => ({
         user: state.user,
         isAuthenticated: state.isAuthenticated,
         navigation: {
           activeScreen: state.navigation.activeScreen,
+          // Don't persist full history to avoid deep navigation on reload
+          // but preserve the current screen for better UX
         },
       }),
     }

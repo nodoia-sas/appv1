@@ -227,13 +227,13 @@ Este plan implementa la separación del componente monolítico `transit-app.jsx`
     - Verify line count constraint (under 150 lines)
     - _Requirements: 4.1, 4.4_
 
-- [ ] 8. Checkpoint - Ensure component integration tests pass
+- [x] 8. Checkpoint - Ensure component integration tests pass
 
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 9. Implement state persistence
 
-  - [ ] 9.1 Add localStorage persistence to Zustand store
+  - [x] 9.1 Add localStorage persistence to Zustand store
 
     - Implement persistence for critical state (user, navigation)
     - Handle localStorage unavailability gracefully

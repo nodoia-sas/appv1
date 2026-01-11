@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1768058318616" clover="3.2.0">
-  <project timestamp="1768058318616" name="All files">
-    <metrics statements="1357" coveredstatements="52" conditionals="761" coveredconditionals="46" methods="403" coveredmethods="14" elements="2521" coveredelements="112" complexity="0" loc="1357" ncloc="1357" packages="7" files="42" classes="42"/>
+<coverage generated="1768099670050" clover="3.2.0">
+  <project timestamp="1768099670051" name="All files">
+    <metrics statements="1465" coveredstatements="52" conditionals="802" coveredconditionals="46" methods="426" coveredmethods="14" elements="2693" coveredelements="112" complexity="0" loc="1465" ncloc="1465" packages="9" files="53" classes="53"/>
     <package name="components">
       <metrics statements="546" coveredstatements="0" conditionals="312" coveredconditionals="0" methods="177" coveredmethods="0"/>
       <file name="ai-assist.jsx" path="/home/antoniovargas/projects/laboral/NodoIA/Proyectos/Transit-IA/CodigosFuentes/appv1/components/ai-assist.jsx">
@@ -902,8 +902,54 @@
         <line num="85" count="0" type="stmt"/>
       </file>
     </package>
+    <package name="src.components">
+      <metrics statements="40" coveredstatements="0" conditionals="12" coveredconditionals="0" methods="5" coveredmethods="0"/>
+      <file name="MainApp.jsx" path="/home/antoniovargas/projects/laboral/NodoIA/Proyectos/Transit-IA/CodigosFuentes/appv1/src/components/MainApp.jsx">
+        <metrics statements="40" coveredstatements="0" conditionals="12" coveredconditionals="0" methods="5" coveredmethods="0"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="43" count="0" type="stmt"/>
+        <line num="45" count="0" type="stmt"/>
+        <line num="46" count="0" type="stmt"/>
+        <line num="47" count="0" type="stmt"/>
+        <line num="50" count="0" type="stmt"/>
+        <line num="52" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="53" count="0" type="stmt"/>
+        <line num="65" count="0" type="stmt"/>
+        <line num="66" count="0" type="stmt"/>
+        <line num="68" count="0" type="stmt"/>
+        <line num="124" count="0" type="stmt"/>
+        <line num="125" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="127" count="0" type="stmt"/>
+        <line num="128" count="0" type="stmt"/>
+        <line num="131" count="0" type="stmt"/>
+        <line num="134" count="0" type="stmt"/>
+        <line num="136" count="0" type="stmt"/>
+        <line num="143" count="0" type="stmt"/>
+        <line num="145" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="147" count="0" type="stmt"/>
+        <line num="152" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="178" count="0" type="stmt"/>
+      </file>
+    </package>
     <package name="src.components.layout">
-      <metrics statements="47" coveredstatements="0" conditionals="12" coveredconditionals="0" methods="24" coveredmethods="0"/>
+      <metrics statements="65" coveredstatements="0" conditionals="19" coveredconditionals="0" methods="28" coveredmethods="0"/>
       <file name="BottomNavigation.jsx" path="/home/antoniovargas/projects/laboral/NodoIA/Proyectos/Transit-IA/CodigosFuentes/appv1/src/components/layout/BottomNavigation.jsx">
         <metrics statements="11" coveredstatements="0" conditionals="6" coveredconditionals="0" methods="4" coveredmethods="0"/>
         <line num="3" count="0" type="stmt"/>
@@ -917,6 +963,23 @@
         <line num="34" count="0" type="stmt"/>
         <line num="44" count="0" type="stmt"/>
         <line num="56" count="0" type="stmt"/>
+      </file>
+      <file name="BottomNavigationExample.jsx" path="/home/antoniovargas/projects/laboral/NodoIA/Proyectos/Transit-IA/CodigosFuentes/appv1/src/components/layout/BottomNavigationExample.jsx">
+        <metrics statements="14" coveredstatements="0" conditionals="5" coveredconditionals="0" methods="3" coveredmethods="0"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="9" count="0" type="cond" truecount="0" falsecount="1"/>
+        <line num="10" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="29" count="0" type="stmt"/>
+        <line num="53" count="0" type="stmt"/>
       </file>
       <file name="Header.jsx" path="/home/antoniovargas/projects/laboral/NodoIA/Proyectos/Transit-IA/CodigosFuentes/appv1/src/components/layout/Header.jsx">
         <metrics statements="27" coveredstatements="0" conditionals="6" coveredconditionals="0" methods="17" coveredmethods="0"/>
@@ -959,6 +1022,90 @@
         <line num="11" count="0" type="stmt"/>
         <line num="14" count="0" type="stmt"/>
         <line num="44" count="0" type="stmt"/>
+      </file>
+      <file name="Layout.jsx" path="/home/antoniovargas/projects/laboral/NodoIA/Proyectos/Transit-IA/CodigosFuentes/appv1/src/components/layout/Layout.jsx">
+        <metrics statements="4" coveredstatements="0" conditionals="2" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="59" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.components.screens">
+      <metrics statements="50" coveredstatements="0" conditionals="22" coveredconditionals="0" methods="14" coveredmethods="0"/>
+      <file name="AIAssistScreen.jsx" path="/home/antoniovargas/projects/laboral/NodoIA/Proyectos/Transit-IA/CodigosFuentes/appv1/src/components/screens/AIAssistScreen.jsx">
+        <metrics statements="3" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="18" count="0" type="stmt"/>
+      </file>
+      <file name="DocumentsScreen.jsx" path="/home/antoniovargas/projects/laboral/NodoIA/Proyectos/Transit-IA/CodigosFuentes/appv1/src/components/screens/DocumentsScreen.jsx">
+        <metrics statements="3" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="22" count="0" type="stmt"/>
+      </file>
+      <file name="GlossaryScreen.jsx" path="/home/antoniovargas/projects/laboral/NodoIA/Proyectos/Transit-IA/CodigosFuentes/appv1/src/components/screens/GlossaryScreen.jsx">
+        <metrics statements="3" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="22" count="0" type="stmt"/>
+      </file>
+      <file name="NewsScreen.jsx" path="/home/antoniovargas/projects/laboral/NodoIA/Proyectos/Transit-IA/CodigosFuentes/appv1/src/components/screens/NewsScreen.jsx">
+        <metrics statements="3" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="22" count="0" type="stmt"/>
+      </file>
+      <file name="PQRScreen.jsx" path="/home/antoniovargas/projects/laboral/NodoIA/Proyectos/Transit-IA/CodigosFuentes/appv1/src/components/screens/PQRScreen.jsx">
+        <metrics statements="5" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+      </file>
+      <file name="ProfileScreen.jsx" path="/home/antoniovargas/projects/laboral/NodoIA/Proyectos/Transit-IA/CodigosFuentes/appv1/src/components/screens/ProfileScreen.jsx">
+        <metrics statements="11" coveredstatements="0" conditionals="17" coveredconditionals="0" methods="4" coveredmethods="0"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="28" count="0" type="stmt"/>
+        <line num="29" count="0" type="stmt"/>
+        <line num="126" count="0" type="stmt"/>
+        <line num="150" count="0" type="stmt"/>
+      </file>
+      <file name="QuizScreen.jsx" path="/home/antoniovargas/projects/laboral/NodoIA/Proyectos/Transit-IA/CodigosFuentes/appv1/src/components/screens/QuizScreen.jsx">
+        <metrics statements="3" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="22" count="0" type="stmt"/>
+      </file>
+      <file name="RegulationsScreen.jsx" path="/home/antoniovargas/projects/laboral/NodoIA/Proyectos/Transit-IA/CodigosFuentes/appv1/src/components/screens/RegulationsScreen.jsx">
+        <metrics statements="19" coveredstatements="0" conditionals="5" coveredconditionals="0" methods="4" coveredmethods="0"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="24" count="0" type="stmt"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="37" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="38" count="0" type="stmt"/>
+        <line num="39" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="40" count="0" type="stmt"/>
+        <line num="43" count="0" type="stmt"/>
+        <line num="65" count="0" type="stmt"/>
       </file>
     </package>
     <package name="src.hooks">
@@ -1303,25 +1450,25 @@
         <metrics statements="45" coveredstatements="45" conditionals="48" coveredconditionals="46" methods="13" coveredmethods="13"/>
         <line num="12" count="1" type="stmt"/>
         <line num="13" count="1" type="stmt"/>
-        <line num="29" count="209" type="cond" truecount="4" falsecount="0"/>
+        <line num="29" count="191" type="cond" truecount="4" falsecount="0"/>
         <line num="30" count="3" type="stmt"/>
-        <line num="34" count="206" type="stmt"/>
-        <line num="37" count="206" type="stmt"/>
-        <line num="39" count="206" type="stmt"/>
-        <line num="55" count="214" type="cond" truecount="4" falsecount="0"/>
+        <line num="34" count="188" type="stmt"/>
+        <line num="37" count="188" type="stmt"/>
+        <line num="39" count="188" type="stmt"/>
+        <line num="55" count="196" type="cond" truecount="4" falsecount="0"/>
         <line num="56" count="3" type="stmt"/>
-        <line num="59" count="211" type="stmt"/>
-        <line num="61" count="211" type="cond" truecount="2" falsecount="0"/>
+        <line num="59" count="193" type="stmt"/>
+        <line num="61" count="193" type="cond" truecount="2" falsecount="0"/>
         <line num="62" count="1" type="stmt"/>
-        <line num="65" count="210" type="stmt"/>
-        <line num="74" count="214" type="cond" truecount="4" falsecount="0"/>
+        <line num="65" count="192" type="stmt"/>
+        <line num="74" count="196" type="cond" truecount="4" falsecount="0"/>
         <line num="75" count="3" type="stmt"/>
-        <line num="79" count="211" type="cond" truecount="2" falsecount="0"/>
+        <line num="79" count="193" type="cond" truecount="2" falsecount="0"/>
         <line num="80" count="2" type="stmt"/>
-        <line num="83" count="209" type="cond" truecount="2" falsecount="0"/>
+        <line num="83" count="191" type="cond" truecount="2" falsecount="0"/>
         <line num="84" count="1" type="stmt"/>
-        <line num="87" count="208" type="stmt"/>
-        <line num="95" count="206" type="stmt"/>
+        <line num="87" count="190" type="stmt"/>
+        <line num="95" count="188" type="stmt"/>
         <line num="107" count="4" type="cond" truecount="2" falsecount="0"/>
         <line num="110" count="3" type="stmt"/>
         <line num="113" count="3" type="cond" truecount="4" falsecount="0"/>
@@ -1339,11 +1486,11 @@
         <line num="174" count="5" type="cond" truecount="2" falsecount="0"/>
         <line num="183" count="5" type="stmt"/>
         <line num="190" count="5" type="cond" truecount="2" falsecount="0"/>
-        <line num="199" count="105" type="cond" truecount="4" falsecount="0"/>
+        <line num="199" count="83" type="cond" truecount="4" falsecount="0"/>
         <line num="200" count="1" type="stmt"/>
-        <line num="203" count="104" type="stmt"/>
-        <line num="205" count="104" type="stmt"/>
-        <line num="208" count="413" type="cond" truecount="3" falsecount="0"/>
+        <line num="203" count="82" type="stmt"/>
+        <line num="205" count="82" type="stmt"/>
+        <line num="208" count="325" type="cond" truecount="3" falsecount="0"/>
         <line num="221" count="1" type="stmt"/>
         <line num="222" count="21" type="stmt"/>
       </file>
