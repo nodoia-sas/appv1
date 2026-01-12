@@ -2,7 +2,7 @@
 
 import type React from "react";
 import Header from "@/src/components/layout/Header";
-import BreadcrumbSystem from "@/components/BreadcrumbSystem";
+import { BreadcrumbSystem } from "@/shared/components";
 import { OfflineIndicator } from "@/lib/pwa";
 import { useNavigationCompat } from "@/lib/navigation";
 
@@ -56,7 +56,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
+    <div className="min-h-screen bg-white text-slate-900 flex flex-col">
       {/* Offline Indicator */}
       <OfflineIndicator showDetails={true} position="top" />
 
@@ -70,7 +70,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
 
       {/* Main content area with proper spacing for fixed header */}
       <main
-        className="flex-1 pt-20 px-4 md:px-6 max-w-md md:max-w-2xl lg:max-w-3xl mx-auto w-full"
+        className="flex-1 pt-20 px-4 md:px-6 max-w-md md:max-w-2xl lg:max-w-3xl mx-auto w-full bg-white"
         style={{
           paddingTop: "calc(5rem + env(safe-area-inset-top))",
         }}
@@ -82,22 +82,24 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
       </main>
 
       {/* Public Footer */}
-      <footer className="bg-card border-t border-border py-6 px-4 md:px-6">
+      <footer className="bg-white border-t border-slate-200 py-6 px-4 md:px-6">
         <div className="max-w-md md:max-w-2xl lg:max-w-3xl mx-auto">
-          <div className="text-center text-sm text-muted-foreground">
+          <div className="text-center text-sm text-slate-500">
             <p className="mb-2">
               © 2024 TransitIA - Tu asesor inteligente de tránsito
             </p>
             <div className="flex justify-center space-x-4">
               <button
+                key="terms"
                 onClick={() => navigate("terms")}
-                className="text-primary hover:text-primary/80 transition-colors"
+                className="text-indigo-600 hover:text-indigo-500 transition-colors"
               >
                 Términos y Privacidad
               </button>
               <button
+                key="help-contact"
                 onClick={() => navigate("help-contact")}
-                className="text-primary hover:text-primary/80 transition-colors"
+                className="text-indigo-600 hover:text-indigo-500 transition-colors"
               >
                 Ayuda y Contacto
               </button>

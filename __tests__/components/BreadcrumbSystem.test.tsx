@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import BreadcrumbSystem from "@/components/BreadcrumbSystem";
+import { BreadcrumbSystem } from "@/shared/components";
 import { useNavigation } from "@/lib/navigation";
 
 // Mock the navigation hook

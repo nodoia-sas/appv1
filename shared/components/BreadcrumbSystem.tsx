@@ -101,7 +101,7 @@ export function BreadcrumbSystem({
   return (
     <nav
       className={cn(
-        "flex items-center space-x-1 text-sm text-gray-600 py-2 px-4",
+        "flex items-center space-x-1 text-sm text-gray-600 py-2 px-4 bg-white",
         "overflow-x-auto scrollbar-hide", // Mobile scroll
         className
       )}
@@ -134,8 +134,8 @@ export function BreadcrumbSystem({
                     "min-w-0 shrink-0", // Prevent text overflow
                     isLast
                       ? "text-gray-900 font-medium cursor-default"
-                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-100 cursor-pointer",
-                    "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+                      : "text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 cursor-pointer",
+                    "focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1"
                   )}
                   aria-current={isLast ? "page" : undefined}
                   title={crumb.label}
@@ -189,14 +189,14 @@ export function CompactBreadcrumbSystem({ className }: { className?: string }) {
 
   return (
     <nav
-      className={cn("flex items-center text-sm", className)}
+      className={cn("flex items-center text-sm bg-white", className)}
       aria-label="Breadcrumb"
     >
       {parentPage && (
         <>
           <button
             onClick={() => navigate(parentPage.path)}
-            className="text-gray-600 hover:text-gray-900 transition-colors flex items-center"
+            className="text-gray-600 hover:text-indigo-600 transition-colors flex items-center"
           >
             <ChevronRightIcon className="h-4 w-4 rotate-180 mr-1" />
             {parentPage.label}

@@ -1,0 +1,10 @@
+# Features Directory
+
+This directory contains feature-based modules organized by business domain.
+
+Each feature should follow the standard structure:
+- /components - Feature-specific UI components
+- /hooks - Custom hooks for the feature
+- /services - Business logic and API interactions
+- /types - TypeScript type definitions
+- index.ts - Barrel export for public API

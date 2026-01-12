@@ -27,14 +27,14 @@ const UnderConstructionComponent = () => {
   };
 
   return (
-    <div className="py-8">
+    <div className="py-8 bg-background min-h-screen">
       {/* Main content card - consistent with platform styling */}
-      <div className="bg-white rounded-xl shadow-lg p-8 text-center">
+      <div className="bg-white rounded-xl shadow-lg p-8 text-center border border-slate-200">
         {/* Icon or illustration area */}
         <div className="mb-6">
-          <div className="w-16 h-16 mx-auto bg-orange-100 rounded-full flex items-center justify-center">
+          <div className="w-16 h-16 mx-auto bg-indigo-100 rounded-full flex items-center justify-center">
             <svg
-              className="w-8 h-8 text-orange-600"
+              className="w-8 h-8 text-indigo-600"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -50,10 +50,10 @@ const UnderConstructionComponent = () => {
         </div>
 
         {/* Title and description */}
-        <h1 className="text-2xl font-bold text-gray-900 mb-4">
+        <h1 className="text-2xl font-bold text-slate-900 mb-4">
           Módulo en construcción
         </h1>
-        <p className="text-gray-600 mb-8 max-w-md mx-auto">
+        <p className="text-slate-600 mb-8 max-w-md mx-auto">
           Estamos trabajando en esta funcionalidad. Pronto estará disponible con
           contenido actualizado y nuevas características.
         </p>
@@ -62,13 +62,13 @@ const UnderConstructionComponent = () => {
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <Link
             href="/"
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-200 min-w-[140px]"
+            className="px-6 py-3 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 transition-colors duration-200 min-w-[140px] shadow-sm"
           >
             Volver al inicio
           </Link>
           <button
             onClick={handleSubscribe}
-            className="px-6 py-3 bg-gray-100 text-gray-800 rounded-lg font-medium hover:bg-gray-200 transition-colors duration-200 min-w-[140px]"
+            className="px-6 py-3 bg-slate-100 text-slate-800 rounded-lg font-medium hover:bg-slate-200 transition-colors duration-200 min-w-[140px] border border-slate-200"
           >
             Avisarme cuando esté listo
           </button>
@@ -77,7 +77,7 @@ const UnderConstructionComponent = () => {
 
       {/* Additional info section */}
       <div className="mt-8 text-center">
-        <p className="text-sm text-gray-500 mb-4">
+        <p className="text-sm text-slate-500 mb-4">
           Mientras tanto, puedes explorar otras funcionalidades disponibles:
         </p>
 
@@ -86,26 +86,26 @@ const UnderConstructionComponent = () => {
           <Link
             //href="/news"
             href="/under-construction"
-            className="px-2 py-1 bg-purple-500 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-200 min-w-[140px]"
+            className="px-4 py-2 bg-purple-500 text-white rounded-lg font-semibold hover:bg-purple-600 transition-colors duration-200 min-w-[140px] shadow-sm"
           >
             📰 Noticias
           </Link>
           <Link
             href="/regulations"
-            className="px-4 py-2 bg-indigo-500 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-200 min-w-[140px]"
+            className="px-4 py-2 bg-indigo-500 text-white rounded-lg font-semibold hover:bg-indigo-600 transition-colors duration-200 min-w-[140px] shadow-sm"
           >
             📋 Normatividad
           </Link>
           <Link
             href="/glossary"
-            className="px-4 py-2 bg-cyan-500 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-200 min-w-[140px]"
+            className="px-4 py-2 bg-cyan-500 text-white rounded-lg font-semibold hover:bg-cyan-600 transition-colors duration-200 min-w-[140px] shadow-sm"
           >
             📖 Glosario
           </Link>
           <Link
             //href="/quiz"
             href="/under-construction"
-            className="px-4 py-2 text-sm bg-teal-500 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-200 min-w-[140px]"
+            className="px-4 py-2 text-sm bg-teal-500 text-white rounded-lg font-semibold hover:bg-teal-600 transition-colors duration-200 min-w-[140px] shadow-sm"
           >
             🎯 Quiz
           </Link>
@@ -114,7 +114,7 @@ const UnderConstructionComponent = () => {
 
       {/* Footer note */}
       <div className="mt-8 text-center">
-        <p className="text-xs text-gray-400">
+        <p className="text-xs text-slate-400">
           Versión beta — contenido sujeto a cambios
         </p>
       </div>

@@ -16,7 +16,7 @@ import {
   useViewportPrefetch,
   PrefetchConfig,
 } from "./prefetch";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/utils";
 
 export interface OptimizedLinkProps
   extends React.AnchorHTMLAttributes<HTMLAnchorElement> {

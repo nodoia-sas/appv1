@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Clear Theme</title>
+  </head>
+  <body>
+    <h1>Clearing Theme Settings</h1>
+    <script>
+      // Clear all theme-related localStorage items
+      localStorage.removeItem("theme");
+      localStorage.removeItem("next-themes-theme");
+      localStorage.removeItem("color-scheme");
+
+      // Clear all localStorage items that might contain theme info
+      Object.keys(localStorage).forEach((key) => {
+        if (
+          key.includes("theme") ||
+          key.includes("dark") ||
+          key.includes("light")
+        ) {
+          localStorage.removeItem(key);
+        }
+      });
+
+      console.log("Theme localStorage cleared");
+      alert("Theme localStorage cleared. Please refresh the main app.");
+    </script>
+  </body>
+</html>

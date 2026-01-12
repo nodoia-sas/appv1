@@ -92,6 +92,7 @@ const Header = ({
             {isAuthenticated ? (
               <>
                 <button
+                  key="my-profile"
                   className="w-full text-left flex items-center space-x-2 px-4 py-2 text-sm text-primary hover:bg-accent hover:text-accent-foreground"
                   onClick={() => handleMenuItemClick("my-profile")}
                 >
@@ -99,6 +100,7 @@ const Header = ({
                   <span>Mi perfil</span>
                 </button>
                 <button
+                  key="documents"
                   className="w-full text-left flex items-center space-x-2 px-4 py-2 text-sm text-primary hover:bg-accent hover:text-accent-foreground"
                   onClick={() => handleMenuItemClick("documents")}
                 >
@@ -106,6 +108,7 @@ const Header = ({
                   <span>Mis documentos</span>
                 </button>
                 <button
+                  key="help-contact"
                   className="w-full text-left flex items-center space-x-2 px-4 py-2 text-sm text-primary hover:bg-accent hover:text-accent-foreground"
                   onClick={() => handleMenuItemClick("help-contact")}
                 >
@@ -113,6 +116,7 @@ const Header = ({
                   <span>Ayuda/Contacto</span>
                 </button>
                 <button
+                  key="terms"
                   className="w-full text-left flex items-center space-x-2 px-4 py-2 text-sm text-primary hover:bg-accent hover:text-accent-foreground"
                   onClick={() => handleMenuItemClick("terms")}
                 >
@@ -120,6 +124,7 @@ const Header = ({
                   <span>Términos y privacidad</span>
                 </button>
                 <button
+                  key="share-app"
                   className="w-full text-left flex items-center space-x-2 px-4 py-2 text-sm text-primary hover:bg-accent hover:text-accent-foreground"
                   onClick={() => handleMenuItemClick("share-app")}
                 >
@@ -127,14 +132,19 @@ const Header = ({
                   <span>Compartir app</span>
                 </button>
                 <button
+                  key="environment-info"
                   className="w-full flex items-center space-x-2 px-4 py-2 text-sm text-primary hover:bg-accent hover:text-accent-foreground"
                   onClick={() => handleMenuItemClick("environment-info")}
                 >
                   <Icons.SettingsIcon className="w-4 h-4" />
                   <span>Configuración API</span>
                 </button>
-                <div className="border-t border-border my-1"></div>
+                <div
+                  key="divider"
+                  className="border-t border-border my-1"
+                ></div>
                 <Link
+                  key="logout"
                   href="/api/auth/logout"
                   className="w-full flex items-center space-x-2 px-4 py-2 text-sm text-destructive hover:bg-destructive/10"
                   onClick={() => setShowLoginDropdown(false)}
@@ -146,6 +156,7 @@ const Header = ({
             ) : (
               <>
                 <button
+                  key="login"
                   className="w-full text-left flex items-center space-x-2 px-4 py-2 text-sm text-primary hover:bg-accent hover:text-accent-foreground"
                   onClick={() => handleMenuItemClick("login")}
                 >
@@ -153,6 +164,7 @@ const Header = ({
                   <span>Iniciar Sesión</span>
                 </button>
                 <button
+                  key="help-contact-public"
                   className="w-full text-left flex items-center space-x-2 px-4 py-2 text-sm text-primary hover:bg-accent hover:text-accent-foreground"
                   onClick={() => handleMenuItemClick("help-contact")}
                 >
@@ -160,6 +172,7 @@ const Header = ({
                   <span>Ayuda/Contacto</span>
                 </button>
                 <button
+                  key="terms-public"
                   className="w-full text-left flex items-center space-x-2 px-4 py-2 text-sm text-primary hover:bg-accent hover:text-accent-foreground"
                   onClick={() => handleMenuItemClick("terms")}
                 >
@@ -167,6 +180,7 @@ const Header = ({
                   <span>Términos y privacidad</span>
                 </button>
                 <button
+                  key="share-app-public"
                   className="w-full text-left flex items-center space-x-2 px-4 py-2 text-sm text-primary hover:bg-accent hover:text-accent-foreground"
                   onClick={() => handleMenuItemClick("share-app")}
                 >

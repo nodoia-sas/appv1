@@ -1,7 +1,7 @@
 import type React from "react";
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
-import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeProvider } from "@/shared/components";
 import { NavigationProvider } from "@/lib/navigation";
 import { PerformanceProvider } from "@/lib/performance/PerformanceProvider";
 import { PWANavigationHandler } from "@/lib/pwa";
@@ -11,7 +11,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#0ea5e9" },
+    { media: "(prefers-color-scheme: light)", color: "#6366f1" },
     { media: "(prefers-color-scheme: dark)", color: "#1e3a8a" },
   ],
   width: "device-width",
@@ -84,12 +84,12 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="es" suppressHydrationWarning>
-      <body className={inter.className}>
+    <html lang="es" suppressHydrationWarning className="light">
+      <body className={`${inter.className} bg-white text-slate-900`}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
-          enableSystem
+          defaultTheme="light"
+          enableSystem={false}
           disableTransitionOnChange
         >
           <PerformanceProvider>

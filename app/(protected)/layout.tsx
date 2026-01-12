@@ -4,7 +4,7 @@ import type React from "react";
 import Header from "@/src/components/layout/Header";
 import BottomNavigation from "@/src/components/layout/BottomNavigation";
 import AuthGuard from "./components/AuthGuard";
-import BreadcrumbSystem from "@/components/BreadcrumbSystem";
+import { BreadcrumbSystem } from "@/shared/components";
 import { OfflineIndicator } from "@/lib/pwa";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useNavigation } from "@/src/hooks/useNavigation";
