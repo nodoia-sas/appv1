@@ -4,6 +4,8 @@ import type React from "react";
 import Header from "@/src/components/layout/Header";
 import BottomNavigation from "@/src/components/layout/BottomNavigation";
 import AuthGuard from "./components/AuthGuard";
+import BreadcrumbSystem from "@/components/BreadcrumbSystem";
+import { OfflineIndicator } from "@/lib/pwa";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useNavigation } from "@/src/hooks/useNavigation";
 
@@ -48,6 +50,9 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
   return (
     <AuthGuard>
       <div className="min-h-screen bg-gray-50 flex flex-col">
+        {/* Offline Indicator */}
+        <OfflineIndicator showDetails={true} position="top" />
+
         {/* Authenticated Header */}
         <Header
           user={user}
@@ -64,6 +69,9 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
             paddingBottom: "calc(6rem + env(safe-area-inset-bottom))",
           }}
         >
+          {/* Breadcrumb Navigation */}
+          <BreadcrumbSystem className="mb-4" />
+
           {children}
         </main>
 

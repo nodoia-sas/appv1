@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useNavigationCompat } from "../../../lib/navigation";
 import * as Icons from "../../../components/icons";
 

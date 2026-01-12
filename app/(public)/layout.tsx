@@ -2,6 +2,8 @@
 
 import type React from "react";
 import Header from "@/src/components/layout/Header";
+import BreadcrumbSystem from "@/components/BreadcrumbSystem";
+import { OfflineIndicator } from "@/lib/pwa";
 import { useNavigationCompat } from "@/lib/navigation";
 
 interface PublicLayoutProps {
@@ -55,6 +57,9 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
+      {/* Offline Indicator */}
+      <OfflineIndicator showDetails={true} position="top" />
+
       {/* Public Header */}
       <Header
         user={null}
@@ -70,6 +75,9 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
           paddingTop: "calc(5rem + env(safe-area-inset-top))",
         }}
       >
+        {/* Breadcrumb Navigation */}
+        <BreadcrumbSystem className="mb-4" />
+
         {children}
       </main>
 

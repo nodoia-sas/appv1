@@ -9,6 +9,8 @@ import React, {
 } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { SCREENS } from "../../src/utils/constants";
+import { usePerformanceMonitor } from "../performance/monitor";
+import { useOfflineNavigation } from "../pwa/useOfflineNavigation";
 
 // Navigation context type definitions
 interface BreadcrumbItem {
@@ -26,6 +28,11 @@ interface NavigationContextType {
   activeScreen: string;
   canGoBack: boolean;
   history: string[];
+  // Offline navigation support
+  isOffline: boolean;
+  pendingNavigations: number;
+  isCurrentRouteAvailableOffline: boolean;
+  cacheCurrentRoute: (data?: any) => void;
 }
 
 // Legacy screen to route mapping for migration compatibility
@@ -75,59 +82,71 @@ const ROUTE_TO_SCREEN_MAP: Record<string, string> = Object.entries(
   return acc;
 }, {} as Record<string, string>);
 
-// Breadcrumb configuration
+// Breadcrumb configuration with icons and descriptive names
 const BREADCRUMB_CONFIG: Record<string, BreadcrumbItem[]> = {
-  "/": [{ label: "Inicio", path: "/" }],
+  "/": [{ label: "Inicio", path: "/", icon: "home" }],
   "/profile": [
-    { label: "Inicio", path: "/" },
-    { label: "Perfil", path: "/profile" },
+    { label: "Inicio", path: "/", icon: "home" },
+    { label: "Mi Perfil", path: "/profile", icon: "user" },
   ],
   "/documents": [
-    { label: "Inicio", path: "/" },
-    { label: "Documentos", path: "/documents" },
+    { label: "Inicio", path: "/", icon: "home" },
+    { label: "Mis Documentos", path: "/documents", icon: "file-text" },
   ],
   "/documents/[id]": [
-    { label: "Inicio", path: "/" },
-    { label: "Documentos", path: "/documents" },
-    { label: "Detalle", path: "/documents/[id]" },
-  ],
-  "/news": [
-    { label: "Inicio", path: "/" },
-    { label: "Noticias", path: "/news" },
-  ],
-  "/news/[id]": [
-    { label: "Inicio", path: "/" },
-    { label: "Noticias", path: "/news" },
-    { label: "Detalle", path: "/news/[id]" },
-  ],
-  "/regulations": [
-    { label: "Inicio", path: "/" },
-    { label: "Regulaciones", path: "/regulations" },
-  ],
-  "/regulations/[id]": [
-    { label: "Inicio", path: "/" },
-    { label: "Regulaciones", path: "/regulations" },
-    { label: "Detalle", path: "/regulations/[id]" },
-  ],
-  "/glossary": [
-    { label: "Inicio", path: "/" },
-    { label: "Glosario", path: "/glossary" },
-  ],
-  "/quiz": [
-    { label: "Inicio", path: "/" },
-    { label: "Quiz", path: "/quiz" },
-  ],
-  "/pqr": [
-    { label: "Inicio", path: "/" },
-    { label: "PQR", path: "/pqr" },
-  ],
-  "/ai-assist": [
-    { label: "Inicio", path: "/" },
-    { label: "Asistente IA", path: "/ai-assist" },
+    { label: "Inicio", path: "/", icon: "home" },
+    { label: "Mis Documentos", path: "/documents", icon: "file-text" },
+    { label: "Detalle del Documento", path: "/documents/[id]", icon: "file" },
   ],
   "/vehicles": [
-    { label: "Inicio", path: "/" },
-    { label: "Vehículos", path: "/vehicles" },
+    { label: "Inicio", path: "/", icon: "home" },
+    { label: "Mis Vehículos", path: "/vehicles", icon: "car" },
+  ],
+  "/news": [
+    { label: "Inicio", path: "/", icon: "home" },
+    { label: "Noticias de Tránsito", path: "/news", icon: "newspaper" },
+  ],
+  "/news/[id]": [
+    { label: "Inicio", path: "/", icon: "home" },
+    { label: "Noticias de Tránsito", path: "/news", icon: "newspaper" },
+    { label: "Detalle de Noticia", path: "/news/[id]", icon: "article" },
+  ],
+  "/regulations": [
+    { label: "Inicio", path: "/", icon: "home" },
+    { label: "Normas de Tránsito", path: "/regulations", icon: "book-open" },
+  ],
+  "/regulations/[id]": [
+    { label: "Inicio", path: "/", icon: "home" },
+    { label: "Normas de Tránsito", path: "/regulations", icon: "book-open" },
+    { label: "Detalle de Norma", path: "/regulations/[id]", icon: "scroll" },
+  ],
+  "/glossary": [
+    { label: "Inicio", path: "/", icon: "home" },
+    { label: "Glosario de Términos", path: "/glossary", icon: "book" },
+  ],
+  "/quiz": [
+    { label: "Inicio", path: "/", icon: "home" },
+    { label: "Examen de Conocimiento", path: "/quiz", icon: "help-circle" },
+  ],
+  "/pqr": [
+    { label: "Inicio", path: "/", icon: "home" },
+    {
+      label: "Peticiones, Quejas y Reclamos",
+      path: "/pqr",
+      icon: "message-square",
+    },
+  ],
+  "/ai-assist": [
+    { label: "Inicio", path: "/", icon: "home" },
+    { label: "Asistente Inteligente", path: "/ai-assist", icon: "bot" },
+  ],
+  "/under-construction": [
+    { label: "Inicio", path: "/", icon: "home" },
+    {
+      label: "En Construcción",
+      path: "/under-construction",
+      icon: "construction",
+    },
   ],
 };
 
@@ -143,6 +162,10 @@ interface NavigationProviderProps {
 export function NavigationProvider({ children }: NavigationProviderProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const performanceMonitor = usePerformanceMonitor();
+
+  // Offline navigation integration
+  const offlineNav = useOfflineNavigation();
 
   // Navigation state
   const [isNavigating, setIsNavigating] = useState(false);
@@ -154,6 +177,13 @@ export function NavigationProvider({ children }: NavigationProviderProps) {
       setHistory([pathname]);
     }
   }, [pathname, history.length]);
+
+  // Monitor route changes for performance tracking
+  useEffect(() => {
+    if (pathname) {
+      performanceMonitor.recordNavigationComplete(pathname);
+    }
+  }, [pathname, performanceMonitor]);
 
   // Generate breadcrumbs based on current path
   const generateBreadcrumbs = useCallback((path: string): BreadcrumbItem[] => {
@@ -205,6 +235,7 @@ export function NavigationProvider({ children }: NavigationProviderProps) {
   const navigate = useCallback(
     (pathOrScreen: string) => {
       setIsNavigating(true);
+      performanceMonitor.recordNavigationStart();
 
       try {
         let targetPath: string;
@@ -230,8 +261,8 @@ export function NavigationProvider({ children }: NavigationProviderProps) {
           return newHistory.slice(-10);
         });
 
-        // Navigate using Next.js router
-        router.push(targetPath);
+        // Use offline navigation which handles both online and offline cases
+        offlineNav.navigate(targetPath);
       } catch (error) {
         console.error("Navigation error:", error);
       } finally {
@@ -239,34 +270,31 @@ export function NavigationProvider({ children }: NavigationProviderProps) {
         setTimeout(() => setIsNavigating(false), 100);
       }
     },
-    [router]
+    [offlineNav, performanceMonitor]
   );
 
   // Go back function
   const goBack = useCallback(() => {
-    if (history.length > 1) {
-      setIsNavigating(true);
+    setIsNavigating(true);
+    performanceMonitor.recordNavigationStart();
 
-      try {
-        // Remove current path from history
+    try {
+      // Use offline navigation go back which handles both online and offline
+      offlineNav.goBack();
+
+      // Update local history
+      if (history.length > 1) {
         const newHistory = history.slice(0, -1);
         setHistory(newHistory);
-
-        // Navigate to previous path
-        const previousPath = newHistory[newHistory.length - 1];
-        router.push(previousPath);
-      } catch (error) {
-        console.error("Go back error:", error);
-        // Fallback to browser back
-        router.back();
-      } finally {
-        setTimeout(() => setIsNavigating(false), 100);
       }
-    } else {
-      // Use browser back as fallback
+    } catch (error) {
+      console.error("Go back error:", error);
+      // Fallback to browser back
       router.back();
+    } finally {
+      setTimeout(() => setIsNavigating(false), 100);
     }
-  }, [history, router]);
+  }, [offlineNav, history, router, performanceMonitor]);
 
   // Context value
   const contextValue: NavigationContextType = {
@@ -276,8 +304,13 @@ export function NavigationProvider({ children }: NavigationProviderProps) {
     breadcrumbs: generateBreadcrumbs(pathname),
     isNavigating,
     activeScreen: getCurrentScreen(pathname),
-    canGoBack: history.length > 1,
+    canGoBack: history.length > 1 || offlineNav.canGoBack,
     history: [...history],
+    // Offline navigation support
+    isOffline: offlineNav.isOffline,
+    pendingNavigations: offlineNav.pendingNavigations.length,
+    isCurrentRouteAvailableOffline: offlineNav.isCurrentRouteAvailableOffline(),
+    cacheCurrentRoute: offlineNav.cacheCurrentRoute,
   };
 
   return (

@@ -3,6 +3,8 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { NavigationProvider } from "@/lib/navigation";
+import { PerformanceProvider } from "@/lib/performance/PerformanceProvider";
+import { PWANavigationHandler } from "@/lib/pwa";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -87,7 +89,11 @@ export default function RootLayout({ children }: RootLayoutProps) {
           enableSystem
           disableTransitionOnChange
         >
-          <NavigationProvider>{children}</NavigationProvider>
+          <PerformanceProvider>
+            <NavigationProvider>
+              <PWANavigationHandler>{children}</PWANavigationHandler>
+            </NavigationProvider>
+          </PerformanceProvider>
         </ThemeProvider>
       </body>
     </html>

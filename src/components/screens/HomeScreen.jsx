@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { OptimizedLink, HighPriorityLink } from "@/lib/performance";
 import * as Icons from "../../../components/icons";
 
 /**
@@ -19,12 +19,13 @@ const HomeScreen = () => {
         Tu asesor inteligente de tránsito
       </h2>
       <div className="grid grid-cols-2 gap-4">
-        <Link
+        <OptimizedLink
           href="/under-construction"
-          className="flex flex-col items-center justify-center p-3 rounded-xl shadow-lg cursor-pointer transition-all duration-200 transform hover:scale-105 bg-gradient-to-br from-blue-500 to-blue-700 text-white"
+          className="flex flex-col items-center justify-center p-3 rounded-xl shadow-lg cursor-pointer transition-all duration-200 transform hover:scale-105 bg-linear-to-br from-blue-500 to-blue-700 text-white"
           role="button"
           aria-label="Conocimiento - Próximamente"
           title="Conocimiento - Próximamente"
+          priority="low"
         >
           <Icons.BookOpenIcon className="w-8 h-8 mb-2" />
           <span className="text-base font-semibold text-center">
@@ -33,7 +34,7 @@ const HomeScreen = () => {
           <span className="mt-2 text-xs bg-yellow-200 text-yellow-800 px-2 py-1 rounded-full">
             Próximamente
           </span>
-        </Link>
+        </OptimizedLink>
         <div
           className="flex flex-col items-center justify-center p-3 rounded-xl shadow-lg cursor-pointer transition-all duration-200 transform hover:scale-105 bg-gradient-to-br from-orange-500 to-orange-700 text-white"
           onClick={() => window.open("https://www.pyphoy.com/bogota", "_blank")}
@@ -57,10 +58,10 @@ const HomeScreen = () => {
             Consulta Multas
           </span>
         </div>
-        <Link
+        <OptimizedLink
           //href="/news"
           href="/under-construction"
-          className="flex flex-col items-center justify-center p-3 rounded-xl shadow-lg cursor-pointer transition-all duration-200 transform hover:scale-105 bg-gradient-to-br from-purple-500 to-purple-700 text-white"
+          className="flex flex-col items-center justify-center p-3 rounded-xl shadow-lg cursor-pointer transition-all duration-200 transform hover:scale-105 bg-linear-to-br from-purple-500 to-purple-700 text-white"
           aria-label="Noticias - Próximamente"
           title="Noticias - Próximamente"
         >
@@ -69,11 +70,11 @@ const HomeScreen = () => {
           <span className="mt-2 text-xs bg-yellow-200 text-yellow-800 px-2 py-1 rounded-full">
             Próximamente
           </span>
-        </Link>
-        <Link
+        </OptimizedLink>
+        <OptimizedLink
           //href="/quiz"
           href="/under-construction"
-          className="flex flex-col items-center justify-center p-3 rounded-xl shadow-lg cursor-pointer transition-all duration-200 transform hover:scale-105 bg-gradient-to-br from-teal-500 to-teal-700 text-white"
+          className="flex flex-col items-center justify-center p-3 rounded-xl shadow-lg cursor-pointer transition-all duration-200 transform hover:scale-105 bg-linear-to-br from-teal-500 to-teal-700 text-white"
           aria-label="Quiz - Próximamente"
           title="Quiz - Próximamente"
         >
@@ -84,27 +85,27 @@ const HomeScreen = () => {
           <span className="mt-2 text-xs bg-yellow-200 text-yellow-800 px-2 py-1 rounded-full">
             Próximamente
           </span>
-        </Link>
-        <Link
+        </OptimizedLink>
+        <HighPriorityLink
           href="/regulations"
-          className="flex flex-col items-center justify-center p-3 rounded-xl shadow-lg cursor-pointer transition-all duration-200 transform hover:scale-105 bg-gradient-to-br from-indigo-500 to-indigo-700 text-white"
+          className="flex flex-col items-center justify-center p-3 rounded-xl shadow-lg cursor-pointer transition-all duration-200 transform hover:scale-105 bg-linear-to-br from-indigo-500 to-indigo-700 text-white"
         >
           <Icons.GavelIcon className="w-8 h-8 mb-2" />
           <span className="text-base font-semibold text-center">
             Normatividad
           </span>
-        </Link>
-        <Link
+        </HighPriorityLink>
+        <HighPriorityLink
           href="/glossary"
-          className="flex flex-col items-center justify-center p-3 rounded-xl shadow-lg cursor-pointer transition-all duration-200 transform hover:scale-105 bg-gradient-to-br from-cyan-500 to-cyan-700 text-white"
+          className="flex flex-col items-center justify-center p-3 rounded-xl shadow-lg cursor-pointer transition-all duration-200 transform hover:scale-105 bg-linear-to-br from-cyan-500 to-cyan-700 text-white"
         >
           <Icons.BookIcon className="w-8 h-8 mb-2" />
           <span className="text-base font-semibold text-center">Glosario</span>
-        </Link>
-        <Link
+        </HighPriorityLink>
+        <OptimizedLink
           //href="/pqr"
           href="/under-construction"
-          className="flex flex-col items-center justify-center p-3 rounded-xl shadow-lg cursor-pointer transition-all duration-200 transform hover:scale-105 bg-gradient-to-br from-pink-500 to-pink-700 text-white"
+          className="flex flex-col items-center justify-center p-3 rounded-xl shadow-lg cursor-pointer transition-all duration-200 transform hover:scale-105 bg-linear-to-br from-pink-500 to-pink-700 text-white"
           aria-label="PQR - Próximamente"
           title="PQR - Próximamente"
         >
@@ -113,7 +114,7 @@ const HomeScreen = () => {
           <span className="mt-2 text-xs bg-yellow-200 text-yellow-800 px-2 py-1 rounded-full">
             Próximamente
           </span>
-        </Link>
+        </OptimizedLink>
       </div>
     </div>
   );
