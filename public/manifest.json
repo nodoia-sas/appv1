@@ -7,6 +7,7 @@
   "orientation": "portrait-primary",
   "background_color": "#ffffff",
   "theme_color": "#0ea5e9",
+  "dark_theme_color": "#1e3a8a",
   "scope": "/",
   "categories": ["navigation", "utilities", "government"],
   "lang": "es",

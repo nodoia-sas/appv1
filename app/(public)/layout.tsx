@@ -56,7 +56,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-background text-foreground flex flex-col">
       {/* Offline Indicator */}
       <OfflineIndicator showDetails={true} position="top" />
 
@@ -82,22 +82,22 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
       </main>
 
       {/* Public Footer */}
-      <footer className="bg-white border-t border-gray-200 py-6 px-4 md:px-6">
+      <footer className="bg-card border-t border-border py-6 px-4 md:px-6">
         <div className="max-w-md md:max-w-2xl lg:max-w-3xl mx-auto">
-          <div className="text-center text-sm text-gray-600">
+          <div className="text-center text-sm text-muted-foreground">
             <p className="mb-2">
               © 2024 TransitIA - Tu asesor inteligente de tránsito
             </p>
             <div className="flex justify-center space-x-4">
               <button
                 onClick={() => navigate("terms")}
-                className="text-blue-600 hover:text-blue-800 transition-colors"
+                className="text-primary hover:text-primary/80 transition-colors"
               >
                 Términos y Privacidad
               </button>
               <button
                 onClick={() => navigate("help-contact")}
-                className="text-blue-600 hover:text-blue-800 transition-colors"
+                className="text-primary hover:text-primary/80 transition-colors"
               >
                 Ayuda y Contacto
               </button>

@@ -59,7 +59,7 @@ const Header = ({
 
   return (
     <div
-      className="fixed top-0 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-blue-600 to-blue-800 text-white p-4 md:px-6 flex items-center justify-between rounded-t-xl shadow-md z-50 w-full max-w-md md:max-w-2xl lg:max-w-3xl"
+      className="fixed top-0 left-1/2 transform -translate-x-1/2 header-gradient text-white p-4 md:px-6 flex items-center justify-between rounded-t-xl shadow-md z-50 w-full max-w-md md:max-w-2xl lg:max-w-3xl"
       style={{ paddingTop: "env(safe-area-inset-top)" }}
     >
       <div className="relative">
@@ -86,57 +86,57 @@ const Header = ({
         )}
         {showLoginDropdown && (
           <div
-            className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-20"
+            className="absolute left-0 mt-2 w-48 card-bg rounded-md shadow-lg py-1 z-20"
             onMouseLeave={() => setShowLoginDropdown(false)}
           >
             {isAuthenticated ? (
               <>
                 <button
-                  className="w-full text-left flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  className="w-full text-left flex items-center space-x-2 px-4 py-2 text-sm text-primary hover:bg-accent hover:text-accent-foreground"
                   onClick={() => handleMenuItemClick("my-profile")}
                 >
                   <Icons.UserIcon className="w-4 h-4" />
                   <span>Mi perfil</span>
                 </button>
                 <button
-                  className="w-full text-left flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  className="w-full text-left flex items-center space-x-2 px-4 py-2 text-sm text-primary hover:bg-accent hover:text-accent-foreground"
                   onClick={() => handleMenuItemClick("documents")}
                 >
                   <Icons.FileTextIcon className="w-4 h-4" />
                   <span>Mis documentos</span>
                 </button>
                 <button
-                  className="w-full text-left flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  className="w-full text-left flex items-center space-x-2 px-4 py-2 text-sm text-primary hover:bg-accent hover:text-accent-foreground"
                   onClick={() => handleMenuItemClick("help-contact")}
                 >
                   <Icons.InfoIcon className="w-4 h-4" />
                   <span>Ayuda/Contacto</span>
                 </button>
                 <button
-                  className="w-full text-left flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  className="w-full text-left flex items-center space-x-2 px-4 py-2 text-sm text-primary hover:bg-accent hover:text-accent-foreground"
                   onClick={() => handleMenuItemClick("terms")}
                 >
                   <Icons.FileWarningIcon className="w-4 h-4" />
                   <span>Términos y privacidad</span>
                 </button>
                 <button
-                  className="w-full text-left flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  className="w-full text-left flex items-center space-x-2 px-4 py-2 text-sm text-primary hover:bg-accent hover:text-accent-foreground"
                   onClick={() => handleMenuItemClick("share-app")}
                 >
                   <Icons.Share2Icon className="w-4 h-4" />
                   <span>Compartir app</span>
                 </button>
                 <button
-                  className="w-full flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  className="w-full flex items-center space-x-2 px-4 py-2 text-sm text-primary hover:bg-accent hover:text-accent-foreground"
                   onClick={() => handleMenuItemClick("environment-info")}
                 >
                   <Icons.SettingsIcon className="w-4 h-4" />
                   <span>Configuración API</span>
                 </button>
-                <div className="border-t border-gray-200 my-1"></div>
+                <div className="border-t border-border my-1"></div>
                 <Link
                   href="/api/auth/logout"
-                  className="w-full flex items-center space-x-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                  className="w-full flex items-center space-x-2 px-4 py-2 text-sm text-destructive hover:bg-destructive/10"
                   onClick={() => setShowLoginDropdown(false)}
                 >
                   <Icons.LogInIcon className="w-4 h-4 transform rotate-180" />
@@ -146,28 +146,28 @@ const Header = ({
             ) : (
               <>
                 <button
-                  className="w-full text-left flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  className="w-full text-left flex items-center space-x-2 px-4 py-2 text-sm text-primary hover:bg-accent hover:text-accent-foreground"
                   onClick={() => handleMenuItemClick("login")}
                 >
                   <Icons.UserIcon className="w-4 h-4" />
                   <span>Iniciar Sesión</span>
                 </button>
                 <button
-                  className="w-full text-left flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  className="w-full text-left flex items-center space-x-2 px-4 py-2 text-sm text-primary hover:bg-accent hover:text-accent-foreground"
                   onClick={() => handleMenuItemClick("help-contact")}
                 >
                   <Icons.InfoIcon className="w-4 h-4" />
                   <span>Ayuda/Contacto</span>
                 </button>
                 <button
-                  className="w-full text-left flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  className="w-full text-left flex items-center space-x-2 px-4 py-2 text-sm text-primary hover:bg-accent hover:text-accent-foreground"
                   onClick={() => handleMenuItemClick("terms")}
                 >
                   <Icons.FileWarningIcon className="w-4 h-4" />
                   <span>Términos y privacidad</span>
                 </button>
                 <button
-                  className="w-full text-left flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  className="w-full text-left flex items-center space-x-2 px-4 py-2 text-sm text-primary hover:bg-accent hover:text-accent-foreground"
                   onClick={() => handleMenuItemClick("share-app")}
                 >
                   <Icons.Share2Icon className="w-4 h-4" />
