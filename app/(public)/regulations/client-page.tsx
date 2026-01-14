@@ -1,7 +1,7 @@
 "use client";
 import type React from "react";
 import { useEffect, useState } from "react";
-import RegulationsComponent from "@/components/regulations";
+import { Regulations } from "@/features/regulations";
 import { fetchRegulations } from "@/lib/regulations-utils";
 
 interface RegulationArticle {
@@ -38,7 +38,7 @@ export default function RegulationsClientPage() {
   }, []);
 
   return (
-    <RegulationsComponent
+    <Regulations
       regulationsData={regulationsData}
       setSelectedRegulation={setSelectedRegulation}
     />

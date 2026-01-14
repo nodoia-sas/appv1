@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import { PersonalDocuments } from "./documents-manager/PersonalDocuments";
-import { Vehicles } from "./documents-manager/Vehicles";
+import { PersonalDocuments } from "@/features/documents";
+import { Vehicles } from "@/features/vehicles";
 
 export default function Documents() {
   const [activeTab, setActiveTab] = useState("personal"); // 'personal' or 'vehicles'

@@ -46,6 +46,22 @@ const nextConfig = {
             chunks: "all",
             priority: 15,
           },
+          // Create separate chunks for features
+          features: {
+            test: /[\\/]features[\\/]/,
+            name: "features",
+            chunks: "all",
+            priority: 8,
+            reuseExistingChunk: true,
+          },
+          // Create separate chunks for shared code
+          shared: {
+            test: /[\\/]shared[\\/]/,
+            name: "shared",
+            chunks: "all",
+            priority: 9,
+            reuseExistingChunk: true,
+          },
         },
       };
     }

@@ -1,6 +1,6 @@
 "use client";
 
-import Quiz from "../../../components/quiz";
+import { Quiz } from "@/features/quiz";
 
 /**
  * QuizScreen Component - Independent quiz screen component

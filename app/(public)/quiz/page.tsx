@@ -1,6 +1,6 @@
 import type React from "react";
 import type { Metadata } from "next";
-import QuizComponent from "@/components/quiz";
+import { Quiz } from "@/features/quiz";
 import {
   generatePageMetadata,
   PAGE_METADATA_CONFIGS,
@@ -20,5 +20,5 @@ export const metadata: Metadata = generatePageMetadata(
 );
 
 export default function QuizPage() {
-  return <QuizComponent />;
+  return <Quiz />;
 }

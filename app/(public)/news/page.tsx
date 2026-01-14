@@ -1,6 +1,6 @@
 import type React from "react";
 import type { Metadata } from "next";
-import NewsComponent from "@/components/news";
+import { News } from "@/features/news";
 import {
   generatePageMetadata,
   PAGE_METADATA_CONFIGS,
@@ -20,5 +20,5 @@ export const metadata: Metadata = generatePageMetadata(
 );
 
 export default function NewsPage() {
-  return <NewsComponent />;
+  return <News />;
 }

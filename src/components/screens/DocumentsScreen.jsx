@@ -1,6 +1,6 @@
 "use client";
 
-import Documents from "../../../components/documents";
+import { Documents } from "@/features/documents";
 
 /**
  * DocumentsScreen Component - Independent documents screen component

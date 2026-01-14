@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import RegulationsMain from "../../../components/regulations-main";
-import RegulationDetail from "../../../components/regulation-detail";
+import { RegulationsMain, RegulationDetail } from "@/features/regulations";
 
 /**
  * RegulationsScreen Component - Independent regulations screen component

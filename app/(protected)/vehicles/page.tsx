@@ -1,6 +1,6 @@
 "use client";
 
-import { Vehicles } from "@/components/documents-manager/Vehicles";
+import { Vehicles } from "@/features/vehicles";
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 

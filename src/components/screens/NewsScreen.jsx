@@ -1,6 +1,6 @@
 "use client";
 
-import News from "../../../components/news";
+import { News } from "@/features/news";
 
 /**
  * NewsScreen Component - Independent news screen component
