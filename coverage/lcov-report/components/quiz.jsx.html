@@ -767,22 +767,22 @@ export default function <span class="cstat-no" title="statement not covered" ><s
 &nbsp;
   return (
     &lt;div className="p-6"&gt;
-      &lt;h2 className="text-2xl font-bold text-gray-800 mb-4 text-center"&gt;
+      &lt;h2 className="text-2xl font-bold text-slate-800 mb-4 text-center"&gt;
         Quiz de Tránsito
       &lt;/h2&gt;
       &lt;Link
         href="/"
-        className="mb-4 bg-gray-300 text-gray-800 py-2 px-4 rounded-full text-sm hover:bg-gray-400 transition-colors duration-200 shadow-md inline-block"
+        className="mb-4 bg-slate-200 text-slate-800 py-2 px-4 rounded-full text-sm hover:bg-slate-300 transition-colors duration-200 shadow-sm inline-block border border-slate-300"
       &gt;
         ← Volver al Inicio
       &lt;/Link&gt;
 &nbsp;
       {!quizStarted ? (
-<span class="branch-0 cbranch-no" title="branch not covered" >        &lt;div className="bg-white p-5 rounded-xl shadow-md border border-gray-200 text-center mt-8"&gt;</span>
-          &lt;h3 className="text-xl font-bold text-gray-800 mb-4"&gt;
+<span class="branch-0 cbranch-no" title="branch not covered" >        &lt;div className="bg-white p-5 rounded-xl shadow-md border border-slate-200 text-center mt-8"&gt;</span>
+          &lt;h3 className="text-xl font-bold text-slate-800 mb-4"&gt;
             Aprende y pon a prueba tus conocimientos de tránsito
           &lt;/h3&gt;
-          &lt;p className="text-gray-600 mb-6"&gt;
+          &lt;p className="text-slate-600 mb-6"&gt;
             Responde 20 preguntas aleatorias para evaluar tu dominio de las
             normas viales.
           &lt;/p&gt;
@@ -791,35 +791,35 @@ export default function <span class="cstat-no" title="statement not covered" ><s
 <span class="cstat-no" title="statement not covered" >              setQuizStarted(true);</span>
 <span class="cstat-no" title="statement not covered" >              selectRandomQuizQuestions();</span>
             }}
-            className="bg-blue-600 text-white py-3 px-6 rounded-full font-semibold hover:bg-blue-700 transition-colors duration-200 shadow-md"
+            className="bg-indigo-600 text-white py-3 px-6 rounded-full font-semibold hover:bg-indigo-700 transition-colors duration-200 shadow-sm"
           &gt;
             Comenzar Quiz
           &lt;/button&gt;
         &lt;/div&gt;
       ) : quizCompleted ? (
-<span class="branch-0 cbranch-no" title="branch not covered" >        &lt;div className="bg-blue-100 p-5 rounded-xl shadow-md border border-blue-300 text-center mt-8"&gt;</span>
-          &lt;h3 className="text-xl font-bold text-blue-800 mb-3"&gt;
+<span class="branch-0 cbranch-no" title="branch not covered" >        &lt;div className="bg-indigo-50 p-5 rounded-xl shadow-md border border-indigo-200 text-center mt-8"&gt;</span>
+          &lt;h3 className="text-xl font-bold text-indigo-800 mb-3"&gt;
             ¡Quiz Completado!
           &lt;/h3&gt;
-          &lt;p className="text-lg text-blue-700 mb-2"&gt;
+          &lt;p className="text-lg text-indigo-700 mb-2"&gt;
             Tu puntuación:{" "}
             &lt;span className="font-bold"&gt;
               {currentScore} / {quizQuestions.length}
             &lt;/span&gt;
           &lt;/p&gt;
-          &lt;p className="text-lg text-blue-700 font-semibold"&gt;
+          &lt;p className="text-lg text-indigo-700 font-semibold"&gt;
             {getKnowledgeRange(currentScore)}
           &lt;/p&gt;
           &lt;button
             onClick={resetQuiz}
-            className="mt-5 bg-blue-600 text-white py-2 px-5 rounded-full font-semibold hover:bg-blue-700 transition-colors duration-200 shadow-md"
+            className="mt-5 bg-indigo-600 text-white py-2 px-5 rounded-full font-semibold hover:bg-indigo-700 transition-colors duration-200 shadow-sm"
           &gt;
             Reiniciar Quiz
           &lt;/button&gt;
         &lt;/div&gt;
       ) : (
         &lt;div className="space-y-4"&gt;
-          &lt;div className="bg-white p-4 rounded-xl shadow-md"&gt;
+          &lt;div className="bg-white p-4 rounded-xl shadow-md border border-slate-200"&gt;
             {currentQuestion &amp;&amp; currentQuestion.imageUrl &amp;&amp; (
               &lt;div className="mb-4 flex justify-center"&gt;
                 &lt;img
@@ -829,7 +829,7 @@ export default function <span class="cstat-no" title="statement not covered" ><s
                 /&gt;
               &lt;/div&gt;
             )}
-            &lt;h4 className="font-semibold text-gray-800 mb-3"&gt;
+            &lt;h4 className="font-semibold text-slate-800 mb-3"&gt;
               {currentQuestion ? currentQuestion.question : ""}
             &lt;/h4&gt;
             &lt;div className="space-y-2"&gt;
@@ -842,9 +842,9 @@ export default function <span class="cstat-no" title="statement not covered" ><s
                     ${
                       currentQuestion.selected === option
                         ? currentQuestion.correct
-                          ? "bg-green-100 border-green-500 text-green-800"
+                          ? "bg-emerald-100 border-emerald-500 text-emerald-800"
                           : "bg-red-100 border-red-500 text-red-800"
-                        : "bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100"
+                        : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
                     }`}
                     disabled={currentQuestion.selected !== null}
                   &gt;
@@ -855,7 +855,7 @@ export default function <span class="cstat-no" title="statement not covered" ><s
             {currentQuestion &amp;&amp; currentQuestion.selected !== null &amp;&amp; (
               &lt;p
                 className={`mt-3 text-sm font-semibold ${
-                  currentQuestion.correct ? "text-green-600" : "text-red-600"
+                  currentQuestion.correct ? "text-emerald-600" : "text-red-600"
                 }`}
               &gt;
                 {currentQuestion.correct
@@ -868,11 +868,11 @@ export default function <span class="cstat-no" title="statement not covered" ><s
             &lt;button
               onClick={goToPreviousQuestion}
               disabled={currentQuestionIndex === 0}
-              className="bg-gray-300 text-gray-800 py-2 px-4 rounded-full text-sm hover:bg-gray-400 transition-colors duration-200 shadow-md disabled:opacity-50"
+              className="bg-slate-200 text-slate-800 py-2 px-4 rounded-full text-sm hover:bg-slate-300 transition-colors duration-200 shadow-sm disabled:opacity-50 border border-slate-300"
             &gt;
               Anterior
             &lt;/button&gt;
-            &lt;span className="text-gray-600 text-sm flex items-center"&gt;
+            &lt;span className="text-slate-600 text-sm flex items-center"&gt;
               {currentQuestionIndex + 1} / {quizQuestions.length}
             &lt;/span&gt;
             &lt;button
@@ -882,7 +882,7 @@ export default function <span class="cstat-no" title="statement not covered" ><s
                 currentQuestion.selected === null &amp;&amp;
                 currentQuestionIndex &lt; quizQuestions.length - 1
               }
-              className="bg-blue-600 text-white py-2 px-4 rounded-full font-semibold hover:bg-blue-700 transition-colors duration-200 shadow-md disabled:opacity-50"
+              className="bg-indigo-600 text-white py-2 px-4 rounded-full font-semibold hover:bg-indigo-700 transition-colors duration-200 shadow-sm disabled:opacity-50"
             &gt;
               {currentQuestionIndex === quizQuestions.length - 1
                 ? "Finalizar Quiz"
@@ -901,7 +901,7 @@ export default function <span class="cstat-no" title="statement not covered" ><s
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-01-12T03:36:14.169Z
+                at 2026-01-14T15:50:05.398Z
             </div>
         <script src="../prettify.js"></script>
         <script>

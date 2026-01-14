@@ -125,7 +125,31 @@
 <a name='L60'></a><a href='#L60'>60</a>
 <a name='L61'></a><a href='#L61'>61</a>
 <a name='L62'></a><a href='#L62'>62</a>
-<a name='L63'></a><a href='#L63'>63</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L63'></a><a href='#L63'>63</a>
+<a name='L64'></a><a href='#L64'>64</a>
+<a name='L65'></a><a href='#L65'>65</a>
+<a name='L66'></a><a href='#L66'>66</a>
+<a name='L67'></a><a href='#L67'>67</a>
+<a name='L68'></a><a href='#L68'>68</a>
+<a name='L69'></a><a href='#L69'>69</a>
+<a name='L70'></a><a href='#L70'>70</a>
+<a name='L71'></a><a href='#L71'>71</a>
+<a name='L72'></a><a href='#L72'>72</a>
+<a name='L73'></a><a href='#L73'>73</a>
+<a name='L74'></a><a href='#L74'>74</a>
+<a name='L75'></a><a href='#L75'>75</a>
+<a name='L76'></a><a href='#L76'>76</a>
+<a name='L77'></a><a href='#L77'>77</a>
+<a name='L78'></a><a href='#L78'>78</a>
+<a name='L79'></a><a href='#L79'>79</a>
+<a name='L80'></a><a href='#L80'>80</a>
+<a name='L81'></a><a href='#L81'>81</a>
+<a name='L82'></a><a href='#L82'>82</a>
+<a name='L83'></a><a href='#L83'>83</a>
+<a name='L84'></a><a href='#L84'>84</a>
+<a name='L85'></a><a href='#L85'>85</a>
+<a name='L86'></a><a href='#L86'>86</a>
+<a name='L87'></a><a href='#L87'>87</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -156,11 +180,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -173,6 +192,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -187,47 +207,83 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">"use client"
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">"use client";
 &nbsp;
-import React, { useState, useRef } from <span class="cstat-no" title="statement not covered" >"react"</span>
-import { PersonalDocuments } from <span class="cstat-no" title="statement not covered" >"./documents-manager/PersonalDocuments"</span>
-import { Vehicles } from <span class="cstat-no" title="statement not covered" >"./documents-manager/Vehicles"</span>
+import React, { useState, useRef } from <span class="cstat-no" title="statement not covered" >"react";</span>
+import { PersonalDocuments } from <span class="cstat-no" title="statement not covered" >"./documents-manager/PersonalDocuments";</span>
+import { Vehicles } from <span class="cstat-no" title="statement not covered" >"./documents-manager/Vehicles";</span>
 &nbsp;
 export default function <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >Documents() {</span></span>
-  const [activeTab, setActiveTab] = <span class="cstat-no" title="statement not covered" >useState('personal') /</span>/ 'personal' or 'vehicles'
-  const [message, setMessage] = <span class="cstat-no" title="statement not covered" >useState(null)</span>
-  const messageTimeoutRef = <span class="cstat-no" title="statement not covered" >useRef(null)</span>
+  const [activeTab, setActiveTab] = <span class="cstat-no" title="statement not covered" >useState("personal"); /</span>/ 'personal' or 'vehicles'
+  const [message, setMessage] = <span class="cstat-no" title="statement not covered" >useState(null);</span>
+  const messageTimeoutRef = <span class="cstat-no" title="statement not covered" >useRef(null);</span>
 &nbsp;
   const showMessage = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(m</span>sgObj, duration = <span class="branch-0 cbranch-no" title="branch not covered" >5000)</span> =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    if (messageTimeoutRef.current) {</span>
-<span class="cstat-no" title="statement not covered" >      clearTimeout(messageTimeoutRef.current)</span>
-<span class="cstat-no" title="statement not covered" >      messageTimeoutRef.current = null</span>
+<span class="cstat-no" title="statement not covered" >      clearTimeout(messageTimeoutRef.current);</span>
+<span class="cstat-no" title="statement not covered" >      messageTimeoutRef.current = null;</span>
     }
-<span class="cstat-no" title="statement not covered" >    setMessage(msgObj)</span>
+<span class="cstat-no" title="statement not covered" >    setMessage(msgObj);</span>
 <span class="cstat-no" title="statement not covered" >    messageTimeoutRef.current = setTimeout(<span class="fstat-no" title="function not covered" >() =&gt; {</span></span>
-<span class="cstat-no" title="statement not covered" >      setMessage(null)</span>
-<span class="cstat-no" title="statement not covered" >      messageTimeoutRef.current = null</span>
-    }, duration)
-  }
+<span class="cstat-no" title="statement not covered" >      setMessage(null);</span>
+<span class="cstat-no" title="statement not covered" >      messageTimeoutRef.current = null;</span>
+    }, duration);
+  };
 &nbsp;
   return (
     &lt;div className="p-6 max-w-5xl mx-auto"&gt;
-      &lt;h2 className="text-3xl font-bold text-gray-800 mb-8 text-center"&gt;Gestión de Documentos&lt;/h2&gt;
+      &lt;h2 className="text-3xl font-bold text-slate-800 mb-8 text-center"&gt;
+        Gestión de Documentos
+      &lt;/h2&gt;
 &nbsp;
       {/* Tabs */}
       &lt;div className="flex justify-center mb-8"&gt;
-        &lt;div className="bg-gray-100 p-1 rounded-full inline-flex"&gt;
+        &lt;div className="bg-slate-100 p-1 rounded-full inline-flex border border-slate-200"&gt;
           &lt;button
-            onClick={<span class="fstat-no" title="function not covered" >() =&gt; <span class="cstat-no" title="statement not covered" >s</span>etActiveTab('personal')}</span>
-            className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${activeTab === 'personal' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'
-              }`}
+            onClick={<span class="fstat-no" title="function not covered" >() =&gt; <span class="cstat-no" title="statement not covered" >s</span>etActiveTab("personal")}</span>
+            className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${
+              activeTab === "personal"
+                ? "bg-white text-indigo-600 shadow-sm border border-slate-200"
+                : "text-slate-500 hover:text-slate-700"
+            }`}
           &gt;
             Mis Documentos
           &lt;/button&gt;
           &lt;button
-            onClick={<span class="fstat-no" title="function not covered" >() =&gt; <span class="cstat-no" title="statement not covered" >s</span>etActiveTab('vehicles')}</span>
-            className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${activeTab === 'vehicles' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'
-              }`}
+            onClick={<span class="fstat-no" title="function not covered" >() =&gt; <span class="cstat-no" title="statement not covered" >s</span>etActiveTab("vehicles")}</span>
+            className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${
+              activeTab === "vehicles"
+                ? "bg-white text-indigo-600 shadow-sm border border-slate-200"
+                : "text-slate-500 hover:text-slate-700"
+            }`}
           &gt;
             Mis Vehículos
           &lt;/button&gt;
@@ -236,18 +292,34 @@ export default function <span class="cstat-no" title="statement not covered" ><s
 &nbsp;
       {/* Content */}
       &lt;div className="min-h-[400px]"&gt;
-        {<span class="branch-0 cbranch-no" title="branch not covered" >activeTab === 'personal' &amp;&amp; &lt;</span>PersonalDocuments showMessage={showMessage} /&gt;}
-        {<span class="branch-0 cbranch-no" title="branch not covered" >activeTab === 'vehicles' &amp;&amp; &lt;</span>Vehicles showMessage={showMessage} /&gt;}
+        {<span class="branch-0 cbranch-no" title="branch not covered" >activeTab === "personal" &amp;&amp; (</span>
+          &lt;PersonalDocuments showMessage={showMessage} /&gt;
+        )}
+        {<span class="branch-0 cbranch-no" title="branch not covered" >activeTab === "vehicles" &amp;&amp; &lt;</span>Vehicles showMessage={showMessage} /&gt;}
       &lt;/div&gt;
 &nbsp;
       {<span class="branch-0 cbranch-no" title="branch not covered" >message &amp;&amp; (</span>
-        &lt;div className={`fixed bottom-8 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-full shadow-xl text-white z-50 flex items-center space-x-2 ${message.type === 'success' ? 'bg-green-600' : message.type === 'info' ? 'bg-blue-600' : 'bg-red-500'}`}&gt;
-          &lt;span&gt;{message.type === 'success' ? '✅' : message.type === 'info' ? 'ℹ️' : '⚠️'}&lt;/span&gt;
+        &lt;div
+          className={`fixed bottom-8 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-full shadow-xl text-white z-50 flex items-center space-x-2 ${
+            message.type === "success"
+              ? "bg-emerald-600"
+              : message.type === "info"
+              ? "bg-indigo-600"
+              : "bg-red-500"
+          }`}
+        &gt;
+          &lt;span&gt;
+            {message.type === "success"
+              ? "✅"
+              : message.type === "info"
+              ? "ℹ️"
+              : "⚠️"}
+          &lt;/span&gt;
           &lt;span&gt;{message.text}&lt;/span&gt;
         &lt;/div&gt;
       )}
     &lt;/div&gt;
-  )
+  );
 }
 &nbsp;</pre></td></tr></table></pre>
 
@@ -256,7 +328,7 @@ export default function <span class="cstat-no" title="statement not covered" ><s
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-01-12T03:36:14.169Z
+                at 2026-01-14T15:50:05.398Z
             </div>
         <script src="../prettify.js"></script>
         <script>

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1768188974313" clover="3.2.0">
-  <project timestamp="1768188974313" name="All files">
-    <metrics statements="1561" coveredstatements="52" conditionals="837" coveredconditionals="46" methods="440" coveredmethods="14" elements="2838" coveredelements="112" complexity="0" loc="1561" ncloc="1561" packages="9" files="56" classes="56"/>
+<coverage generated="1768405805551" clover="3.2.0">
+  <project timestamp="1768405805552" name="All files">
+    <metrics statements="1625" coveredstatements="52" conditionals="851" coveredconditionals="46" methods="449" coveredmethods="14" elements="2925" coveredelements="112" complexity="0" loc="1625" ncloc="1625" packages="10" files="59" classes="59"/>
     <package name="components">
-      <metrics statements="613" coveredstatements="0" conditionals="360" coveredconditionals="0" methods="184" coveredmethods="0"/>
+      <metrics statements="633" coveredstatements="0" conditionals="364" coveredconditionals="0" methods="191" coveredmethods="0"/>
       <file name="BreadcrumbSystem.tsx" path="/home/antoniovargas/projects/laboral/NodoIA/Proyectos/Transit-IA/CodigosFuentes/appv1/components/BreadcrumbSystem.tsx">
         <metrics statements="31" coveredstatements="0" conditionals="35" coveredconditionals="0" methods="7" coveredmethods="0"/>
         <line num="3" count="0" type="stmt"/>
@@ -81,8 +81,8 @@
         <line num="18" count="0" type="stmt"/>
         <line num="19" count="0" type="stmt"/>
         <line num="20" count="0" type="stmt"/>
-        <line num="32" count="0" type="stmt"/>
-        <line num="39" count="0" type="stmt"/>
+        <line num="34" count="0" type="stmt"/>
+        <line num="44" count="0" type="stmt"/>
       </file>
       <file name="environment-info.jsx" path="/home/antoniovargas/projects/laboral/NodoIA/Proyectos/Transit-IA/CodigosFuentes/appv1/components/environment-info.jsx">
         <metrics statements="29" coveredstatements="0" conditionals="31" coveredconditionals="0" methods="6" coveredmethods="0"/>
@@ -184,7 +184,7 @@
         <line num="224" count="0" type="stmt"/>
       </file>
       <file name="my-profile.jsx" path="/home/antoniovargas/projects/laboral/NodoIA/Proyectos/Transit-IA/CodigosFuentes/appv1/components/my-profile.jsx">
-        <metrics statements="19" coveredstatements="0" conditionals="16" coveredconditionals="0" methods="4" coveredmethods="0"/>
+        <metrics statements="22" coveredstatements="0" conditionals="16" coveredconditionals="0" methods="4" coveredmethods="0"/>
         <line num="3" count="0" type="stmt"/>
         <line num="7" count="0" type="stmt"/>
         <line num="9" count="0" type="stmt"/>
@@ -201,9 +201,12 @@
         <line num="25" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="26" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="28" count="0" type="cond" truecount="0" falsecount="4"/>
-        <line num="30" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="35" count="0" type="stmt"/>
-        <line num="37" count="0" type="stmt"/>
+        <line num="29" count="0" type="stmt"/>
+        <line num="34" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="39" count="0" type="stmt"/>
+        <line num="41" count="0" type="stmt"/>
+        <line num="42" count="0" type="stmt"/>
+        <line num="43" count="0" type="stmt"/>
       </file>
       <file name="news.jsx" path="/home/antoniovargas/projects/laboral/NodoIA/Proyectos/Transit-IA/CodigosFuentes/appv1/components/news.jsx">
         <metrics statements="32" coveredstatements="0" conditionals="17" coveredconditionals="0" methods="13" coveredmethods="0"/>
@@ -354,8 +357,8 @@
         <metrics statements="4" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="3" coveredmethods="0"/>
         <line num="2" count="0" type="stmt"/>
         <line num="4" count="0" type="stmt"/>
-        <line num="9" count="0" type="stmt"/>
-        <line num="24" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="31" count="0" type="stmt"/>
       </file>
       <file name="quiz.jsx" path="/home/antoniovargas/projects/laboral/NodoIA/Proyectos/Transit-IA/CodigosFuentes/appv1/components/quiz.jsx">
         <metrics statements="79" coveredstatements="0" conditionals="72" coveredconditionals="0" methods="23" coveredmethods="0"/>
@@ -513,6 +516,26 @@
         <line num="3" count="0" type="stmt"/>
         <line num="7" count="0" type="stmt"/>
         <line num="9" count="0" type="stmt"/>
+      </file>
+      <file name="theme-toggle.tsx" path="/home/antoniovargas/projects/laboral/NodoIA/Proyectos/Transit-IA/CodigosFuentes/appv1/components/theme-toggle.tsx">
+        <metrics statements="17" coveredstatements="0" conditionals="4" coveredconditionals="0" methods="7" coveredmethods="0"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="33" count="0" type="stmt"/>
+        <line num="41" count="0" type="stmt"/>
+        <line num="42" count="0" type="stmt"/>
+        <line num="43" count="0" type="stmt"/>
+        <line num="45" count="0" type="stmt"/>
+        <line num="46" count="0" type="stmt"/>
+        <line num="49" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="50" count="0" type="stmt"/>
+        <line num="57" count="0" type="cond" truecount="0" falsecount="2"/>
       </file>
       <file name="toast.jsx" path="/home/antoniovargas/projects/laboral/NodoIA/Proyectos/Transit-IA/CodigosFuentes/appv1/components/toast.jsx">
         <metrics statements="18" coveredstatements="0" conditionals="22" coveredconditionals="0" methods="6" coveredmethods="0"/>
@@ -686,14 +709,14 @@
         <metrics statements="10" coveredstatements="0" conditionals="2" coveredconditionals="0" methods="3" coveredmethods="0"/>
         <line num="3" count="0" type="stmt"/>
         <line num="5" count="0" type="stmt"/>
-        <line num="15" count="0" type="stmt"/>
-        <line num="23" count="0" type="stmt"/>
-        <line num="24" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="17" count="0" type="stmt"/>
         <line num="25" count="0" type="stmt"/>
         <line num="26" count="0" type="stmt"/>
-        <line num="27" count="0" type="stmt"/>
         <line num="29" count="0" type="stmt"/>
-        <line num="43" count="0" type="stmt"/>
+        <line num="33" count="0" type="stmt"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="42" count="0" type="stmt"/>
+        <line num="61" count="0" type="stmt"/>
       </file>
     </package>
     <package name="components.documents-manager">
@@ -975,6 +998,59 @@
         <line num="85" count="0" type="stmt"/>
       </file>
     </package>
+    <package name="components.ui">
+      <metrics statements="44" coveredstatements="0" conditionals="10" coveredconditionals="0" methods="2" coveredmethods="0"/>
+      <file name="button.tsx" path="/home/antoniovargas/projects/laboral/NodoIA/Proyectos/Transit-IA/CodigosFuentes/appv1/components/ui/button.tsx">
+        <metrics statements="9" coveredstatements="0" conditionals="3" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="41" count="0" type="stmt"/>
+        <line num="43" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="53" count="0" type="stmt"/>
+        <line num="55" count="0" type="stmt"/>
+      </file>
+      <file name="dropdown-menu.tsx" path="/home/antoniovargas/projects/laboral/NodoIA/Proyectos/Transit-IA/CodigosFuentes/appv1/components/ui/dropdown-menu.tsx">
+        <metrics statements="35" coveredstatements="0" conditionals="7" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="8" count="0" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="39" count="0" type="stmt"/>
+        <line num="55" count="0" type="stmt"/>
+        <line num="74" count="0" type="stmt"/>
+        <line num="92" count="0" type="stmt"/>
+        <line num="115" count="0" type="stmt"/>
+        <line num="138" count="0" type="stmt"/>
+        <line num="156" count="0" type="stmt"/>
+        <line num="168" count="0" type="stmt"/>
+        <line num="170" count="0" type="stmt"/>
+        <line num="181" count="0" type="stmt"/>
+        <line num="184" count="0" type="stmt"/>
+        <line num="185" count="0" type="stmt"/>
+        <line num="186" count="0" type="stmt"/>
+        <line num="187" count="0" type="stmt"/>
+        <line num="188" count="0" type="stmt"/>
+        <line num="189" count="0" type="stmt"/>
+        <line num="190" count="0" type="stmt"/>
+        <line num="191" count="0" type="stmt"/>
+        <line num="192" count="0" type="stmt"/>
+        <line num="193" count="0" type="stmt"/>
+        <line num="194" count="0" type="stmt"/>
+        <line num="195" count="0" type="stmt"/>
+        <line num="196" count="0" type="stmt"/>
+        <line num="197" count="0" type="stmt"/>
+        <line num="198" count="0" type="stmt"/>
+      </file>
+    </package>
     <package name="src.components">
       <metrics statements="58" coveredstatements="0" conditionals="16" coveredconditionals="0" methods="10" coveredmethods="0"/>
       <file name="MainApp.jsx" path="/home/antoniovargas/projects/laboral/NodoIA/Proyectos/Transit-IA/CodigosFuentes/appv1/src/components/MainApp.jsx">
@@ -1101,18 +1177,18 @@
         <line num="57" count="0" type="stmt"/>
         <line num="69" count="0" type="stmt"/>
         <line num="90" count="0" type="stmt"/>
-        <line num="96" count="0" type="stmt"/>
-        <line num="103" count="0" type="stmt"/>
-        <line num="110" count="0" type="stmt"/>
-        <line num="117" count="0" type="stmt"/>
-        <line num="124" count="0" type="stmt"/>
-        <line num="131" count="0" type="stmt"/>
-        <line num="140" count="0" type="stmt"/>
+        <line num="97" count="0" type="stmt"/>
+        <line num="105" count="0" type="stmt"/>
+        <line num="113" count="0" type="stmt"/>
+        <line num="121" count="0" type="stmt"/>
+        <line num="129" count="0" type="stmt"/>
+        <line num="137" count="0" type="stmt"/>
         <line num="150" count="0" type="stmt"/>
-        <line num="157" count="0" type="stmt"/>
-        <line num="164" count="0" type="stmt"/>
-        <line num="171" count="0" type="stmt"/>
-        <line num="197" count="0" type="stmt"/>
+        <line num="161" count="0" type="stmt"/>
+        <line num="169" count="0" type="stmt"/>
+        <line num="177" count="0" type="stmt"/>
+        <line num="185" count="0" type="stmt"/>
+        <line num="211" count="0" type="stmt"/>
       </file>
       <file name="HeaderExample.jsx" path="/home/antoniovargas/projects/laboral/NodoIA/Proyectos/Transit-IA/CodigosFuentes/appv1/src/components/layout/HeaderExample.jsx">
         <metrics statements="9" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="3" coveredmethods="0"/>
@@ -1546,25 +1622,25 @@
         <metrics statements="45" coveredstatements="45" conditionals="48" coveredconditionals="46" methods="13" coveredmethods="13"/>
         <line num="12" count="1" type="stmt"/>
         <line num="13" count="1" type="stmt"/>
-        <line num="29" count="209" type="cond" truecount="4" falsecount="0"/>
+        <line num="29" count="122" type="cond" truecount="4" falsecount="0"/>
         <line num="30" count="3" type="stmt"/>
-        <line num="34" count="206" type="stmt"/>
-        <line num="37" count="206" type="stmt"/>
-        <line num="39" count="206" type="stmt"/>
-        <line num="55" count="214" type="cond" truecount="4" falsecount="0"/>
+        <line num="34" count="119" type="stmt"/>
+        <line num="37" count="119" type="stmt"/>
+        <line num="39" count="119" type="stmt"/>
+        <line num="55" count="127" type="cond" truecount="4" falsecount="0"/>
         <line num="56" count="3" type="stmt"/>
-        <line num="59" count="211" type="stmt"/>
-        <line num="61" count="211" type="cond" truecount="2" falsecount="0"/>
+        <line num="59" count="124" type="stmt"/>
+        <line num="61" count="124" type="cond" truecount="2" falsecount="0"/>
         <line num="62" count="1" type="stmt"/>
-        <line num="65" count="210" type="stmt"/>
-        <line num="74" count="214" type="cond" truecount="4" falsecount="0"/>
+        <line num="65" count="123" type="stmt"/>
+        <line num="74" count="127" type="cond" truecount="4" falsecount="0"/>
         <line num="75" count="3" type="stmt"/>
-        <line num="79" count="211" type="cond" truecount="2" falsecount="0"/>
+        <line num="79" count="124" type="cond" truecount="2" falsecount="0"/>
         <line num="80" count="2" type="stmt"/>
-        <line num="83" count="209" type="cond" truecount="2" falsecount="0"/>
+        <line num="83" count="122" type="cond" truecount="2" falsecount="0"/>
         <line num="84" count="1" type="stmt"/>
-        <line num="87" count="208" type="stmt"/>
-        <line num="95" count="206" type="stmt"/>
+        <line num="87" count="121" type="stmt"/>
+        <line num="95" count="119" type="stmt"/>
         <line num="107" count="4" type="cond" truecount="2" falsecount="0"/>
         <line num="110" count="3" type="stmt"/>
         <line num="113" count="3" type="cond" truecount="4" falsecount="0"/>
@@ -1582,11 +1658,11 @@
         <line num="174" count="5" type="cond" truecount="2" falsecount="0"/>
         <line num="183" count="5" type="stmt"/>
         <line num="190" count="5" type="cond" truecount="2" falsecount="0"/>
-        <line num="199" count="105" type="cond" truecount="4" falsecount="0"/>
+        <line num="199" count="14" type="cond" truecount="4" falsecount="0"/>
         <line num="200" count="1" type="stmt"/>
-        <line num="203" count="104" type="stmt"/>
-        <line num="205" count="104" type="stmt"/>
-        <line num="208" count="413" type="cond" truecount="3" falsecount="0"/>
+        <line num="203" count="13" type="stmt"/>
+        <line num="205" count="13" type="stmt"/>
+        <line num="208" count="49" type="cond" truecount="3" falsecount="0"/>
         <line num="221" count="1" type="stmt"/>
         <line num="222" count="21" type="stmt"/>
       </file>

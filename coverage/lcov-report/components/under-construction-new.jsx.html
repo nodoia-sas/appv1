@@ -342,14 +342,14 @@ const UnderConstructionComponent = <span class="cstat-no" title="statement not c
   };
 &nbsp;
   return (
-    &lt;div className="py-8"&gt;
+    &lt;div className="py-8 bg-background min-h-screen"&gt;
       {/* Main content card - consistent with platform styling */}
-      &lt;div className="bg-white rounded-xl shadow-lg p-8 text-center"&gt;
+      &lt;div className="bg-white rounded-xl shadow-lg p-8 text-center border border-slate-200"&gt;
         {/* Icon or illustration area */}
         &lt;div className="mb-6"&gt;
-          &lt;div className="w-16 h-16 mx-auto bg-orange-100 rounded-full flex items-center justify-center"&gt;
+          &lt;div className="w-16 h-16 mx-auto bg-indigo-100 rounded-full flex items-center justify-center"&gt;
             &lt;svg
-              className="w-8 h-8 text-orange-600"
+              className="w-8 h-8 text-indigo-600"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -365,10 +365,10 @@ const UnderConstructionComponent = <span class="cstat-no" title="statement not c
         &lt;/div&gt;
 &nbsp;
         {/* Title and description */}
-        &lt;h1 className="text-2xl font-bold text-gray-900 mb-4"&gt;
+        &lt;h1 className="text-2xl font-bold text-slate-900 mb-4"&gt;
           Módulo en construcción
         &lt;/h1&gt;
-        &lt;p className="text-gray-600 mb-8 max-w-md mx-auto"&gt;
+        &lt;p className="text-slate-600 mb-8 max-w-md mx-auto"&gt;
           Estamos trabajando en esta funcionalidad. Pronto estará disponible con
           contenido actualizado y nuevas características.
         &lt;/p&gt;
@@ -377,13 +377,13 @@ const UnderConstructionComponent = <span class="cstat-no" title="statement not c
         &lt;div className="flex flex-col sm:flex-row gap-4 justify-center items-center"&gt;
           &lt;Link
             href="/"
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-200 min-w-[140px]"
+            className="px-6 py-3 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 transition-colors duration-200 min-w-[140px] shadow-sm"
           &gt;
             Volver al inicio
           &lt;/Link&gt;
           &lt;button
             onClick={handleSubscribe}
-            className="px-6 py-3 bg-gray-100 text-gray-800 rounded-lg font-medium hover:bg-gray-200 transition-colors duration-200 min-w-[140px]"
+            className="px-6 py-3 bg-slate-100 text-slate-800 rounded-lg font-medium hover:bg-slate-200 transition-colors duration-200 min-w-[140px] border border-slate-200"
           &gt;
             Avisarme cuando esté listo
           &lt;/button&gt;
@@ -392,7 +392,7 @@ const UnderConstructionComponent = <span class="cstat-no" title="statement not c
 &nbsp;
       {/* Additional info section */}
       &lt;div className="mt-8 text-center"&gt;
-        &lt;p className="text-sm text-gray-500 mb-4"&gt;
+        &lt;p className="text-sm text-slate-500 mb-4"&gt;
           Mientras tanto, puedes explorar otras funcionalidades disponibles:
         &lt;/p&gt;
 &nbsp;
@@ -401,26 +401,26 @@ const UnderConstructionComponent = <span class="cstat-no" title="statement not c
           &lt;Link
             //href="/news"
             href="/under-construction"
-            className="px-2 py-1 bg-purple-500 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-200 min-w-[140px]"
+            className="px-4 py-2 bg-purple-500 text-white rounded-lg font-semibold hover:bg-purple-600 transition-colors duration-200 min-w-[140px] shadow-sm"
           &gt;
             📰 Noticias
           &lt;/Link&gt;
           &lt;Link
             href="/regulations"
-            className="px-4 py-2 bg-indigo-500 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-200 min-w-[140px]"
+            className="px-4 py-2 bg-indigo-500 text-white rounded-lg font-semibold hover:bg-indigo-600 transition-colors duration-200 min-w-[140px] shadow-sm"
           &gt;
             📋 Normatividad
           &lt;/Link&gt;
           &lt;Link
             href="/glossary"
-            className="px-4 py-2 bg-cyan-500 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-200 min-w-[140px]"
+            className="px-4 py-2 bg-cyan-500 text-white rounded-lg font-semibold hover:bg-cyan-600 transition-colors duration-200 min-w-[140px] shadow-sm"
           &gt;
             📖 Glosario
           &lt;/Link&gt;
           &lt;Link
             //href="/quiz"
             href="/under-construction"
-            className="px-4 py-2 text-sm bg-teal-500 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-200 min-w-[140px]"
+            className="px-4 py-2 text-sm bg-teal-500 text-white rounded-lg font-semibold hover:bg-teal-600 transition-colors duration-200 min-w-[140px] shadow-sm"
           &gt;
             🎯 Quiz
           &lt;/Link&gt;
@@ -429,7 +429,7 @@ const UnderConstructionComponent = <span class="cstat-no" title="statement not c
 &nbsp;
       {/* Footer note */}
       &lt;div className="mt-8 text-center"&gt;
-        &lt;p className="text-xs text-gray-400"&gt;
+        &lt;p className="text-xs text-slate-400"&gt;
           Versión beta — contenido sujeto a cambios
         &lt;/p&gt;
       &lt;/div&gt;
@@ -445,7 +445,7 @@ const UnderConstructionComponent = <span class="cstat-no" title="statement not c
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-01-12T03:36:14.169Z
+                at 2026-01-14T15:50:05.398Z
             </div>
         <script src="../prettify.js"></script>
         <script>
