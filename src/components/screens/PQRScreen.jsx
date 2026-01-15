@@ -1,6 +1,6 @@
 "use client";
 
-import PqrMain from "../../../components/pqr-main";
+import { Pqr } from "../../../features/pqr";
 import { useNotifications } from "../../hooks/useNotifications";
 
 /**
@@ -8,7 +8,7 @@ import { useNotifications } from "../../hooks/useNotifications";
  *
  * Extracted from transit-app.jsx monolith to provide a dedicated
  * PQR (Peticiones, Quejas y Reclamos) interface. Integrates with
- * the existing PqrMain component and useNotifications hook.
+ * the migrated Pqr feature component and useNotifications hook.
  *
  * Requirements: 1.7 - PQR screen as independent component
  */
@@ -16,7 +16,7 @@ const PQRScreen = ({ onNavigate }) => {
   const { showNotification } = useNotifications();
 
   return (
-    <PqrMain setActiveScreen={onNavigate} showNotification={showNotification} />
+    <Pqr setActiveScreen={onNavigate} showNotification={showNotification} />
   );
 };
 

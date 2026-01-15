@@ -24,8 +24,10 @@ import PicoYPlaca from "../../components/pico-y-placa";
 import HelpContact from "../../components/help-contact";
 import Terms from "../../components/terms";
 import UnderConstruction from "../../components/under-construction";
-import RegulationDetail from "../../components/regulation-detail";
 import Notifications from "../../components/notifications";
+
+// Migrated feature components
+import { RegulationDetail } from "../../features/regulations";
 
 import { SCREENS } from "../utils/constants";
 

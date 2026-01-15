@@ -120,11 +120,167 @@ El proyecto incluye configuración básica para PWA.
 
 ## 📂 Estructura del Proyecto
 
-- `/app`: Rutas y layouts del App Router.
-- `/pages`: Rutas API y páginas legacy.
-- `/components`: Componentes reutilizables de la UI.
-- `/public`: Archivos estáticos (imágenes, iconos).
-- `/styles`: Estilos globales.
+El proyecto utiliza una **arquitectura basada en features** para mejorar la mantenibilidad y escalabilidad:
+
+### Estructura Principal
+
+```
+/app                    # Rutas y layouts del App Router (Next.js 15)
+/pages                  # Rutas API y páginas legacy
+/features               # ⭐ Módulos organizados por dominio de negocio
+  /documents            # Feature de gestión de documentos
+  /vehicles             # Feature de gestión de vehículos
+  /regulations          # Feature de regulaciones y normativas
+  /news                 # Feature de noticias
+  /quiz                 # Feature de quiz educativo
+  /pqr                  # Feature de PQR
+/shared                 # ⭐ Código compartido entre features
+  /components           # Componentes UI reutilizables
+  /hooks                # Hooks personalizados compartidos
+  /utils                # Utilidades comunes
+  /types                # Tipos TypeScript compartidos
+/components             # Componentes legacy (en proceso de migración)
+/lib                    # Utilidades y servicios legacy
+/public                 # Archivos estáticos (imágenes, iconos)
+/styles                 # Estilos globales
+```
+
+### Estructura de Features
+
+Cada feature sigue una estructura estándar para mantener consistencia:
+
+```
+/features/{feature-name}
+  /components           # Componentes específicos de la feature
+  /hooks                # Hooks personalizados de la feature
+  /services             # Lógica de negocio y llamadas API
+  /types                # Tipos TypeScript de la feature
+  index.ts              # Barrel export (API pública)
+```
+
+### Principios de Arquitectura
+
+1. **Encapsulación por Dominio**: Cada feature agrupa toda su funcionalidad relacionada
+2. **Separación Clara**: Código específico de features vs código compartido
+3. **API Pública Controlada**: Cada feature expone solo lo necesario mediante barrel exports
+4. **Independencia de Features**: Las features no dependen directamente entre sí
+5. **Código Compartido**: Utilidades y componentes comunes viven en `/shared`
+
+### Ejemplo de Uso
+
+```typescript
+// ✅ Importar desde la API pública de una feature
+import { Documents, useDocuments } from "@/features/documents";
+
+// ✅ Importar componentes compartidos
+import { Button } from "@/shared/components";
+
+// ❌ NO importar directamente desde implementaciones internas
+// import { DocumentCard } from '@/features/documents/components/DocumentCard'
+```
+
+## 🏗️ Guía para Agregar Nuevas Features
+
+### Paso 1: Crear la Estructura
+
+Crea la estructura estándar para tu nueva feature:
+
+```bash
+mkdir -p features/mi-feature/{components,hooks,services,types}
+touch features/mi-feature/index.ts
+```
+
+### Paso 2: Implementar los Componentes
+
+Crea los componentes específicos de tu feature en `/features/mi-feature/components`:
+
+```typescript
+// features/mi-feature/components/MiComponente.tsx
+import { useMiFeature } from "../hooks/useMiFeature";
+
+export function MiComponente() {
+  const { data, loading } = useMiFeature();
+  // Implementación del componente
+}
+```
+
+### Paso 3: Crear el Service Layer
+
+Encapsula la lógica de negocio y llamadas API en `/features/mi-feature/services`:
+
+```typescript
+// features/mi-feature/services/miFeatureService.ts
+import { apiClient } from "@/shared/utils/apiClient";
+
+export const miFeatureService = {
+  async getData() {
+    return apiClient.get("/mi-feature/data");
+  },
+};
+```
+
+### Paso 4: Implementar Hooks Personalizados
+
+Crea hooks que encapsulen el estado y la lógica en `/features/mi-feature/hooks`:
+
+```typescript
+// features/mi-feature/hooks/useMiFeature.ts
+import { useState, useEffect } from "react";
+import { miFeatureService } from "../services/miFeatureService";
+
+export function useMiFeature() {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  // Lógica del hook
+
+  return { data, loading };
+}
+```
+
+### Paso 5: Definir Tipos TypeScript
+
+Define los tipos específicos en `/features/mi-feature/types`:
+
+```typescript
+// features/mi-feature/types/index.ts
+export interface MiFeatureData {
+  id: string;
+  name: string;
+}
+```
+
+### Paso 6: Crear el Barrel Export
+
+Expón la API pública de tu feature en `/features/mi-feature/index.ts`:
+
+```typescript
+// features/mi-feature/index.ts
+export { MiComponente } from "./components/MiComponente";
+export { useMiFeature } from "./hooks/useMiFeature";
+export type { MiFeatureData } from "./types";
+```
+
+### Paso 7: Usar la Feature
+
+Importa y usa tu feature desde otros lugares:
+
+```typescript
+// app/mi-pagina/page.tsx
+import { MiComponente } from "@/features/mi-feature";
+
+export default function MiPagina() {
+  return <MiComponente />;
+}
+```
+
+### Mejores Prácticas
+
+1. **Mantén la Encapsulación**: No expongas detalles internos de implementación
+2. **Usa Shared para Código Común**: Si algo se usa en múltiples features, muévelo a `/shared`
+3. **Evita Dependencias entre Features**: Las features no deben importarse directamente entre sí
+4. **Sigue la Estructura Estándar**: Mantén consistencia con las features existentes
+5. **Documenta la API Pública**: Comenta qué expone cada feature en su `index.ts`
 
 ## 🗺️ Rutas y Funcionalidades del Sistema
 
