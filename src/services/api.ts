@@ -100,7 +100,12 @@ export default apiClient;
 // API Service Functions
 // ============================================
 
-import { Page, RegulationDto, GlossaryDto } from "../types/transit-models";
+import {
+  Page,
+  RegulationDto,
+  GlossaryDto,
+  SearchCriteria,
+} from "../types/transit-models";
 
 /**
  * Busca regulaciones por texto
@@ -182,6 +187,46 @@ export async function searchGlossaryTerms(
 
     // If response is empty or not an array, return empty array
     return [];
+  } catch (error) {
+    // Re-throw ApiError from interceptor
+    throw error;
+  }
+}
+
+/**
+ * Realiza búsqueda avanzada de regulaciones usando criterios múltiples
+ * @param criteria - Array de criterios de búsqueda (key, operation, value)
+ * @param page - Número de página (0-indexed), opcional
+ * @param size - Tamaño de página, opcional
+ * @returns Promise con resultados paginados de regulaciones que cumplen todos los criterios
+ * @throws ApiError si la solicitud falla
+ *
+ * @example
+ * // Buscar regulaciones activas con título que contenga "velocidad"
+ * searchWithCriteria([
+ *   { key: "title", operation: ":", value: "velocidad" },
+ *   { key: "active", operation: "=", value: true }
+ * ])
+ */
+export async function searchWithCriteria(
+  criteria: SearchCriteria[],
+  page: number = 0,
+  size?: number
+): Promise<Page<RegulationDto>> {
+  try {
+    // Serialize criteria as JSON body for POST request
+    const requestBody = {
+      criteria: criteria,
+      page: page,
+      ...(size !== undefined && { size: size }),
+    };
+
+    const response = await apiClient.post<Page<RegulationDto>>(
+      "/regulations/advanced-search",
+      requestBody
+    );
+
+    return response.data;
   } catch (error) {
     // Re-throw ApiError from interceptor
     throw error;
