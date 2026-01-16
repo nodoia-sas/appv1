@@ -105,26 +105,139 @@ import {
   RegulationDto,
   GlossaryDto,
   SearchCriteria,
+  LawDto,
 } from "../types/transit-models";
+
+/**
+ * Busca leyes por texto usando el endpoint de búsqueda avanzada
+ * @param query - Texto de búsqueda (opcional)
+ * @param page - Número de página (0-indexed)
+ * @param size - Tamaño de página (default: 10)
+ * @returns Promise con resultados paginados de leyes
+ * @throws ApiError si la solicitud falla
+ */
+export async function searchLaws(
+  query?: string,
+  page: number = 0,
+  size: number = 10
+): Promise<Page<LawDto>> {
+  try {
+    const params: any = {
+      page,
+      size,
+    };
+
+    // Si hay query, agregar criterio de búsqueda
+    if (query && query.trim()) {
+      params.criteria = `key=title,operation=:,value=${encodeURIComponent(
+        query
+      )}`;
+    }
+
+    const response = await apiClient.get<Page<LawDto>>("/laws", {
+      params,
+    });
+
+    return response.data;
+  } catch (error) {
+    // Re-throw ApiError from interceptor
+    throw error;
+  }
+}
+
+/**
+ * Obtiene todas las leyes con paginación
+ * @param page - Número de página (0-indexed)
+ * @param size - Tamaño de página (default: 10)
+ * @returns Promise con resultados paginados de leyes
+ * @throws ApiError si la solicitud falla
+ */
+export async function getAllLaws(
+  page: number = 0,
+  size: number = 10
+): Promise<Page<LawDto>> {
+  try {
+    const response = await apiClient.get<Page<LawDto>>("/laws", {
+      params: {
+        page,
+        size,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    // Re-throw ApiError from interceptor
+    throw error;
+  }
+}
+
+/**
+ * Obtiene una ley específica por su ID
+ * @param id - ID único de la ley
+ * @returns Promise con los detalles completos de la ley
+ * @throws ApiError si la solicitud falla (incluyendo 404 si no se encuentra)
+ */
+export async function getLawById(id: string): Promise<LawDto> {
+  try {
+    const response = await apiClient.get<LawDto>(`/laws/${id}`);
+    return response.data;
+  } catch (error) {
+    // Re-throw ApiError from interceptor
+    throw error;
+  }
+}
+
+/**
+ * Obtiene todas las regulaciones (artículos) de una ley específica
+ * @param lawId - ID de la ley
+ * @param page - Número de página (0-indexed)
+ * @param size - Tamaño de página (default: 10)
+ * @returns Promise con resultados paginados de regulaciones de esa ley
+ * @throws ApiError si la solicitud falla
+ */
+export async function getRegulationsByLawId(
+  lawId: string,
+  page: number = 0,
+  size: number = 10
+): Promise<Page<RegulationDto>> {
+  try {
+    // El backend acepta lawId como parámetro directo, no como criteria
+    const response = await apiClient.get<Page<RegulationDto>>("/regulations", {
+      params: {
+        lawId,
+        page,
+        size,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    // Re-throw ApiError from interceptor
+    throw error;
+  }
+}
 
 /**
  * Busca regulaciones por texto
  * @param query - Texto de búsqueda
  * @param page - Número de página (0-indexed)
+ * @param size - Tamaño de página (default: 10)
  * @returns Promise con resultados paginados de regulaciones
  * @throws ApiError si la solicitud falla
  */
 export async function searchRegulations(
   query: string,
-  page: number = 0
+  page: number = 0,
+  size: number = 10
 ): Promise<Page<RegulationDto>> {
   try {
     const response = await apiClient.get<Page<RegulationDto>>(
       "/regulations/search",
       {
         params: {
-          q: query,
-          page: page,
+          query: query,
+          page,
+          size,
         },
       }
     );
@@ -157,36 +270,30 @@ export async function getRegulationById(id: string): Promise<RegulationDto> {
 /**
  * Busca términos en el glosario
  * @param term - Término de búsqueda
+ * @param page - Número de página (0-indexed)
+ * @param size - Tamaño de página (default: 10)
  * @returns Promise con array de términos del glosario que coinciden
  * @throws ApiError si la solicitud falla
  */
 export async function searchGlossaryTerms(
-  term: string
+  term: string,
+  page: number = 0,
+  size: number = 10
 ): Promise<GlossaryDto[]> {
   try {
-    const response = await apiClient.get<Page<GlossaryDto>[]>(
+    const response = await apiClient.get<Page<GlossaryDto>>(
       "/glossaries/search",
       {
         params: {
-          term: term,
+          searchTerm: term,
+          page,
+          size,
         },
       }
     );
 
-    // According to the design document, the API returns an array of Page objects
-    // We need to extract the content from all pages and flatten it
-    if (Array.isArray(response.data)) {
-      const allTerms: GlossaryDto[] = [];
-      for (const page of response.data) {
-        if (page.content && Array.isArray(page.content)) {
-          allTerms.push(...page.content);
-        }
-      }
-      return allTerms;
-    }
-
-    // If response is empty or not an array, return empty array
-    return [];
+    // Return the content array from the paginated response
+    return response.data.content || [];
   } catch (error) {
     // Re-throw ApiError from interceptor
     throw error;
@@ -211,20 +318,22 @@ export async function searchGlossaryTerms(
 export async function searchWithCriteria(
   criteria: SearchCriteria[],
   page: number = 0,
-  size?: number
+  size: number = 10
 ): Promise<Page<RegulationDto>> {
   try {
-    // Serialize criteria as JSON body for POST request
-    const requestBody = {
-      criteria: criteria,
-      page: page,
-      ...(size !== undefined && { size: size }),
-    };
-
-    const response = await apiClient.post<Page<RegulationDto>>(
-      "/regulations/advanced-search",
-      requestBody
+    // Serialize criteria as query parameters
+    // Format: key=title,operation=:,value=searchTerm
+    const criteriaParams = criteria.map(
+      (c) => `key=${c.key},operation=${c.operation},value=${c.value}`
     );
+
+    const response = await apiClient.get<Page<RegulationDto>>("/regulations", {
+      params: {
+        criteria: criteriaParams,
+        page,
+        size,
+      },
+    });
 
     return response.data;
   } catch (error) {

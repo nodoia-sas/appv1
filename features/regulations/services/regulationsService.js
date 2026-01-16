@@ -3,79 +3,8 @@
  * Handles business logic and data operations for regulations feature
  */
 
-// Default regulations data
-const DEFAULT_REGULATIONS = [
-  {
-    id: "ley769",
-    title: "Ley 769 de 2002 - Código Nacional de Tránsito",
-    summary:
-      "Establece las normas de comportamiento para conductores, pasajeros, peatones y ciclistas en las vías públicas y privadas abiertas al público.",
-    articles: [
-      {
-        number: "21",
-        summary:
-          "Obligatoriedad de la licencia de conducción y su presentación.",
-      },
-      {
-        number: "25",
-        summary:
-          "Uso obligatorio del cinturón de seguridad para todos los ocupantes del vehículo.",
-      },
-      {
-        number: "55",
-        summary:
-          "Comportamiento de conductores y pasajeros en la vía, incluyendo prohibiciones.",
-      },
-      {
-        number: "131",
-        summary:
-          "Clasificación de las infracciones de tránsito y sus respectivas sanciones.",
-      },
-    ],
-  },
-  {
-    id: "res3027",
-    title: "Resolución 3027 de 2010 - Manual de Señalización Vial",
-    summary:
-      "Define las características y el uso de la señalización vial en Colombia para garantizar la seguridad y fluidez del tránsito.",
-    articles: [
-      {
-        number: "5",
-        summary:
-          "Clasificación general de las señales de tránsito (reglamentarias, preventivas, informativas, transitorias).",
-      },
-      {
-        number: "10",
-        summary:
-          "Características de las señales reglamentarias (forma, color, significado).",
-      },
-      {
-        number: "15",
-        summary:
-          "Características de las señales preventivas (forma, color, significado).",
-      },
-    ],
-  },
-  {
-    id: "decreto1079",
-    title:
-      "Decreto 1079 de 2015 - Decreto Único Reglamentario del Sector Transporte",
-    summary:
-      "Compila y racionaliza las normas de carácter reglamentario que rigen el sector transporte en Colombia.",
-    articles: [
-      {
-        number: "2.3.1.5.1",
-        summary:
-          "Regulación sobre la presentación de documentos de tránsito en formato digital.",
-      },
-      {
-        number: "2.3.1.5.2",
-        summary:
-          "Disposiciones sobre la revisión técnico-mecánica y de emisiones contaminantes.",
-      },
-    ],
-  },
-];
+import { getAllLaws, searchLaws } from "@/src/services/api";
+import { ApiError } from "@/src/services/api";
 
 // Storage keys
 const STORAGE_KEYS = {
@@ -86,23 +15,61 @@ const STORAGE_KEYS = {
 
 /**
  * Regulations Service
- * Provides methods for fetching, searching, and managing regulations
+ * Provides methods for fetching, searching, and managing regulations (laws)
  */
 export const regulationsService = {
   /**
-   * Fetch all regulations
-   * @returns {Promise<Array>} Array of regulation objects
+   * Fetch laws from the TransitIA API with pagination
+   * @param {number} page - Page number (0-indexed)
+   * @param {number} size - Page size (default: 10)
+   * @returns {Promise<Object>} Object with laws array and pagination info
    */
-  async fetchRegulations() {
-    // Stub for future API calls
-    // In production, this would call an actual API endpoint
-    return Promise.resolve(DEFAULT_REGULATIONS);
+  async fetchRegulations(page = 0, size = 10) {
+    try {
+      // Fetch laws from the API with pagination
+      const response = await getAllLaws(page, size);
+
+      // Transform LawDto to match the expected format
+      const laws = response.content.map((law) => ({
+        id: law.id,
+        title: law.title,
+        summary: law.description,
+        iaExplanation: law.iaExplanation,
+        codeId: law.codeId,
+        updatedAt: law.updatedAt,
+        // Note: articles will need to be fetched separately if needed
+        articles: [],
+      }));
+
+      // Return laws with pagination info
+      return {
+        laws,
+        pagination: {
+          currentPage: response.number,
+          totalPages: response.totalPages,
+          totalElements: response.totalElements,
+          pageSize: response.size,
+          isFirst: response.first,
+          isLast: response.last,
+        },
+      };
+    } catch (error) {
+      console.error("Error fetching laws from API:", error);
+
+      // If API fails, throw error
+      if (error instanceof ApiError) {
+        throw new Error(`Error al cargar las leyes: ${error.message}`);
+      }
+      throw new Error(
+        "Error al cargar las leyes. Por favor, intenta de nuevo."
+      );
+    }
   },
 
   /**
-   * Fetch a single regulation by ID
-   * @param {string} regulationId - The regulation ID
-   * @returns {Promise<Object|null>} Regulation object or null if not found
+   * Fetch a single law by ID
+   * @param {string} regulationId - The law ID
+   * @returns {Promise<Object|null>} Law object or null if not found
    */
   async fetchRegulationById(regulationId) {
     const regulations = await this.fetchRegulations();
@@ -110,35 +77,53 @@ export const regulationsService = {
   },
 
   /**
-   * Search regulations by query
+   * Search laws by query using the TransitIA API
    * @param {string} query - Search query
-   * @param {Object} options - Search options
-   * @returns {Promise<Array>} Filtered regulations
+   * @param {number} page - Page number (0-indexed)
+   * @param {number} size - Page size (default: 10)
+   * @returns {Promise<Object>} Object with laws array and pagination info
    */
-  async searchRegulations(query, options = {}) {
-    const regulations = await this.fetchRegulations();
+  async searchRegulations(query, page = 0, size = 10) {
+    try {
+      if (!query || query.trim() === "") {
+        // If no query, return all laws
+        return await this.fetchRegulations(page, size);
+      }
 
-    if (!query || query.trim() === "") {
-      return regulations;
+      // Use the API search endpoint
+      const response = await searchLaws(query, page, size);
+
+      // Transform results to match expected format
+      const laws = response.content.map((law) => ({
+        id: law.id,
+        title: law.title,
+        summary: law.description,
+        iaExplanation: law.iaExplanation,
+        codeId: law.codeId,
+        updatedAt: law.updatedAt,
+        articles: [],
+      }));
+
+      // Return laws with pagination info
+      return {
+        laws,
+        pagination: {
+          currentPage: response.number,
+          totalPages: response.totalPages,
+          totalElements: response.totalElements,
+          pageSize: response.size,
+          isFirst: response.first,
+          isLast: response.last,
+        },
+      };
+    } catch (error) {
+      console.error("Error searching laws:", error);
+
+      if (error instanceof ApiError) {
+        throw new Error(`Error al buscar leyes: ${error.message}`);
+      }
+      throw new Error("Error al buscar leyes. Por favor, intenta de nuevo.");
     }
-
-    const lowerQuery = query.toLowerCase();
-
-    return regulations.filter((regulation) => {
-      const titleMatch = regulation.title.toLowerCase().includes(lowerQuery);
-      const summaryMatch = regulation.summary
-        .toLowerCase()
-        .includes(lowerQuery);
-      const articlesMatch =
-        regulation.articles &&
-        regulation.articles.some(
-          (article) =>
-            article.number.toLowerCase().includes(lowerQuery) ||
-            article.summary.toLowerCase().includes(lowerQuery)
-        );
-
-      return titleMatch || summaryMatch || articlesMatch;
-    });
   },
 
   /**

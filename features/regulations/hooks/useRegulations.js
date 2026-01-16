@@ -9,6 +9,14 @@ export const useRegulations = () => {
   const [regulations, setRegulations] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [pagination, setPagination] = useState({
+    currentPage: 0,
+    totalPages: 0,
+    totalElements: 0,
+    pageSize: 10,
+    isFirst: true,
+    isLast: false,
+  });
 
   // Clear error helper
   const clearError = useCallback(() => {
@@ -23,21 +31,25 @@ export const useRegulations = () => {
     console.error("Regulations hook error:", error);
   }, []);
 
-  // Fetch all regulations
-  const fetchRegulations = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+  // Fetch regulations with pagination
+  const fetchRegulations = useCallback(
+    async (page = 0, size = 10) => {
+      setLoading(true);
+      setError(null);
 
-    try {
-      const fetchedRegulations = await regulationsService.fetchRegulations();
-      setRegulations(fetchedRegulations);
-    } catch (error) {
-      handleError(error);
-      setRegulations([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [handleError]);
+      try {
+        const result = await regulationsService.fetchRegulations(page, size);
+        setRegulations(result.laws);
+        setPagination(result.pagination);
+      } catch (error) {
+        handleError(error);
+        setRegulations([]);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [handleError]
+  );
 
   // Get regulation by ID
   const getRegulationById = useCallback(
@@ -115,7 +127,7 @@ export const useRegulations = () => {
 
   // Initial load effect
   useEffect(() => {
-    fetchRegulations();
+    fetchRegulations(0, 10); // Load first page with 10 items
   }, [fetchRegulations]);
 
   return {
@@ -123,6 +135,7 @@ export const useRegulations = () => {
     regulations,
     loading,
     error,
+    pagination,
 
     // Actions
     fetchRegulations,
