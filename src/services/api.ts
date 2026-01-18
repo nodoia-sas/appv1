@@ -83,12 +83,28 @@ const apiClient = axios.create({
 /**
  * Response interceptor for error handling
  * Converts Axios errors into ApiError instances with user-friendly messages
+ * Requirement 9.5: Logs errors to console for debugging
  */
 apiClient.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
     const statusCode = error.response?.status || 0;
     const message = getErrorMessage(error);
+
+    // Log error details for debugging (Requirement 9.5)
+    const errorLog: Record<string, any> = {
+      endpoint: error.config?.url,
+      method: error.config?.method?.toUpperCase(),
+      status: statusCode,
+      message: message,
+      timestamp: new Date().toISOString(),
+    };
+
+    if (error.response?.data) {
+      errorLog.responseData = error.response.data;
+    }
+
+    console.error("API Error:", errorLog);
 
     throw new ApiError(statusCode, message, error);
   }
@@ -272,14 +288,14 @@ export async function getRegulationById(id: string): Promise<RegulationDto> {
  * @param term - Término de búsqueda
  * @param page - Número de página (0-indexed)
  * @param size - Tamaño de página (default: 10)
- * @returns Promise con array de términos del glosario que coinciden
+ * @returns Promise con respuesta paginada de términos del glosario que coinciden
  * @throws ApiError si la solicitud falla
  */
 export async function searchGlossaryTerms(
   term: string,
   page: number = 0,
   size: number = 10
-): Promise<GlossaryDto[]> {
+): Promise<Page<GlossaryDto>> {
   try {
     const response = await apiClient.get<Page<GlossaryDto>>(
       "/glossaries/search",
@@ -292,8 +308,34 @@ export async function searchGlossaryTerms(
       }
     );
 
-    // Return the content array from the paginated response
-    return response.data.content || [];
+    // Return the full paginated response
+    return response.data;
+  } catch (error) {
+    // Re-throw ApiError from interceptor
+    throw error;
+  }
+}
+
+/**
+ * Obtiene todos los términos del glosario con paginación
+ * @param page - Número de página (0-indexed)
+ * @param size - Tamaño de página
+ * @returns Promise con respuesta paginada de términos del glosario
+ * @throws ApiError si la solicitud falla
+ */
+export async function getAllGlossaries(
+  page: number = 0,
+  size: number = 10
+): Promise<Page<GlossaryDto>> {
+  try {
+    const response = await apiClient.get<Page<GlossaryDto>>("/glossaries", {
+      params: {
+        page,
+        size,
+      },
+    });
+    // The API returns a paginated response
+    return response.data;
   } catch (error) {
     // Re-throw ApiError from interceptor
     throw error;

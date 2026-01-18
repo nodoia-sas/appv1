@@ -69,14 +69,31 @@ const RegulationDetail: React.FC<RegulationDetailProps> = ({
       // Manejar errores de la API
       if (err instanceof ApiError) {
         setError(err.message);
+        // Enhanced error logging (Requirement 9.5)
+        console.error("RegulationDetail - Error loading regulation:", {
+          regulationId,
+          statusCode: err.statusCode,
+          message: err.message,
+          timestamp: new Date().toISOString(),
+        });
       } else if (err instanceof Error) {
         setError(err.message);
+        // Enhanced error logging (Requirement 9.5)
+        console.error("RegulationDetail - Unexpected error:", {
+          regulationId,
+          message: err.message,
+          stack: err.stack,
+          timestamp: new Date().toISOString(),
+        });
       } else {
         setError("Ocurrió un error inesperado al cargar la regulación.");
+        // Enhanced error logging (Requirement 9.5)
+        console.error("RegulationDetail - Unknown error:", {
+          regulationId,
+          error: err,
+          timestamp: new Date().toISOString(),
+        });
       }
-
-      // Log del error para debugging (Requirement 9.5)
-      console.error("Error loading regulation:", err);
     } finally {
       // Siempre actualizar el estado de loading al finalizar
       setLoading(false);

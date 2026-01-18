@@ -11,19 +11,21 @@ async function testSearchGlossaryTerms() {
   try {
     console.log("Test 1: Searching for 'conductor'...");
     const results = await searchGlossaryTerms("conductor");
-    console.log(`✓ Found ${results.length} results`);
-    if (results.length > 0) {
+    console.log(`✓ Found ${results.content.length} results`);
+    console.log(`✓ Total elements: ${results.totalElements}`);
+    console.log(`✓ Total pages: ${results.totalPages}`);
+    if (results.content.length > 0) {
       console.log("First result:", {
-        id: results[0].id,
-        wordName: results[0].wordName,
-        wordValue: results[0].wordValue?.substring(0, 50) + "...",
+        id: results.content[0].id,
+        wordName: results.content[0].wordName,
+        wordValue: results.content[0].wordValue?.substring(0, 50) + "...",
       });
     }
     console.log();
 
     console.log("Test 2: Searching for non-existent term...");
     const emptyResults = await searchGlossaryTerms("xyzabc123");
-    console.log(`✓ Found ${emptyResults.length} results (expected 0)`);
+    console.log(`✓ Found ${emptyResults.content.length} results (expected 0)`);
     console.log();
 
     console.log("All tests completed successfully!");

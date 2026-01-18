@@ -25,9 +25,9 @@ export const metadata: Metadata = generatePageMetadata(
 );
 
 export default async function GlossaryPage() {
-  // For now, use default terms to avoid server-side fetch issues
-  // The client component can handle dynamic loading if needed
-  const glossaryTerms: GlossaryTerm[] = [
+  // The component will load data dynamically from the API
+  // We only provide fallback terms in case of error
+  const fallbackTerms = [
     {
       term: "SOAT",
       explanation: "Seguro Obligatorio de Accidentes de Tránsito.",
@@ -41,30 +41,7 @@ export default async function GlossaryPage() {
       explanation:
         "Documento de identificación personal utilizado en Colombia.",
     },
-    {
-      term: "Licencia de Conducción",
-      explanation:
-        "Documento que autoriza a una persona para conducir vehículos.",
-    },
-    {
-      term: "Pico y Placa",
-      explanation:
-        "Medida de restricción vehicular basada en el último dígito de la placa.",
-    },
-    {
-      term: "Comparendo",
-      explanation: "Orden de comparecencia por infracción de tránsito.",
-    },
-    {
-      term: "Inmovilización",
-      explanation: "Retención temporal de un vehículo por infracciones graves.",
-    },
-    {
-      term: "Embriaguez",
-      explanation:
-        "Estado de alteración por consumo de alcohol que afecta la conducción.",
-    },
   ];
 
-  return <GlossaryComponent initialTerms={glossaryTerms} />;
+  return <GlossaryComponent initialTerms={fallbackTerms} />;
 }

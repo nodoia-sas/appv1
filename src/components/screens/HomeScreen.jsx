@@ -2,6 +2,7 @@
 
 import { OptimizedLink, HighPriorityLink } from "@/lib/performance";
 import * as Icons from "../../../components/icons";
+import SmartSearch from "../SmartSearch";
 
 /**
  * HomeScreen Component - Main dashboard screen
@@ -10,7 +11,7 @@ import * as Icons from "../../../components/icons";
  * to different features of the application. This component maintains the
  * same functionality as the original home screen in transit-app.jsx.
  *
- * Requirements: 7.1, 7.2, 7.3, 7.4
+ * Requirements: 7.1, 7.2, 7.3, 7.4, 7.8 (SmartSearch integration)
  */
 const HomeScreen = () => {
   return (
@@ -18,6 +19,12 @@ const HomeScreen = () => {
       <h2 className="text-xl font-bold text-gray-800 mb-6 text-center">
         Tu asesor inteligente de tránsito
       </h2>
+
+      {/* SmartSearch Component - Requirement 7.8 */}
+      <div className="mb-8">
+        <SmartSearch />
+      </div>
+
       <div className="grid grid-cols-2 gap-4">
         <OptimizedLink
           href="/under-construction"
