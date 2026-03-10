@@ -1,64 +1,84 @@
-"use client"
+"use client";
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from "react";
 
 // Icons removed for simplified profile view
 
 export default function MyProfile({ setActiveScreen, showNotification }) {
   // Vehicles removed from profile; keep profile focused on user data
-  const [apiProfile, setApiProfile] = useState(null)
-  const [loadingProfile, setLoadingProfile] = useState(false)
+  const [apiProfile, setApiProfile] = useState(null);
+  const [loadingProfile, setLoadingProfile] = useState(false);
 
   // No vehicles state
 
   // Fetch profile from backend when user logs in. Use apiProfile over Auth0 user when available.
   useEffect(() => {
-    let mounted = true
-    const controller = new AbortController()
+    let mounted = true;
+    const controller = new AbortController();
     const fetchProfile = async () => {
-      setLoadingProfile(true)
+      setLoadingProfile(true);
       try {
-        const res = await fetch('/api/profile', { signal: controller.signal })
-        if (!res.ok) throw new Error(`Status ${res.status}`)
-        const json = await res.json()
+        const res = await fetch("/api/profile", { signal: controller.signal });
+        if (!res.ok) throw new Error(`Status ${res.status}`);
+        const json = await res.json();
         // backend responds { data: { id, name, email } }
-        const profileData = json?.data || json
-        if (mounted) setApiProfile(profileData)
+        const profileData = json?.data || json;
+        if (mounted) setApiProfile(profileData);
       } catch (err) {
-        if (mounted && showNotification) showNotification('No se pudo obtener el perfil desde el servidor', 'warning')
+        if (mounted && showNotification)
+          showNotification(
+            "No se pudo obtener el perfil desde el servidor",
+            "warning"
+          );
       } finally {
-        if (mounted) setLoadingProfile(false)
+        if (mounted) setLoadingProfile(false);
       }
-    }
+    };
 
-      // Fetch on mount; server will return 401 if not authenticated
-      fetchProfile()
+    // Fetch on mount; server will return 401 if not authenticated
+    fetchProfile();
 
-      return () => { mounted = false; controller.abort() }
-    }, [showNotification])
+    return () => {
+      mounted = false;
+      controller.abort();
+    };
+  }, [showNotification]);
 
   // Vehicle helpers removed
 
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Mi Perfil</h2>
+      <h2 className="text-2xl font-bold text-slate-800 mb-6 text-center">
+        Mi Perfil
+      </h2>
       <div className="space-y-6">
-        <div className="bg-white p-5 rounded-xl shadow-md border border-gray-200">
-          <h3 className="font-semibold text-gray-800 text-lg mb-3">Mis Datos</h3>
+        <div className="bg-white p-5 rounded-xl shadow-md border border-slate-200">
+          <h3 className="font-semibold text-slate-800 text-lg mb-3">
+            Mis Datos
+          </h3>
           {loadingProfile ? (
-            <div className="text-sm text-gray-600">Cargando perfil...</div>
+            <div className="text-sm text-slate-600">Cargando perfil...</div>
           ) : (
             <div>
-              {apiProfile?.name && <div className="font-semibold text-gray-800">{apiProfile.name}</div>}
-              {apiProfile?.email && <div className="text-sm text-gray-600">{apiProfile.email}</div>}
+              {apiProfile?.name && (
+                <div className="font-semibold text-slate-800">
+                  {apiProfile.name}
+                </div>
+              )}
+              {apiProfile?.email && (
+                <div className="text-sm text-slate-600">{apiProfile.email}</div>
+              )}
               {apiProfile?.id && (
-                <p className="text-gray-700 text-sm break-words mt-2">ID de usuario: <span className="font-mono">{apiProfile.id}</span></p>
+                <p className="text-slate-700 text-sm wrap-break-word mt-2">
+                  ID de usuario:{" "}
+                  <span className="font-mono">{apiProfile.id}</span>
+                </p>
               )}
             </div>
           )}
         </div>
-          {/* Vehicles section removed */}
+        {/* Vehicles section removed */}
       </div>
     </div>
-  )
+  );
 }

@@ -1,0 +1,9 @@
+# Shared Directory
+
+This directory contains code that is shared across multiple features.
+
+Structure:
+- /components - Reusable UI components
+- /hooks - Common custom hooks
+- /utils - Utility functions and helpers
+- /types - Shared TypeScript type definitions

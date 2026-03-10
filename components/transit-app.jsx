@@ -1,49 +1,55 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useRef, useCallback } from "react"
-import { useUser } from '@auth0/nextjs-auth0/client'
-import MyProfile from './my-profile'
-import Documents from './documents'
-import Quiz from "./quiz"
-import RegulationsMain from "./regulations-main"
-import RegulationDetail from "./regulation-detail"
-import GlossaryMain from "./glossary-main"
-import PqrMain from "./pqr-main"
-import AiAssist from "./ai-assist"
-import Notifications from "./notifications"
-import News from "./news"
-import PicoYPlaca from "./pico-y-placa"
-import UnderConstruction from "./under-construction"
-import Terms from './terms'
-import HelpContact from './help-contact'
-import * as Icons from './icons'
-import Toast from './toast'
+import { useState, useEffect, useRef, useCallback } from "react";
+import { useUser } from "@auth0/nextjs-auth0/client";
+import MyProfile from "./my-profile";
+import Documents from "./documents";
+import Quiz from "./quiz";
+import RegulationsMain from "./regulations-main";
+import RegulationDetail from "./regulation-detail";
+import GlossaryMain from "./glossary-main";
+import PqrMain from "./pqr-main";
+import AiAssist from "./ai-assist";
+import Notifications from "./notifications";
+import News from "./news";
+import PicoYPlaca from "./pico-y-placa";
+import UnderConstruction from "./under-construction";
+import Terms from "./terms";
+import HelpContact from "./help-contact";
+import EnvironmentInfo from "./environment-info";
+import * as Icons from "./icons";
+import Toast from "./toast";
 
 // Auth handled via Auth0; local login modal removed
 
 const App = () => {
-  const [userId, setUserId] = useState("local-user-123")
-  const [loggedIn, setLoggedIn] = useState(false)
-  const { user, error: userError, isLoading } = useUser()
+  const [userId, setUserId] = useState("local-user-123");
+  const [loggedIn, setLoggedIn] = useState(false);
+  const { user, error: userError, isLoading } = useUser();
 
   useEffect(() => {
-    setLoggedIn(Boolean(user))
-    if (user && user.sub) setUserId(user.sub)
-  }, [user])
+    setLoggedIn(Boolean(user));
+    if (user && user.sub) setUserId(user.sub);
+  }, [user]);
   const [userProfile, setUserProfile] = useState({
     name: "Usuario Demo",
     email: "demo@transitia.com",
     phone: "300 123 4567",
     vehicles: [],
-  })
-  const [loadingProfileFromApi, setLoadingProfileFromApi] = useState(false)
+  });
+  const [loadingProfileFromApi, setLoadingProfileFromApi] = useState(false);
 
   // quiz progress moved to Quiz component
 
-  const [activeScreen, setActiveScreen] = useState("home")
-  const [showLoginDropdown, setShowLoginDropdown] = useState(false)
-  const loginButtonRef = useRef(null)
-  const [notification, setNotification] = useState({ message: "", visible: false, type: "" })
+  const [activeScreen, setActiveScreen] = useState("home");
+  const [showLoginDropdown, setShowLoginDropdown] = useState(false);
+  const [showEnvironmentInfo, setShowEnvironmentInfo] = useState(false);
+  const loginButtonRef = useRef(null);
+  const [notification, setNotification] = useState({
+    message: "",
+    visible: false,
+    type: "",
+  });
 
   // Data for learn/infractions/news/vehicles/quiz are loaded by each feature component
 
@@ -56,81 +62,94 @@ const App = () => {
   useEffect(() => {
     // Other domain data (vehicles, learn content, infractions, news, quiz bank)
     // are loaded and managed by their respective components to avoid prop-drilling.
-  }, [])
+  }, []);
 
   const showNotification = useCallback((message, type = "success") => {
-    setNotification({ message, visible: true, type })
+    setNotification({ message, visible: true, type });
     setTimeout(() => {
-      setNotification((prev) => ({ ...prev, visible: false }))
-    }, 3000)
-  }, [])
+      setNotification((prev) => ({ ...prev, visible: false }));
+    }, 3000);
+  }, []);
 
   // When Auth0 user is present fetch authoritative profile from backend (/api/profile)
   useEffect(() => {
-    if (!user) return
-    let mounted = true
-    const controller = new AbortController()
+    if (!user) return;
+    let mounted = true;
+    const controller = new AbortController();
     const fetchProfile = async () => {
-      setLoadingProfileFromApi(true)
+      setLoadingProfileFromApi(true);
       try {
-        const res = await fetch('/api/profile', { signal: controller.signal })
-        if (!res.ok) throw new Error(`Status ${res.status}`)
-        const json = await res.json()
-        const profile = json?.data || json
+        const res = await fetch("/api/profile", { signal: controller.signal });
+        if (!res.ok) throw new Error(`Status ${res.status}`);
+        const json = await res.json();
+        const profile = json?.data || json;
         if (mounted) {
           setUserProfile((prev) => ({
             name: profile.name ?? prev.name,
             email: profile.email ?? prev.email,
             phone: profile.phone ?? prev.phone,
-            vehicles: profile.vehicles ?? prev.vehicles ?? []
-          }))
+            vehicles: profile.vehicles ?? prev.vehicles ?? [],
+          }));
         }
       } catch (e) {
-        if (showNotification) showNotification('No se pudo obtener el perfil desde el servidor', 'warning')
+        if (showNotification)
+          showNotification(
+            "No se pudo obtener el perfil desde el servidor",
+            "warning"
+          );
       } finally {
-        if (mounted) setLoadingProfileFromApi(false)
+        if (mounted) setLoadingProfileFromApi(false);
       }
-    }
-    fetchProfile()
-    return () => { mounted = false; controller.abort() }
-  }, [user, showNotification])
+    };
+    fetchProfile();
+    return () => {
+      mounted = false;
+      controller.abort();
+    };
+  }, [user, showNotification]);
 
   // If the app is opened with a ?screen=... query param or hash, navigate to that screen
   useEffect(() => {
     try {
-      if (typeof window !== 'undefined') {
-        const params = new URLSearchParams(window.location.search)
-        const qScreen = params.get('screen')
-        const hashScreen = window.location.hash ? window.location.hash.replace(/^#/, '') : null
-        const target = qScreen || hashScreen
+      if (typeof window !== "undefined") {
+        const params = new URLSearchParams(window.location.search);
+        const qScreen = params.get("screen");
+        const hashScreen = window.location.hash
+          ? window.location.hash.replace(/^#/, "")
+          : null;
+        const target = qScreen || hashScreen;
         if (target) {
-          setActiveScreen(target)
+          setActiveScreen(target);
           // remove the screen param from URL to keep it clean
-          const url = new URL(window.location.href)
-          url.searchParams.delete('screen')
+          const url = new URL(window.location.href);
+          url.searchParams.delete("screen");
           // keep hash if present
-          history.replaceState(null, '', url.pathname + (window.location.hash || ''))
+          history.replaceState(
+            null,
+            "",
+            url.pathname + (window.location.hash || "")
+          );
         }
       }
     } catch (e) {
       // ignore
     }
-  }, [])
-
-
+  }, []);
 
   // Global search removed — related state and helpers cleaned up
 
   // Quiz selection logic moved to Quiz component
 
-  const [selectedRegulation, setSelectedRegulation] = useState(null)
+  const [selectedRegulation, setSelectedRegulation] = useState(null);
 
   const renderContent = () => {
     switch (activeScreen) {
       case "home":
         return (
           <div className="p-4">
-            <h2 className="text-xl font-bold text-gray-800 mb-6 text-center">Tu asesor inteligente de tránsito</h2>
+            <h2 className="text-xl font-bold text-gray-800 mb-6 text-center">
+              Tu asesor inteligente de tránsito
+            </h2>
             <div className="grid grid-cols-2 gap-4">
               <div
                 className="flex flex-col items-center justify-center p-3 rounded-xl shadow-lg cursor-pointer transition-all duration-200 transform hover:scale-105 bg-gradient-to-br from-blue-500 to-blue-700 text-white"
@@ -140,53 +159,79 @@ const App = () => {
                 title="Conocimiento - Próximamente"
               >
                 <Icons.BookOpenIcon className="w-8 h-8 mb-2" />
-                <span className="text-base font-semibold text-center">Conocimiento</span>
-                <span className="mt-2 text-xs bg-yellow-200 text-yellow-800 px-2 py-1 rounded-full">Próximamente</span>
+                <span className="text-base font-semibold text-center">
+                  Conocimiento
+                </span>
+                <span className="mt-2 text-xs bg-yellow-200 text-yellow-800 px-2 py-1 rounded-full">
+                  Próximamente
+                </span>
               </div>
               <div
                 className="flex flex-col items-center justify-center p-3 rounded-xl shadow-lg cursor-pointer transition-all duration-200 transform hover:scale-105 bg-gradient-to-br from-orange-500 to-orange-700 text-white"
-                onClick={() => window.open("https://www.pyphoy.com/bogota", "_blank")}
+                onClick={() =>
+                  window.open("https://www.pyphoy.com/bogota", "_blank")
+                }
               >
                 <Icons.CalendarCheckIcon className="w-8 h-8 mb-2" />
-                <span className="text-base font-semibold text-center">Pico y Placa</span>
+                <span className="text-base font-semibold text-center">
+                  Pico y Placa
+                </span>
               </div>
               <div
                 className="flex flex-col items-center justify-center p-3 rounded-xl shadow-lg cursor-pointer transition-all duration-200 transform hover:scale-105 bg-gradient-to-br from-red-500 to-red-700 text-white"
-                onClick={() => window.open("https://www.fcm.org.co/simit/#/estado-cuenta", "_blank")}
+                onClick={() =>
+                  window.open(
+                    "https://www.fcm.org.co/simit/#/estado-cuenta",
+                    "_blank"
+                  )
+                }
               >
                 <Icons.ReceiptTextIcon className="w-8 h-8 mb-2" />
-                <span className="text-base font-semibold text-center">Consulta Multas</span>
+                <span className="text-base font-semibold text-center">
+                  Consulta Multas
+                </span>
               </div>
               <div
                 className="flex flex-col items-center justify-center p-3 rounded-xl shadow-lg cursor-pointer transition-all duration-200 transform hover:scale-105 bg-gradient-to-br from-purple-500 to-purple-700 text-white"
                 onClick={() => setActiveScreen("under-construction")} // "news"
               >
                 <Icons.NewspaperIcon className="w-8 h-8 mb-2" />
-                <span className="text-base font-semibold text-center">Noticias</span>
-                <span className="mt-2 text-xs bg-yellow-200 text-yellow-800 px-2 py-1 rounded-full">Próximamente</span>
+                <span className="text-base font-semibold text-center">
+                  Noticias
+                </span>
+                <span className="mt-2 text-xs bg-yellow-200 text-yellow-800 px-2 py-1 rounded-full">
+                  Próximamente
+                </span>
               </div>
               <div
                 className="flex flex-col items-center justify-center p-3 rounded-xl shadow-lg cursor-pointer transition-all duration-200 transform hover:scale-105 bg-gradient-to-br from-teal-500 to-teal-700 text-white"
                 onClick={() => setActiveScreen("under-construction")} // "quiz"
               >
                 <Icons.ListChecksIcon className="w-8 h-8 mb-2" />
-                <span className="text-base font-semibold text-center">Quiz de Tránsito</span>
-                <span className="mt-2 text-xs bg-yellow-200 text-yellow-800 px-2 py-1 rounded-full">Próximamente</span>
+                <span className="text-base font-semibold text-center">
+                  Quiz de Tránsito
+                </span>
+                <span className="mt-2 text-xs bg-yellow-200 text-yellow-800 px-2 py-1 rounded-full">
+                  Próximamente
+                </span>
               </div>
               <div
                 className="flex flex-col items-center justify-center p-3 rounded-xl shadow-lg cursor-pointer transition-all duration-200 transform hover:scale-105 bg-gradient-to-br from-indigo-500 to-indigo-700 text-white"
-                onClick={() => setActiveScreen("under-construction")} // "regulations-main"
+                onClick={() => setActiveScreen("regulations-main")}
               >
                 <Icons.GavelIcon className="w-8 h-8 mb-2" />
-                <span className="text-base font-semibold text-center">Normatividad</span>
-                <span className="mt-2 text-xs bg-yellow-200 text-yellow-800 px-2 py-1 rounded-full">Próximamente</span>
+                <span className="text-base font-semibold text-center">
+                  Normatividad
+                </span>
               </div>
               <div
                 className="flex flex-col items-center justify-center p-3 rounded-xl shadow-lg cursor-pointer transition-all duration-200 transform hover:scale-105 bg-gradient-to-br from-cyan-500 to-cyan-700 text-white"
                 onClick={() => setActiveScreen("glossary")}
               >
                 <Icons.BookIcon className="w-8 h-8 mb-2" />
-                <span className="text-base font-semibold text-center">Glosario</span>
+                <span className="text-base font-semibold text-center">
+                  Glosario
+                </span>
               </div>
               <div
                 className="flex flex-col items-center justify-center p-3 rounded-xl shadow-lg cursor-pointer transition-all duration-200 transform hover:scale-105 bg-gradient-to-br from-pink-500 to-pink-700 text-white"
@@ -194,50 +239,45 @@ const App = () => {
               >
                 <Icons.MessageSquareTextIcon className="w-8 h-8 mb-2" />
                 <span className="text-base font-semibold text-center">PQR</span>
-                <span className="mt-2 text-xs bg-yellow-200 text-yellow-800 px-2 py-1 rounded-full">Próximamente</span>
+                <span className="mt-2 text-xs bg-yellow-200 text-yellow-800 px-2 py-1 rounded-full">
+                  Próximamente
+                </span>
               </div>
             </div>
-          </div >
-        )
+          </div>
+        );
 
       case "under-construction":
         return (
-          <UnderConstruction setActiveScreen={setActiveScreen} showNotification={showNotification} />
-        )
+          <UnderConstruction
+            setActiveScreen={setActiveScreen}
+            showNotification={showNotification}
+          />
+        );
       case "pico-y-placa":
-        return (
-          <PicoYPlaca setActiveScreen={setActiveScreen} />
-        )
+        return <PicoYPlaca setActiveScreen={setActiveScreen} />;
       case "news":
-        return (
-          <News setActiveScreen={setActiveScreen} />
-        )
+        return <News setActiveScreen={setActiveScreen} />;
       case "my-profile":
         return (
           <MyProfile
             setActiveScreen={setActiveScreen}
             showNotification={showNotification}
           />
-        )
+        );
       case "terms":
-        return (
-          <Terms setActiveScreen={setActiveScreen} />
-        )
+        return <Terms setActiveScreen={setActiveScreen} />;
       case "help-contact":
-        return (
-          <HelpContact setActiveScreen={setActiveScreen} />
-        )
+        return <HelpContact setActiveScreen={setActiveScreen} />;
       case "quiz":
-        return (
-          <Quiz setActiveScreen={setActiveScreen} />
-        )
+        return <Quiz setActiveScreen={setActiveScreen} />;
       case "regulations-main":
         return (
           <RegulationsMain
             setActiveScreen={setActiveScreen}
             setSelectedRegulation={setSelectedRegulation}
           />
-        )
+        );
       case "regulation-detail":
         return (
           <RegulationDetail
@@ -245,41 +285,30 @@ const App = () => {
             setActiveScreen={setActiveScreen}
             setSelectedRegulation={setSelectedRegulation}
           />
-        )
+        );
       case "glossary":
-        return (
-          <GlossaryMain
-            setActiveScreen={setActiveScreen}
-          />
-        )
+        return <GlossaryMain setActiveScreen={setActiveScreen} />;
       case "pqr":
         // Render autonomous PQR
         return (
-          <PqrMain setActiveScreen={setActiveScreen} showNotification={showNotification} />
-        )
+          <PqrMain
+            setActiveScreen={setActiveScreen}
+            showNotification={showNotification}
+          />
+        );
       case "ai-assist":
         // Autonomous AiAssist now manages its own chat state and persistence via lib/ai-utils
-        return (
-          <AiAssist
-            setActiveScreen={setActiveScreen}
-          />
-        )
+        return <AiAssist setActiveScreen={setActiveScreen} />;
       case "notifications":
         // Notifications is now autonomous: it reads vehicles/documents from localStorage and uses pico-utils
-        return (
-          <Notifications setActiveScreen={setActiveScreen} />
-        )
+        return <Notifications setActiveScreen={setActiveScreen} />;
       case "documents":
         // Lazy render external Documents component
-        return (
-          <Documents
-            setActiveScreen={setActiveScreen}
-          />
-        )
+        return <Documents setActiveScreen={setActiveScreen} />;
       default:
-        return null
+        return null;
     }
-  }
+  };
 
   const navItems = [
     { name: "Perfil", icon: Icons.UserIcon, screen: "my-profile" },
@@ -287,32 +316,34 @@ const App = () => {
     { name: "Inicio", icon: Icons.HomeIcon, screen: "home" },
     { name: "Favs", icon: Icons.StarIcon, screen: "favorites" },
     { name: "Asesoría", icon: Icons.LightbulbIcon, screen: "ai-assist" },
-  ]
+  ];
 
   // Navigation handler that requires authentication for routes different than 'home'
   const handleNavClick = (screen) => {
-    if (screen !== 'home' && !loggedIn) {
-      showNotification('Debes iniciar sesión para acceder a esta sección', 'info')
+    if (screen !== "home" && !loggedIn) {
+      showNotification(
+        "Debes iniciar sesión para acceder a esta sección",
+        "info"
+      );
       // Redirect to Auth0 login page to begin authentication
       try {
-        if (typeof window !== 'undefined') window.location.href = '/api/auth/login'
+        if (typeof window !== "undefined")
+          window.location.href = "/api/auth/login";
       } catch (e) {
         // ignore
       }
-      return
+      return;
     }
 
-    setActiveScreen(screen)
-  }
+    setActiveScreen(screen);
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 font-sans flex flex-col p-4">
-      <div
-        className="relative w-full max-w-md md:max-w-2xl lg:max-w-3xl bg-white rounded-xl shadow-lg overflow-hidden flex flex-col max-h-[calc(100vh-2rem)] mx-auto"
-      >
+      <div className="relative w-full max-w-md md:max-w-2xl lg:max-w-3xl bg-white rounded-xl shadow-lg overflow-hidden flex flex-col max-h-[calc(100vh-2rem)] mx-auto">
         <div
           className="fixed top-0 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-blue-600 to-blue-800 text-white p-4 md:px-6 flex items-center justify-between rounded-t-xl shadow-md z-50 w-full max-w-md md:max-w-2xl lg:max-w-3xl"
-          style={{ paddingTop: 'env(safe-area-inset-top)' }}
+          style={{ paddingTop: "env(safe-area-inset-top)" }}
         >
           <div className="relative">
             {loggedIn ? (
@@ -346,8 +377,8 @@ const App = () => {
                     <button
                       className="w-full text-left flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       onClick={() => {
-                        setActiveScreen('my-profile')
-                        setShowLoginDropdown(false)
+                        setActiveScreen("my-profile");
+                        setShowLoginDropdown(false);
                       }}
                     >
                       <Icons.UserIcon className="w-4 h-4" />
@@ -356,8 +387,8 @@ const App = () => {
                     <button
                       className="w-full text-left flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       onClick={() => {
-                        setActiveScreen('documents')
-                        setShowLoginDropdown(false)
+                        setActiveScreen("documents");
+                        setShowLoginDropdown(false);
                       }}
                     >
                       <Icons.FileTextIcon className="w-4 h-4" />
@@ -367,8 +398,8 @@ const App = () => {
                       href="#"
                       className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       onClick={() => {
-                        setActiveScreen('help-contact')
-                        setShowLoginDropdown(false)
+                        setActiveScreen("help-contact");
+                        setShowLoginDropdown(false);
                       }}
                     >
                       <Icons.InfoIcon className="w-4 h-4" />
@@ -377,8 +408,8 @@ const App = () => {
                     <button
                       className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       onClick={() => {
-                        setActiveScreen('terms')
-                        setShowLoginDropdown(false)
+                        setActiveScreen("terms");
+                        setShowLoginDropdown(false);
                       }}
                     >
                       <Icons.FileWarningIcon className="w-4 h-4" />
@@ -388,13 +419,23 @@ const App = () => {
                       href="#"
                       className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       onClick={() => {
-                        showNotification("Compartir app (simulado)", "info")
-                        setShowLoginDropdown(false)
+                        showNotification("Compartir app (simulado)", "info");
+                        setShowLoginDropdown(false);
                       }}
                     >
                       <Icons.Share2Icon className="w-4 h-4" />
                       <span>Compartir app</span>
                     </a>
+                    <button
+                      className="w-full flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={() => {
+                        setShowEnvironmentInfo(true);
+                        setShowLoginDropdown(false);
+                      }}
+                    >
+                      <Icons.SettingsIcon className="w-4 h-4" />
+                      <span>Configuración API</span>
+                    </button>
                     <div className="border-t border-gray-200 my-1"></div>
                     <a
                       href="/api/auth/logout"
@@ -412,8 +453,11 @@ const App = () => {
                       className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       onClick={() => {
                         // redirect to Auth0 login
-                        try { if (typeof window !== 'undefined') window.location.href = '/api/auth/login' } catch (e) { }
-                        setShowLoginDropdown(false)
+                        try {
+                          if (typeof window !== "undefined")
+                            window.location.href = "/api/auth/login";
+                        } catch (e) {}
+                        setShowLoginDropdown(false);
                       }}
                     >
                       <Icons.UserIcon className="w-4 h-4" />
@@ -424,8 +468,8 @@ const App = () => {
                       className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       onClick={() => {
                         // Navigate to Help/Contact view (unauthenticated users may still view contact info)
-                        setActiveScreen('help-contact')
-                        setShowLoginDropdown(false)
+                        setActiveScreen("help-contact");
+                        setShowLoginDropdown(false);
                       }}
                     >
                       <Icons.InfoIcon className="w-4 h-4" />
@@ -435,8 +479,11 @@ const App = () => {
                       href="#"
                       className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       onClick={() => {
-                        showNotification("Navegar a Términos y privacidad (simulado)", "info")
-                        setShowLoginDropdown(false)
+                        showNotification(
+                          "Navegar a Términos y privacidad (simulado)",
+                          "info"
+                        );
+                        setShowLoginDropdown(false);
                       }}
                     >
                       <Icons.FileWarningIcon className="w-4 h-4" />
@@ -446,8 +493,8 @@ const App = () => {
                       href="#"
                       className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       onClick={() => {
-                        showNotification("Compartir app (simulado)", "info")
-                        setShowLoginDropdown(false)
+                        showNotification("Compartir app (simulado)", "info");
+                        setShowLoginDropdown(false);
                       }}
                     >
                       <Icons.Share2Icon className="w-4 h-4" />
@@ -458,19 +505,27 @@ const App = () => {
               </div>
             )}
           </div>
-          <h1 className="text-2xl font-bold absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">Transit IA</h1>
+          <h1 className="text-2xl font-bold absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+            Transit IA
+          </h1>
           <div className="flex items-center">
             <button
               className="p-2 rounded-full bg-blue-700 hover:bg-blue-800 transition-colors duration-200 shadow-md"
               onClick={() => {
                 if (!loggedIn) {
                   // require login to view notifications
-                  showNotification('Debes iniciar sesión para ver notificaciones', 'info')
+                  showNotification(
+                    "Debes iniciar sesión para ver notificaciones",
+                    "info"
+                  );
                   // redirect to Auth0 login
-                  try { if (typeof window !== 'undefined') window.location.href = '/api/auth/login' } catch (e) { }
-                  return
+                  try {
+                    if (typeof window !== "undefined")
+                      window.location.href = "/api/auth/login";
+                  } catch (e) {}
+                  return;
                 }
-                setActiveScreen("notifications")
+                setActiveScreen("notifications");
               }}
               aria-label="View notifications"
             >
@@ -481,8 +536,8 @@ const App = () => {
         <div
           className="flex-grow overflow-y-auto"
           style={{
-            paddingTop: 'calc(3.5rem + env(safe-area-inset-top))',
-            paddingBottom: 'calc(5rem + env(safe-area-inset-bottom))',
+            paddingTop: "calc(3.5rem + env(safe-area-inset-top))",
+            paddingBottom: "calc(5rem + env(safe-area-inset-bottom))",
           }}
         >
           {renderContent()}
@@ -490,17 +545,21 @@ const App = () => {
 
         <nav
           className="fixed left-1/2 transform -translate-x-1/2 bottom-0 bg-white border-t border-gray-200 rounded-t-xl shadow-inner z-50 h-20 flex items-center justify-around px-2 w-full max-w-md md:max-w-2xl lg:max-w-3xl"
-          style={{ paddingBottom: 'env(safe-area-inset-bottom)', WebkitTapHighlightColor: 'transparent' }}
+          style={{
+            paddingBottom: "env(safe-area-inset-bottom)",
+            WebkitTapHighlightColor: "transparent",
+          }}
         >
           {navItems.map((item) => (
             <button
               key={item.name}
               className={`relative flex flex-col items-center justify-center flex-1 h-full py-2
                           rounded-xl transition-all duration-300 ease-in-out
-                          ${activeScreen === item.screen
-                  ? "bg-blue-500 text-white transform -translate-y-2 shadow-lg"
-                  : "bg-white text-gray-600 hover:bg-gray-100"
-                }
+                          ${
+                            activeScreen === item.screen
+                              ? "bg-blue-500 text-white transform -translate-y-2 shadow-lg"
+                              : "bg-white text-gray-600 hover:bg-gray-100"
+                          }
                           focus:outline-none focus:ring-2 focus:ring-blue-300`}
               onClick={() => handleNavClick(item.screen)}
               aria-label={`Go to ${item.name}`}
@@ -513,15 +572,26 @@ const App = () => {
       </div>
       {/* local login modal removed; Auth0 handles auth */}
       {/* Global search removed */}
+
+      {/* Environment Info Modal */}
+      <EnvironmentInfo
+        isVisible={showEnvironmentInfo}
+        onClose={() => setShowEnvironmentInfo(false)}
+      />
+
       <Toast
         message={notification.message}
         type={notification.type}
         visible={notification.visible}
-        onRequestClose={() => setNotification({ message: '', visible: false, type: '' })}
-        onHidden={() => { /* no-op */ }}
+        onRequestClose={() =>
+          setNotification({ message: "", visible: false, type: "" })
+        }
+        onHidden={() => {
+          /* no-op */
+        }}
       />
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;
