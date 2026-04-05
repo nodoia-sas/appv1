@@ -2,7 +2,13 @@
 
 import React from 'react'
 
+const CONTACT_PHONE = process.env.NEXT_PUBLIC_CONTACT_PHONE || '573165678851'
+const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'nodo.ia.sas@gmail.com'
+const COMPANY_WEBSITE = process.env.NEXT_PUBLIC_COMPANY_WEBSITE || 'https://nodoia.co/'
+
 export default function HelpContact({ setActiveScreen }) {
+  const waMessage = encodeURIComponent('Hola NodoIA, necesito ayuda con la app')
+
   return (
     <div className="p-6">
       <h2 className="text-2xl font-bold text-gray-800 mb-4">Ayuda / Contacto</h2>
@@ -13,12 +19,12 @@ export default function HelpContact({ setActiveScreen }) {
           <li className="flex items-center space-x-3">
             <div>
               <strong>Teléfono:</strong>{' '}
-              <a href="tel:+573165678851" className="text-blue-600 hover:underline">+57 3165678851</a>
+              <a href={`tel:+${CONTACT_PHONE}`} className="text-blue-600 hover:underline">+{CONTACT_PHONE}</a>
             </div>
             <div>
               {/* WhatsApp quick link with a prefixed message */}
               <a
-                href="https://wa.me/573165678851?text=Hola%20NodoIA%2C%20necesito%20ayuda%20con%20la%20app"
+                href={`https://wa.me/${CONTACT_PHONE}?text=${waMessage}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center px-3 py-1 rounded-full bg-green-500 text-white text-sm hover:bg-green-600"
@@ -30,11 +36,11 @@ export default function HelpContact({ setActiveScreen }) {
           </li>
           <li>
             <strong>Email:</strong>{' '}
-            <a href="mailto:nodo.ia.sas@gmail.com" className="text-blue-600 hover:underline">nodo.ia.sas@gmail.com</a>
+            <a href={`mailto:${CONTACT_EMAIL}`} className="text-blue-600 hover:underline">{CONTACT_EMAIL}</a>
           </li>
           <li>
             <strong>Sitio web:</strong>{' '}
-            <a href="https://nodoia.co/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">https://nodoia.co/</a>
+            <a href={COMPANY_WEBSITE} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">{COMPANY_WEBSITE}</a>
           </li>
         </ul>
       </section>

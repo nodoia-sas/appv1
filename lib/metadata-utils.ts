@@ -19,11 +19,11 @@ export interface PageMetadataConfig {
 }
 
 const DEFAULT_CONFIG = {
-  siteName: "TransitIA",
-  baseUrl: "https://transitia.app",
+  siteName: process.env.NEXT_PUBLIC_SITE_NAME || "TransitIA",
+  baseUrl: process.env.NEXT_PUBLIC_APP_URL || "https://transitia.app",
   defaultImage: "/icons/icon-512.png",
   locale: "es_CO",
-  twitterHandle: "@TransitIA",
+  twitterHandle: process.env.NEXT_PUBLIC_TWITTER_HANDLE || "@TransitIA",
 };
 
 /**

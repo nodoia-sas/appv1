@@ -28,6 +28,9 @@ yarn-error.log*
 # Kiro
 .kiro/*
 
+# Claude
+.claude/*
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

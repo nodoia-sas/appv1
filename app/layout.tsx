@@ -55,7 +55,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "es_CO",
-    url: "https://transitia.app",
+    url: process.env.NEXT_PUBLIC_APP_URL || "https://transitia.app",
     siteName: "TransitIA",
     title: "Transit IA - Tu asesor inteligente de tránsito",
     description:

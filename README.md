@@ -69,6 +69,9 @@ El proyecto soporta múltiples ambientes con endpoints específicos:
 ### Configuración Mínima (.env.local)
 
 ```env
+# Ambiente (opcional - por defecto: dev)
+NEXT_PUBLIC_APP_ENV=dev
+
 # Auth0 (requerido)
 AUTH0_DOMAIN=tu-dominio.auth0.com
 AUTH0_CLIENT_ID=tu-client-id
@@ -76,12 +79,87 @@ AUTH0_CLIENT_SECRET=tu-client-secret
 AUTH0_SECRET=tu-secret-muy-seguro-de-32-caracteres-minimo
 AUTH0_BASE_URL=http://localhost:3000
 
-# Ambiente (opcional - por defecto: dev)
-NEXT_PUBLIC_APP_ENV=dev
+# URL pública de la app (usada en metadata/SEO)
+NEXT_PUBLIC_APP_URL=http://localhost:3000
 
-# Override manual de API (opcional)
-# API_URL=http://localhost:8010/transitia/api/v1
+# URL base del backend (solo host:puerto)
+API_BASE_URL=http://localhost:8010
+
+# Glosario
+NEXT_PUBLIC_GLOSSARY_API_URL=http://localhost:8011/glossaries
+
+# Asistente IA - Google Gemini
+NEXT_PUBLIC_GEMINI_API_KEY=
+NEXT_PUBLIC_GEMINI_MODEL=gemini-2.5-flash-preview-05-20
 ```
+
+### Referencia Completa de Variables de Entorno
+
+#### Auth0
+
+| Variable | Descripción | Requerida |
+|---|---|---|
+| `AUTH0_DOMAIN` | Dominio de tu tenant en Auth0 | Sí |
+| `AUTH0_CLIENT_ID` | Client ID de la aplicación | Sí |
+| `AUTH0_CLIENT_SECRET` | Client Secret de la aplicación | Sí |
+| `AUTH0_SECRET` | Secret para firmar cookies (mín. 32 chars) | Sí |
+| `AUTH0_BASE_URL` | URL base de la app (para callbacks) | Sí |
+| `AUTH0_AUDIENCE` | Audience del API en Auth0 | No |
+
+#### API Backend
+
+| Variable | Descripción | Por defecto |
+|---|---|---|
+| `API_BASE_URL` | URL base del backend (host:puerto) — usada en `/api/profile` | `http://localhost:8010` |
+| `API_URL` | Override completo de la URL con path (máxima prioridad) | — |
+| `API_BASE_PATH` | Path base del API | `/transitia/api/v1` |
+| `API_BASE_URL_LOCAL` | URL base para el ambiente `local` | `http://localhost:8010` |
+| `API_BASE_URL_DEV` | URL base para el ambiente `dev` | `https://api-dev.transitia.com` |
+| `API_BASE_URL_STAGING` | URL base para el ambiente `staging` | `https://api-staging.transitia.com` |
+| `API_BASE_URL_PRODUCTION` | URL base para el ambiente `production` | `https://api.transitia.com` |
+
+#### Aplicación y SEO
+
+| Variable | Descripción | Por defecto |
+|---|---|---|
+| `NEXT_PUBLIC_APP_ENV` | Ambiente activo (`local`, `dev`, `staging`, `production`) | `dev` |
+| `NEXT_PUBLIC_APP_URL` | URL pública de la app (usada en metadata y Open Graph) | `https://transitia.app` |
+| `NEXT_PUBLIC_SITE_NAME` | Nombre del sitio para SEO | `TransitIA` |
+| `NEXT_PUBLIC_TWITTER_HANDLE` | Handle de Twitter/X para metadata | `@TransitIA` |
+
+#### Servicios Externos
+
+| Variable | Descripción | Por defecto |
+|---|---|---|
+| `NEXT_PUBLIC_GLOSSARY_API_URL` | URL del servicio de glosario | `http://localhost:8011/glossaries` |
+| `NEXT_PUBLIC_PYPHOY_URL` | URL del servicio Pico y Placa | `https://www.pyphoy.com/bogota` |
+| `NEXT_PUBLIC_SIMIT_URL` | URL del SIMIT para consulta de multas | `https://www.fcm.org.co/simit/#/estado-cuenta` |
+
+#### Asistente IA (Google Gemini)
+
+| Variable | Descripción | Por defecto |
+|---|---|---|
+| `NEXT_PUBLIC_GEMINI_API_KEY` | API key de Google Gemini | *(vacío)* |
+| `NEXT_PUBLIC_GEMINI_MODEL` | Modelo de Gemini a usar | `gemini-2.5-flash-preview-05-20` |
+
+> **Advertencia de seguridad:** Al usar el prefijo `NEXT_PUBLIC_`, la API key queda expuesta en el bundle del cliente. Para producción se recomienda implementar un API route proxy que mantenga la key en el servidor.
+
+#### Información de Contacto
+
+| Variable | Descripción | Por defecto |
+|---|---|---|
+| `NEXT_PUBLIC_CONTACT_PHONE` | Número de teléfono/WhatsApp (sin `+`) | `573165678851` |
+| `NEXT_PUBLIC_CONTACT_EMAIL` | Email de contacto | `nodo.ia.sas@gmail.com` |
+| `NEXT_PUBLIC_COMPANY_WEBSITE` | Sitio web de la empresa | `https://nodoia.co/` |
+
+#### Depuración y Monitoreo
+
+| Variable | Descripción | Por defecto |
+|---|---|---|
+| `NEXT_PUBLIC_DEBUG` | Habilita logs de depuración | `false` |
+| `NEXT_PUBLIC_LOG_LEVEL` | Nivel de log (`info`, `warn`, `error`) | `info` |
+| `NEXT_PUBLIC_ANALYTICS_ENABLED` | Habilita analytics | `false` |
+| `NEXT_PUBLIC_SENTRY_ENABLED` | Habilita Sentry | `false` |
 
 ### Verificar Configuración
 

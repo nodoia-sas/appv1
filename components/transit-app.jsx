@@ -22,6 +22,9 @@ import Toast from "./toast";
 
 // Auth handled via Auth0; local login modal removed
 
+const PYPHOY_URL = process.env.NEXT_PUBLIC_PYPHOY_URL || 'https://www.pyphoy.com/bogota'
+const SIMIT_URL = process.env.NEXT_PUBLIC_SIMIT_URL || 'https://www.fcm.org.co/simit/#/estado-cuenta'
+
 const App = () => {
   const [userId, setUserId] = useState("local-user-123");
   const [loggedIn, setLoggedIn] = useState(false);
@@ -169,7 +172,7 @@ const App = () => {
               <div
                 className="flex flex-col items-center justify-center p-3 rounded-xl shadow-lg cursor-pointer transition-all duration-200 transform hover:scale-105 bg-gradient-to-br from-orange-500 to-orange-700 text-white"
                 onClick={() =>
-                  window.open("https://www.pyphoy.com/bogota", "_blank")
+                  window.open(PYPHOY_URL, "_blank")
                 }
               >
                 <Icons.CalendarCheckIcon className="w-8 h-8 mb-2" />
@@ -180,10 +183,7 @@ const App = () => {
               <div
                 className="flex flex-col items-center justify-center p-3 rounded-xl shadow-lg cursor-pointer transition-all duration-200 transform hover:scale-105 bg-gradient-to-br from-red-500 to-red-700 text-white"
                 onClick={() =>
-                  window.open(
-                    "https://www.fcm.org.co/simit/#/estado-cuenta",
-                    "_blank"
-                  )
+                  window.open(SIMIT_URL, "_blank")
                 }
               >
                 <Icons.ReceiptTextIcon className="w-8 h-8 mb-2" />

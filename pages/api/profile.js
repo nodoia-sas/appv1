@@ -6,7 +6,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  const apiBase = process.env.API_URL || 'http://localhost:8010'
+  const apiBase = process.env.API_BASE_URL || process.env.API_URL || 'http://localhost:8010'
   try {
     const upstream = new URL('/transitia/api/v1/users/profile', apiBase).toString()
 
@@ -17,7 +17,9 @@ export default async function handler(req, res) {
       // console.log('tokenResponse: ', tokenResponse.token)
       token = tokenResponse?.token || tokenResponse?.access_token || null
     } catch (e) {
-      console.log('[api/profile] getAccessToken failed:', String(e?.message || e))
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[api/profile] getAccessToken failed:', String(e?.message || e))
+      }
     }
 
     const headers = {
@@ -25,9 +27,7 @@ export default async function handler(req, res) {
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     }
 
-    console.log('[api/profile] proxy ->', upstream, 'hasToken?', !!token)
     const upstreamRes = await fetch(upstream, { method: 'GET', headers })
-    console.log('[api/profile] upstream status', upstreamRes.status)
 
     const contentType = upstreamRes.headers.get('content-type') || ''
     const status = upstreamRes.status
