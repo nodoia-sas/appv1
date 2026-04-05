@@ -1,4 +1,9 @@
+import { rateLimit } from '../../lib/rate-limit'
+
+const limiter = rateLimit({ windowMs: 60_000, max: 20, keyPrefix: 'ai-proxy' })
+
 export default async function handler(req, res) {
+  if (!limiter(req, res)) return
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST')
     return res.status(405).json({ error: 'Method not allowed' })

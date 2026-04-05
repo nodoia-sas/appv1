@@ -1,7 +1,9 @@
 import { getApiInfo, validateEndpoint } from "../../../shared/utils";
+import { auth0 } from "../../../lib/auth0";
 
 /**
- * Endpoint de diagnóstico para verificar la configuración del ambiente
+ * Endpoint de diagnóstico para verificar la configuración del ambiente.
+ * Requiere sesión Auth0 activa. Solo disponible en ambientes no-producción.
  * GET /api/config/environment
  */
 export default async function handler(req, res) {
@@ -10,13 +12,26 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
+  // Solo disponible fuera de producción
+  if (process.env.NODE_ENV === "production") {
+    return res.status(404).json({ error: "Not found" });
+  }
+
+  // Requiere sesión activa
+  try {
+    const session = await auth0.getSession(req, res);
+    if (!session?.user) {
+      return res.status(401).json({ error: "Authentication required" });
+    }
+  } catch {
+    return res.status(401).json({ error: "Authentication required" });
+  }
+
   try {
     const apiInfo = getApiInfo();
 
-    // Validar conectividad (opcional, puede ser lento)
     const shouldValidate = req.query.validate === "true";
     let validation = null;
-
     if (shouldValidate) {
       validation = await validateEndpoint("/health");
     }
@@ -27,14 +42,11 @@ export default async function handler(req, res) {
         current: apiInfo.environment,
         name: apiInfo.name,
         nodeEnv: process.env.NODE_ENV,
-        appEnv: process.env.NEXT_PUBLIC_APP_ENV || null,
       },
       api: {
         baseUrl: apiInfo.baseUrl,
         basePath: apiInfo.basePath,
-        finalUrl: apiInfo.finalUrl,
         isOverridden: apiInfo.isOverridden,
-        overrideValue: process.env.API_URL || null,
       },
       validation: validation || {
         message: "Add ?validate=true to test connectivity",
@@ -44,9 +56,6 @@ export default async function handler(req, res) {
     return res.status(200).json(response);
   } catch (error) {
     console.error("[api/config/environment] Error:", error);
-    return res.status(500).json({
-      error: "Internal server error",
-      message: error.message,
-    });
+    return res.status(500).json({ error: "Internal server error" });
   }
 }

@@ -1,4 +1,5 @@
 import { proxyRequest } from '../../../../lib/proxy-api'
+import { validate, idParamSchema } from '../../../../lib/validate'
 
 export const config = {
     api: {
@@ -7,14 +8,12 @@ export const config = {
 }
 
 export default async function handler(req, res) {
-    const { id } = req.query
-    if (!id) {
-        return res.status(400).json({ error: 'Missing document ID' })
-    }
+    const params = validate(res, idParamSchema, { id: req.query.id })
+    if (!params) return
 
     return proxyRequest(req, res, {
         method: 'PATCH',
-        endpoint: `/transitia/api/v1/documents/edit/${id}`,
+        endpoint: `/transitia/api/v1/documents/edit/${encodeURIComponent(params.id)}`,
         isMultipart: true
     })
 }
