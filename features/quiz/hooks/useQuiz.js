@@ -1,3 +1,4 @@
+"use client"
 /**
  * useQuiz Hook
  * Manages quiz state, progress, and game logic

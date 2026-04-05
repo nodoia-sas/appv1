@@ -1,3 +1,4 @@
+"use client"
 /**
  * useNews Hook
  * Manages news state, loading, and favorites

@@ -22,6 +22,6 @@ export {
 } from "./legacyStateMapping";
 
 // Migration hook and utilities
-export { useLegacyMigration, withLegacyMigration } from "./useLegacyMigration";
+export { useLegacyMigration } from "./useLegacyMigration";
 
 // Re-export types (will be available when useLegacyMigration is imported)
