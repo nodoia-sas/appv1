@@ -1,6 +1,7 @@
 "use client"
 import React, { useEffect, useState } from "react"
 import { checkPicoYPlacaStatus } from "../lib/pico-utils"
+import { STORAGE_KEYS } from "../lib/storage-keys"
 
 export default function Notifications({ setActiveScreen }) {
   const [registeredVehicles, setRegisteredVehicles] = useState([])
@@ -9,14 +10,14 @@ export default function Notifications({ setActiveScreen }) {
 
   useEffect(() => {
     try {
-      const saved = JSON.parse(localStorage.getItem("transit-user-vehicles") || "[]")
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEYS.VEHICLES) || "[]")
       setRegisteredVehicles(Array.isArray(saved) ? saved : [])
     } catch (e) {
       setRegisteredVehicles([])
     }
 
     try {
-      const docs = JSON.parse(localStorage.getItem("transit-user-documents") || "[]")
+      const docs = JSON.parse(localStorage.getItem(STORAGE_KEYS.DOCUMENTS) || "[]")
       setDocuments(Array.isArray(docs) ? docs : [])
     } catch (e) {
       setDocuments([])

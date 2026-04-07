@@ -3,6 +3,25 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import Header from "../../../src/components/layout/Header";
 
+// Mock navigation to avoid NavigationProvider requirement
+const mockNavigate = jest.fn();
+jest.mock("../../../lib/navigation", () => ({
+  useNavigationCompat: () => ({
+    navigate: mockNavigate,
+    handleNavClick: jest.fn(),
+    activeScreen: "home",
+    canGoBack: false,
+    history: ["home"],
+  }),
+}));
+
+// Mock SmartSearch
+jest.mock("../../../src/components/SmartSearch", () => {
+  return function MockSmartSearch() {
+    return <div data-testid="smart-search" />;
+  };
+});
+
 // Mock the icons module
 jest.mock("../../../components/icons", () => ({
   UserIcon: ({ className }) => (
@@ -28,6 +47,9 @@ jest.mock("../../../components/icons", () => ({
   ),
   SettingsIcon: ({ className }) => (
     <div className={className} data-testid="settings-icon" />
+  ),
+  SearchIcon: ({ className }) => (
+    <div className={className} data-testid="search-icon" />
   ),
 }));
 
@@ -150,7 +172,7 @@ describe("Header Component", () => {
     expect(screen.getByText("Cerrar Sesión")).toBeInTheDocument();
   });
 
-  it("calls onMenuClick with correct action when menu items are clicked", () => {
+  it("navigates to my-profile when menu item is clicked", () => {
     const mockUser = { name: "Test User", email: "test@example.com" };
 
     render(
@@ -165,9 +187,9 @@ describe("Header Component", () => {
     // Open dropdown
     fireEvent.click(screen.getByLabelText("Abrir menú de usuario"));
 
-    // Click on "Mi perfil"
+    // Click on "Mi perfil" — uses navigate() from hook, not onMenuClick
     fireEvent.click(screen.getByText("Mi perfil"));
-    expect(mockOnMenuClick).toHaveBeenCalledWith("my-profile");
+    expect(mockNavigate).toHaveBeenCalledWith("my-profile");
   });
 
   it("shows unauthenticated menu options when user is not logged in", () => {

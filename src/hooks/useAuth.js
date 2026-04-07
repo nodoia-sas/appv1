@@ -77,11 +77,14 @@ export const useAuth = () => {
   const validateToken = async () => {
     try {
       const isValid = await authService.validateToken();
-      if (!isValid && authError) {
-        showNotification(
-          "Sesión expirada, por favor inicia sesión nuevamente",
-          "warning"
-        );
+      if (!isValid) {
+        const currentError = authService.getAuthError();
+        if (currentError) {
+          showNotification(
+            "Sesión expirada, por favor inicia sesión nuevamente",
+            "warning"
+          );
+        }
       }
       return isValid;
     } catch (error) {

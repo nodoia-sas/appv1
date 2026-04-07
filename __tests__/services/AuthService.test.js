@@ -1,4 +1,4 @@
-import AuthService from "../../src/services/AuthService";
+import authServiceSingleton, { AuthService } from "../../src/services/AuthService";
 import fc from "fast-check";
 
 // Mock fetch globally
@@ -15,11 +15,8 @@ describe("AuthService", () => {
     jest.clearAllMocks();
     global.fetch.mockClear();
 
-    // Mock window.location
-    delete window.location;
-    window.location = {
-      href: "",
-    };
+    // Reset window.location to base URL before each test
+    window.location.href = "http://localhost/";
   });
 
   afterEach(() => {
@@ -183,16 +180,17 @@ describe("AuthService", () => {
 
   describe("Authentication Actions", () => {
     it("should redirect to login", () => {
+      const navigateSpy = jest.spyOn(authService, "_navigate").mockImplementation(() => {});
       authService.login();
-      expect(window.location.href).toBe("/api/auth/login");
+      expect(navigateSpy).toHaveBeenCalledWith("/api/auth/login");
+      navigateSpy.mockRestore();
     });
 
     it("should handle login redirect error", () => {
-      // Mock window as undefined to simulate error
-      const originalWindow = global.window;
-      global.window = undefined;
-
       const consoleSpy = jest.spyOn(console, "error").mockImplementation();
+      jest.spyOn(authService, "_navigate").mockImplementation(() => {
+        throw new Error("Navigation blocked");
+      });
 
       authService.login();
 
@@ -201,22 +199,21 @@ describe("AuthService", () => {
         "Error redirecting to login:",
         expect.any(Error)
       );
-
-      global.window = originalWindow;
       consoleSpy.mockRestore();
     });
 
     it("should redirect to logout", () => {
+      const navigateSpy = jest.spyOn(authService, "_navigate").mockImplementation(() => {});
       authService.logout();
-      expect(window.location.href).toBe("/api/auth/logout");
+      expect(navigateSpy).toHaveBeenCalledWith("/api/auth/logout");
+      navigateSpy.mockRestore();
     });
 
     it("should handle logout redirect error", () => {
-      // Mock window as undefined to simulate error
-      const originalWindow = global.window;
-      global.window = undefined;
-
       const consoleSpy = jest.spyOn(console, "error").mockImplementation();
+      jest.spyOn(authService, "_navigate").mockImplementation(() => {
+        throw new Error("Navigation blocked");
+      });
 
       authService.logout();
 
@@ -225,8 +222,6 @@ describe("AuthService", () => {
         "Error redirecting to logout:",
         expect.any(Error)
       );
-
-      global.window = originalWindow;
       consoleSpy.mockRestore();
     });
   });
@@ -298,10 +293,12 @@ describe("AuthService", () => {
     });
 
     it("should redirect to login when no callback provided", () => {
+      const navigateSpy = jest.spyOn(authService, "_navigate").mockImplementation(() => {});
       const result = authService.requireAuth();
 
       expect(result).toBe(false);
-      expect(window.location.href).toBe("/api/auth/login");
+      expect(navigateSpy).toHaveBeenCalledWith("/api/auth/login");
+      navigateSpy.mockRestore();
     });
 
     it("should handle navigation auth for home screen", () => {
@@ -324,6 +321,7 @@ describe("AuthService", () => {
     });
 
     it("should handle navigation auth for protected screens when not authenticated", () => {
+      const navigateSpy = jest.spyOn(authService, "_navigate").mockImplementation(() => {});
       const showNotification = jest.fn();
       const result = authService.handleNavAuth("documents", showNotification);
 
@@ -332,7 +330,8 @@ describe("AuthService", () => {
         "Debes iniciar sesión para acceder a esta sección",
         "info"
       );
-      expect(window.location.href).toBe("/api/auth/login");
+      expect(navigateSpy).toHaveBeenCalledWith("/api/auth/login");
+      navigateSpy.mockRestore();
     });
   });
 
@@ -444,9 +443,7 @@ describe("AuthService", () => {
             }
 
             const showNotification = jest.fn();
-
-            // Reset window.location.href for each test
-            window.location.href = "";
+            const navigateSpy = jest.spyOn(authService, "_navigate").mockImplementation(() => {});
 
             const result = authService.handleNavAuth(
               testCase.screen,
@@ -457,12 +454,12 @@ describe("AuthService", () => {
               // Home screen should always be accessible
               expect(result).toBe(true);
               expect(showNotification).not.toHaveBeenCalled();
-              expect(window.location.href).toBe("");
+              expect(navigateSpy).not.toHaveBeenCalled();
             } else if (testCase.isAuthenticated && testCase.user) {
               // Protected screens should be accessible when authenticated
               expect(result).toBe(true);
               expect(showNotification).not.toHaveBeenCalled();
-              expect(window.location.href).toBe("");
+              expect(navigateSpy).not.toHaveBeenCalled();
             } else {
               // Protected screens should redirect when not authenticated
               expect(result).toBe(false);
@@ -470,8 +467,10 @@ describe("AuthService", () => {
                 "Debes iniciar sesión para acceder a esta sección",
                 "info"
               );
-              expect(window.location.href).toBe("/api/auth/login");
+              expect(navigateSpy).toHaveBeenCalledWith("/api/auth/login");
             }
+
+            navigateSpy.mockRestore();
           }
         ),
         { numRuns: 100 }

@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useUser } from "@auth0/nextjs-auth0/client";
+import { useRouter } from "next/navigation";
+import useSWR from "swr";
 import MyProfile from "./my-profile";
 import Documents from "./documents";
 import Quiz from "./quiz";
@@ -26,21 +28,37 @@ const PYPHOY_URL = process.env.NEXT_PUBLIC_PYPHOY_URL || 'https://www.pyphoy.com
 const SIMIT_URL = process.env.NEXT_PUBLIC_SIMIT_URL || 'https://www.fcm.org.co/simit/#/estado-cuenta'
 
 const App = () => {
-  const [userId, setUserId] = useState("local-user-123");
-  const [loggedIn, setLoggedIn] = useState(false);
+  const router = useRouter();
   const { user, error: userError, isLoading } = useUser();
 
-  useEffect(() => {
-    setLoggedIn(Boolean(user));
-    if (user && user.sub) setUserId(user.sub);
-  }, [user]);
+  // Estado derivado: no necesita useState propio — evita re-renders en cascada
+  const loggedIn = Boolean(user);
+  const userId = user?.sub ?? "local-user-123";
   const [userProfile, setUserProfile] = useState({
     name: "Usuario Demo",
     email: "demo@transitia.com",
     phone: "300 123 4567",
     vehicles: [],
   });
-  const [loadingProfileFromApi, setLoadingProfileFromApi] = useState(false);
+
+  // SWR: caché, deduplicación y revalidación automáticas.
+  // Solo fetcha cuando hay sesión activa (key null = deshabilitado).
+  const { data: profileData, isLoading: loadingProfileFromApi } = useSWR(
+    user ? "/api/profile" : null,
+    (url) => fetch(url).then((r) => { if (!r.ok) throw new Error(`Status ${r.status}`); return r.json(); }),
+    { revalidateOnFocus: false, dedupingInterval: 30_000 }
+  );
+
+  useEffect(() => {
+    if (!profileData) return;
+    const profile = profileData?.data || profileData;
+    setUserProfile((prev) => ({
+      name: profile.name ?? prev.name,
+      email: profile.email ?? prev.email,
+      phone: profile.phone ?? prev.phone,
+      vehicles: profile.vehicles ?? prev.vehicles ?? [],
+    }));
+  }, [profileData]);
 
   // quiz progress moved to Quiz component
 
@@ -74,42 +92,6 @@ const App = () => {
     }, 3000);
   }, []);
 
-  // When Auth0 user is present fetch authoritative profile from backend (/api/profile)
-  useEffect(() => {
-    if (!user) return;
-    let mounted = true;
-    const controller = new AbortController();
-    const fetchProfile = async () => {
-      setLoadingProfileFromApi(true);
-      try {
-        const res = await fetch("/api/profile", { signal: controller.signal });
-        if (!res.ok) throw new Error(`Status ${res.status}`);
-        const json = await res.json();
-        const profile = json?.data || json;
-        if (mounted) {
-          setUserProfile((prev) => ({
-            name: profile.name ?? prev.name,
-            email: profile.email ?? prev.email,
-            phone: profile.phone ?? prev.phone,
-            vehicles: profile.vehicles ?? prev.vehicles ?? [],
-          }));
-        }
-      } catch (e) {
-        if (showNotification)
-          showNotification(
-            "No se pudo obtener el perfil desde el servidor",
-            "warning"
-          );
-      } finally {
-        if (mounted) setLoadingProfileFromApi(false);
-      }
-    };
-    fetchProfile();
-    return () => {
-      mounted = false;
-      controller.abort();
-    };
-  }, [user, showNotification]);
 
   // If the app is opened with a ?screen=... query param or hash, navigate to that screen
   useEffect(() => {
@@ -321,20 +303,10 @@ const App = () => {
   // Navigation handler that requires authentication for routes different than 'home'
   const handleNavClick = (screen) => {
     if (screen !== "home" && !loggedIn) {
-      showNotification(
-        "Debes iniciar sesión para acceder a esta sección",
-        "info"
-      );
-      // Redirect to Auth0 login page to begin authentication
-      try {
-        if (typeof window !== "undefined")
-          window.location.href = "/api/auth/login";
-      } catch (e) {
-        // ignore
-      }
+      showNotification("Debes iniciar sesión para acceder a esta sección", "info");
+      router.push("/api/auth/login");
       return;
     }
-
     setActiveScreen(screen);
   };
 

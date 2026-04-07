@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { useNotifications } from "@/src/hooks/useNotifications";
+import { STORAGE_KEYS } from "@/lib/storage-keys";
 
 /**
  * UnderConstructionComponent - Displays under construction message
@@ -16,10 +17,10 @@ const UnderConstructionComponent = () => {
   const handleSubscribe = () => {
     try {
       const subs = JSON.parse(
-        localStorage.getItem("transit-knowledge-subs") || "[]"
+        localStorage.getItem(STORAGE_KEYS.KNOWLEDGE_SUBS) || "[]"
       );
       subs.push({ id: Date.now().toString(), date: new Date().toISOString() });
-      localStorage.setItem("transit-knowledge-subs", JSON.stringify(subs));
+      localStorage.setItem(STORAGE_KEYS.KNOWLEDGE_SUBS, JSON.stringify(subs));
       showNotification("Te avisaremos cuando el módulo esté listo", "success");
     } catch (e) {
       showNotification("No se pudo suscribir en este momento", "error");

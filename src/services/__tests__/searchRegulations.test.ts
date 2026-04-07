@@ -54,7 +54,7 @@ describe("searchRegulations", () => {
 
     expect(result).toEqual(mockResponse);
     expect(mock.history.get.length).toBe(1);
-    expect(mock.history.get[0].params).toEqual({ q: "velocidad", page: 0 });
+    expect(mock.history.get[0].params).toEqual({ query: "velocidad", page: 0, size: 10 });
   });
 
   it("should use default page number 0 when not provided", async () => {
@@ -83,7 +83,7 @@ describe("searchRegulations", () => {
 
     await searchRegulations("test");
 
-    expect(mock.history.get[0].params).toEqual({ q: "test", page: 0 });
+    expect(mock.history.get[0].params).toEqual({ query: "test", page: 0, size: 10 });
   });
 
   it("should handle different page numbers", async () => {
@@ -113,7 +113,7 @@ describe("searchRegulations", () => {
     const result = await searchRegulations("multa", 2);
 
     expect(result.number).toBe(2);
-    expect(mock.history.get[0].params).toEqual({ q: "multa", page: 2 });
+    expect(mock.history.get[0].params).toEqual({ query: "multa", page: 2, size: 10 });
   });
 
   it("should throw ApiError when request fails", async () => {

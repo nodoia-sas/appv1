@@ -1,12 +1,18 @@
 import type React from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { fetchNews } from "@/lib/news-utils";
+import { fetchNews, DEFAULT_NEWS_ITEMS } from "@/lib/news-utils";
 import { validateAndSanitizeId } from "@/lib/route-validation";
 import {
   generateDynamicMetadata,
   PAGE_METADATA_CONFIGS,
 } from "@/lib/metadata-utils";
+
+export async function generateStaticParams() {
+  return DEFAULT_NEWS_ITEMS.map((item: { id: number }) => ({
+    id: item.id.toString(),
+  }));
+}
 
 interface NewsItem {
   id: number;

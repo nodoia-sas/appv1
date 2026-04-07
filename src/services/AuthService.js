@@ -94,13 +94,21 @@ class AuthService {
   }
 
   /**
+   * Internal navigation helper — extracted for testability
+   * @param {string} url - URL to navigate to
+   */
+  _navigate(url) {
+    window.location.href = url;
+  }
+
+  /**
    * Handle login redirect
    * Redirects to Auth0 login page
    */
   login() {
     try {
       if (typeof window !== "undefined") {
-        window.location.href = "/api/auth/login";
+        this._navigate("/api/auth/login");
       }
     } catch (error) {
       console.error("Error redirecting to login:", error);
@@ -115,7 +123,7 @@ class AuthService {
   logout() {
     try {
       if (typeof window !== "undefined") {
-        window.location.href = "/api/auth/logout";
+        this._navigate("/api/auth/logout");
       }
     } catch (error) {
       console.error("Error redirecting to logout:", error);
@@ -207,6 +215,8 @@ class AuthService {
     this.setAuthState(null, false, null);
   }
 }
+
+export { AuthService };
 
 // Create singleton instance
 const authService = new AuthService();

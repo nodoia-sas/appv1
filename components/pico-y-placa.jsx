@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react"
 import { VEHICLE_TYPES as DEFAULT_VEHICLE_TYPES, COLOMBIAN_CITIES_WITH_PICO_Y_PLACA as DEFAULT_CITIES, checkPicoYPlacaStatus as defaultCheck }
   from "../lib/pico-utils"
+import { STORAGE_KEYS } from "../lib/storage-keys"
 
 export default function PicoYPlaca({ setActiveScreen }) {
   // Local state: component autonomous, loads/saves registered vehicles from localStorage
@@ -22,7 +23,7 @@ export default function PicoYPlaca({ setActiveScreen }) {
 
   useEffect(() => {
     try {
-      const saved = JSON.parse(localStorage.getItem("transit-user-vehicles") || "[]")
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEYS.VEHICLES) || "[]")
       setRegisteredVehicles(Array.isArray(saved) ? saved : [])
     } catch (e) {
       setRegisteredVehicles([])
@@ -43,7 +44,7 @@ export default function PicoYPlaca({ setActiveScreen }) {
     const updated = registeredVehicles.filter((v) => v.id !== id)
     setRegisteredVehicles(updated)
     try {
-      localStorage.setItem("transit-user-vehicles", JSON.stringify(updated))
+      localStorage.setItem(STORAGE_KEYS.VEHICLES, JSON.stringify(updated))
     } catch (e) {
       // ignore
     }

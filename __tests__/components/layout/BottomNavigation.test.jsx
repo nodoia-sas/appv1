@@ -3,6 +3,18 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import BottomNavigation from "../../../src/components/layout/BottomNavigation";
 
+// Mock navigation to avoid NavigationProvider requirement
+const mockHandleNavClick = jest.fn();
+jest.mock("../../../lib/navigation", () => ({
+  useNavigationCompat: () => ({
+    navigate: jest.fn(),
+    handleNavClick: mockHandleNavClick,
+    activeScreen: "home",
+    canGoBack: false,
+    history: ["home"],
+  }),
+}));
+
 // Mock the icons module
 jest.mock("../../../components/icons", () => ({
   UserIcon: ({ className }) => (
@@ -58,7 +70,7 @@ describe("BottomNavigation Component", () => {
     expect(homeButton).toHaveClass("bg-blue-500", "text-white");
   });
 
-  it("calls onNavigate when authenticated user clicks navigation item", () => {
+  it("calls handleNavClick when user clicks navigation item", () => {
     render(
       <BottomNavigation
         activeScreen="home"
@@ -68,10 +80,10 @@ describe("BottomNavigation Component", () => {
     );
 
     fireEvent.click(screen.getByLabelText("Go to Perfil"));
-    expect(mockOnNavigate).toHaveBeenCalledWith("my-profile");
+    expect(mockHandleNavClick).toHaveBeenCalledWith("my-profile");
   });
 
-  it("calls onNavigate with requiresAuth flag when unauthenticated user clicks protected route", () => {
+  it("calls handleNavClick for protected route when unauthenticated", () => {
     render(
       <BottomNavigation
         activeScreen="home"
@@ -81,12 +93,10 @@ describe("BottomNavigation Component", () => {
     );
 
     fireEvent.click(screen.getByLabelText("Go to Perfil"));
-    expect(mockOnNavigate).toHaveBeenCalledWith("my-profile", {
-      requiresAuth: true,
-    });
+    expect(mockHandleNavClick).toHaveBeenCalledWith("my-profile");
   });
 
-  it("allows unauthenticated users to navigate to home", () => {
+  it("calls handleNavClick when navigating to home", () => {
     render(
       <BottomNavigation
         activeScreen="documents"
@@ -96,7 +106,7 @@ describe("BottomNavigation Component", () => {
     );
 
     fireEvent.click(screen.getByLabelText("Go to Inicio"));
-    expect(mockOnNavigate).toHaveBeenCalledWith("home");
+    expect(mockHandleNavClick).toHaveBeenCalledWith("home");
   });
 
   it("renders correct test ids for navigation items", () => {

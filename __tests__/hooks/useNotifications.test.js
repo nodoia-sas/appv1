@@ -8,8 +8,11 @@ import { renderHook, act } from "@testing-library/react";
 import { useNotifications } from "../../src/hooks/useNotifications";
 import { useAppStore } from "../../src/store/appStore";
 
-// Mock the store
-jest.mock("../../src/store/appStore");
+// Mock the store - export selectNotification so the hook gets a real selector
+jest.mock("../../src/store/appStore", () => ({
+  useAppStore: jest.fn(),
+  selectNotification: (state) => state.notification,
+}));
 
 describe("useNotifications", () => {
   let mockShowNotification;
@@ -29,20 +32,15 @@ describe("useNotifications", () => {
 
     // Mock the store selectors and actions
     useAppStore.mockImplementation((selector) => {
-      if (
-        selector.name === "selectNotification" ||
-        typeof selector === "function"
-      ) {
-        // Handle selector function
-        const mockState = {
-          notification: mockNotification,
-          showNotification: mockShowNotification,
-          hideNotification: mockHideNotification,
-        };
+      const mockState = {
+        notification: mockNotification,
+        showNotification: mockShowNotification,
+        hideNotification: mockHideNotification,
+      };
+      if (typeof selector === "function") {
         return selector(mockState);
       }
-      // Handle direct property access
-      return mockShowNotification; // fallback
+      return mockState;
     });
 
     // Clear all timers

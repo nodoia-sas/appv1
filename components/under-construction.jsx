@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { STORAGE_KEYS } from "../lib/storage-keys";
 
 const UnderConstruction = ({ setActiveScreen, showNotification }) => {
   return (
@@ -24,14 +25,14 @@ const UnderConstruction = ({ setActiveScreen, showNotification }) => {
               // Simulate subscribe action
               try {
                 const subs = JSON.parse(
-                  localStorage.getItem("transit-knowledge-subs") || "[]"
+                  localStorage.getItem(STORAGE_KEYS.KNOWLEDGE_SUBS) || "[]"
                 );
                 subs.push({
                   id: Date.now().toString(),
                   date: new Date().toISOString(),
                 });
                 localStorage.setItem(
-                  "transit-knowledge-subs",
+                  STORAGE_KEYS.KNOWLEDGE_SUBS,
                   JSON.stringify(subs)
                 );
                 showNotification(

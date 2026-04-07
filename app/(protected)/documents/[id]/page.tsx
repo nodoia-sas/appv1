@@ -19,14 +19,12 @@ interface Document {
   updatedAt: string;
 }
 
+export function generateStaticParams() {
+  return [{ id: "_" }];
+}
+
 /**
  * Dynamic Document Detail Page - Protected route for specific document
- *
- * This page displays the full details of a specific document
- * identified by the dynamic [id] parameter. It validates the ID
- * and shows a 404 page if the document doesn't exist.
- *
- * Requirements: 6.4, 6.5, 7.1, 7.6
  */
 export default async function DocumentDetailPage({
   params,

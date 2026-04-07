@@ -13,14 +13,14 @@ const customJestConfig = {
     "**/__tests__/**/*.(js|jsx|ts|tsx)",
     "**/*.(test|spec).(js|jsx|ts|tsx)",
   ],
-  testPathIgnorePatterns: ["<rootDir>/.next/", "<rootDir>/node_modules/"],
+  testPathIgnorePatterns: ["<rootDir>/.next/", "<rootDir>/node_modules/", "manual-test-"],
   collectCoverageFrom: [
     "src/**/*.{js,jsx,ts,tsx}",
     "components/**/*.{js,jsx,ts,tsx}",
     "!**/*.d.ts",
     "!**/node_modules/**",
   ],
-  moduleNameMapping: {
+  moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/$1",
     "^@/src/(.*)$": "<rootDir>/src/$1",
     "^@/components/(.*)$": "<rootDir>/components/$1",
