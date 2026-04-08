@@ -19,12 +19,17 @@ Este proyecto es una aplicación web moderna construida con **Next.js 15**, dise
 ## 🛠️ Stack Tecnológico
 
 - **Framework**: [Next.js 15](https://nextjs.org/) (App Router & Pages Router)
-- **Lenguaje**: JavaScript / React 19
+- **Lenguaje**: TypeScript / JavaScript / React 19
 - **Estilos**: [TailwindCSS 4](https://tailwindcss.com/)
 - **Componentes UI**: [Radix UI](https://www.radix-ui.com/), [Lucide React](https://lucide.dev/) (Iconos)
 - **Formularios**: React Hook Form + Zod
+- **Estado**: Zustand
+- **HTTP Client**: Axios
 - **Gráficos**: Recharts
-- **Autenticación**: Auth0 (Configurado)
+- **Autenticación**: Auth0
+- **Testing**: Jest + React Testing Library
+- **Deploy**: AWS S3 + CloudFront (GitHub Actions CI/CD)
+- **PWA**: next-pwa
 
 ## 📦 Requisitos Previos
 
@@ -97,69 +102,69 @@ NEXT_PUBLIC_GEMINI_MODEL=gemini-2.5-flash-preview-05-20
 
 #### Auth0
 
-| Variable | Descripción | Requerida |
-|---|---|---|
-| `AUTH0_DOMAIN` | Dominio de tu tenant en Auth0 | Sí |
-| `AUTH0_CLIENT_ID` | Client ID de la aplicación | Sí |
-| `AUTH0_CLIENT_SECRET` | Client Secret de la aplicación | Sí |
-| `AUTH0_SECRET` | Secret para firmar cookies (mín. 32 chars) | Sí |
-| `AUTH0_BASE_URL` | URL base de la app (para callbacks) | Sí |
-| `AUTH0_AUDIENCE` | Audience del API en Auth0 | No |
+| Variable              | Descripción                                | Requerida |
+| --------------------- | ------------------------------------------ | --------- |
+| `AUTH0_DOMAIN`        | Dominio de tu tenant en Auth0              | Sí        |
+| `AUTH0_CLIENT_ID`     | Client ID de la aplicación                 | Sí        |
+| `AUTH0_CLIENT_SECRET` | Client Secret de la aplicación             | Sí        |
+| `AUTH0_SECRET`        | Secret para firmar cookies (mín. 32 chars) | Sí        |
+| `AUTH0_BASE_URL`      | URL base de la app (para callbacks)        | Sí        |
+| `AUTH0_AUDIENCE`      | Audience del API en Auth0                  | No        |
 
 #### API Backend
 
-| Variable | Descripción | Por defecto |
-|---|---|---|
-| `API_BASE_URL` | URL base del backend (host:puerto) — usada en `/api/profile` | `http://localhost:8010` |
-| `API_URL` | Override completo de la URL con path (máxima prioridad) | — |
-| `API_BASE_PATH` | Path base del API | `/transitia/api/v1` |
-| `API_BASE_URL_LOCAL` | URL base para el ambiente `local` | `http://localhost:8010` |
-| `API_BASE_URL_DEV` | URL base para el ambiente `dev` | `https://api-dev.transitia.com` |
-| `API_BASE_URL_STAGING` | URL base para el ambiente `staging` | `https://api-staging.transitia.com` |
-| `API_BASE_URL_PRODUCTION` | URL base para el ambiente `production` | `https://api.transitia.com` |
+| Variable                  | Descripción                                                  | Por defecto                         |
+| ------------------------- | ------------------------------------------------------------ | ----------------------------------- |
+| `API_BASE_URL`            | URL base del backend (host:puerto) — usada en `/api/profile` | `http://localhost:8010`             |
+| `API_URL`                 | Override completo de la URL con path (máxima prioridad)      | —                                   |
+| `API_BASE_PATH`           | Path base del API                                            | `/transitia/api/v1`                 |
+| `API_BASE_URL_LOCAL`      | URL base para el ambiente `local`                            | `http://localhost:8010`             |
+| `API_BASE_URL_DEV`        | URL base para el ambiente `dev`                              | `https://api-dev.transitia.com`     |
+| `API_BASE_URL_STAGING`    | URL base para el ambiente `staging`                          | `https://api-staging.transitia.com` |
+| `API_BASE_URL_PRODUCTION` | URL base para el ambiente `production`                       | `https://api.transitia.com`         |
 
 #### Aplicación y SEO
 
-| Variable | Descripción | Por defecto |
-|---|---|---|
-| `NEXT_PUBLIC_APP_ENV` | Ambiente activo (`local`, `dev`, `staging`, `production`) | `dev` |
-| `NEXT_PUBLIC_APP_URL` | URL pública de la app (usada en metadata y Open Graph) | `https://transitia.app` |
-| `NEXT_PUBLIC_SITE_NAME` | Nombre del sitio para SEO | `TransitIA` |
-| `NEXT_PUBLIC_TWITTER_HANDLE` | Handle de Twitter/X para metadata | `@TransitIA` |
+| Variable                     | Descripción                                               | Por defecto             |
+| ---------------------------- | --------------------------------------------------------- | ----------------------- |
+| `NEXT_PUBLIC_APP_ENV`        | Ambiente activo (`local`, `dev`, `staging`, `production`) | `dev`                   |
+| `NEXT_PUBLIC_APP_URL`        | URL pública de la app (usada en metadata y Open Graph)    | `https://transitia.app` |
+| `NEXT_PUBLIC_SITE_NAME`      | Nombre del sitio para SEO                                 | `TransitIA`             |
+| `NEXT_PUBLIC_TWITTER_HANDLE` | Handle de Twitter/X para metadata                         | `@TransitIA`            |
 
 #### Servicios Externos
 
-| Variable | Descripción | Por defecto |
-|---|---|---|
-| `NEXT_PUBLIC_GLOSSARY_API_URL` | URL del servicio de glosario | `http://localhost:8011/glossaries` |
-| `NEXT_PUBLIC_PYPHOY_URL` | URL del servicio Pico y Placa | `https://www.pyphoy.com/bogota` |
-| `NEXT_PUBLIC_SIMIT_URL` | URL del SIMIT para consulta de multas | `https://www.fcm.org.co/simit/#/estado-cuenta` |
+| Variable                       | Descripción                           | Por defecto                                    |
+| ------------------------------ | ------------------------------------- | ---------------------------------------------- |
+| `NEXT_PUBLIC_GLOSSARY_API_URL` | URL del servicio de glosario          | `http://localhost:8011/glossaries`             |
+| `NEXT_PUBLIC_PYPHOY_URL`       | URL del servicio Pico y Placa         | `https://www.pyphoy.com/bogota`                |
+| `NEXT_PUBLIC_SIMIT_URL`        | URL del SIMIT para consulta de multas | `https://www.fcm.org.co/simit/#/estado-cuenta` |
 
 #### Asistente IA (Google Gemini)
 
-| Variable | Descripción | Por defecto |
-|---|---|---|
-| `NEXT_PUBLIC_GEMINI_API_KEY` | API key de Google Gemini | *(vacío)* |
-| `NEXT_PUBLIC_GEMINI_MODEL` | Modelo de Gemini a usar | `gemini-2.5-flash-preview-05-20` |
+| Variable                     | Descripción              | Por defecto                      |
+| ---------------------------- | ------------------------ | -------------------------------- |
+| `NEXT_PUBLIC_GEMINI_API_KEY` | API key de Google Gemini | _(vacío)_                        |
+| `NEXT_PUBLIC_GEMINI_MODEL`   | Modelo de Gemini a usar  | `gemini-2.5-flash-preview-05-20` |
 
 > **Advertencia de seguridad:** Al usar el prefijo `NEXT_PUBLIC_`, la API key queda expuesta en el bundle del cliente. Para producción se recomienda implementar un API route proxy que mantenga la key en el servidor.
 
 #### Información de Contacto
 
-| Variable | Descripción | Por defecto |
-|---|---|---|
-| `NEXT_PUBLIC_CONTACT_PHONE` | Número de teléfono/WhatsApp (sin `+`) | `573165678851` |
-| `NEXT_PUBLIC_CONTACT_EMAIL` | Email de contacto | `nodo.ia.sas@gmail.com` |
-| `NEXT_PUBLIC_COMPANY_WEBSITE` | Sitio web de la empresa | `https://nodoia.co/` |
+| Variable                      | Descripción                           | Por defecto             |
+| ----------------------------- | ------------------------------------- | ----------------------- |
+| `NEXT_PUBLIC_CONTACT_PHONE`   | Número de teléfono/WhatsApp (sin `+`) | `573165678851`          |
+| `NEXT_PUBLIC_CONTACT_EMAIL`   | Email de contacto                     | `nodo.ia.sas@gmail.com` |
+| `NEXT_PUBLIC_COMPANY_WEBSITE` | Sitio web de la empresa               | `https://nodoia.co/`    |
 
 #### Depuración y Monitoreo
 
-| Variable | Descripción | Por defecto |
-|---|---|---|
-| `NEXT_PUBLIC_DEBUG` | Habilita logs de depuración | `false` |
-| `NEXT_PUBLIC_LOG_LEVEL` | Nivel de log (`info`, `warn`, `error`) | `info` |
-| `NEXT_PUBLIC_ANALYTICS_ENABLED` | Habilita analytics | `false` |
-| `NEXT_PUBLIC_SENTRY_ENABLED` | Habilita Sentry | `false` |
+| Variable                        | Descripción                            | Por defecto |
+| ------------------------------- | -------------------------------------- | ----------- |
+| `NEXT_PUBLIC_DEBUG`             | Habilita logs de depuración            | `false`     |
+| `NEXT_PUBLIC_LOG_LEVEL`         | Nivel de log (`info`, `warn`, `error`) | `info`      |
+| `NEXT_PUBLIC_ANALYTICS_ENABLED` | Habilita analytics                     | `false`     |
+| `NEXT_PUBLIC_SENTRY_ENABLED`    | Habilita Sentry                        | `false`     |
 
 ### Verificar Configuración
 
@@ -180,6 +185,23 @@ npm run dev
 
 La aplicación estará disponible en `http://localhost:3000`.
 
+### Build Estático
+
+El proyecto está configurado con `output: "export"` en Next.js, lo que genera archivos estáticos en la carpeta `out/`. Esto permite servir la app desde S3 + CloudFront sin necesidad de un servidor Node.js.
+
+```bash
+npm run build
+```
+
+### Deploy Manual a S3
+
+Si necesitas desplegar manualmente (sin CI/CD):
+
+```bash
+# Requiere variables de entorno: S3_BUCKET, CF_DISTRIBUTION_ID, AWS_REGION
+npm run deploy
+```
+
 ### Modo Producción
 
 Para construir y ejecutar la versión optimizada:
@@ -189,12 +211,95 @@ npm run build
 npm start
 ```
 
+## 🚀 CI/CD - Despliegue Automático
+
+El proyecto usa GitHub Actions para desplegar automáticamente a AWS CloudFront cuando se mergea un PR a `main`.
+
+### Flujo de despliegue
+
+1. Se abre un PR hacia `main`
+2. Se revisa y aprueba el PR
+3. Se mergea a `main` → se dispara el workflow automáticamente
+4. El workflow obtiene la versión del último tag de Git (o `v1.0.0` si no hay tags)
+5. Hace build estático (`npm run build` → carpeta `out/`)
+6. Sube archivos a S3 y crea invalidación de caché en CloudFront
+
+### Crear un tag de versión
+
+Antes de mergear, crea un tag para versionar el despliegue:
+
+```bash
+git tag v1.1.0
+git push origin v1.1.0
+```
+
+### Configuración requerida en GitHub
+
+Ve a tu repositorio en GitHub → Settings → Secrets and variables → Actions.
+
+#### Secrets (pestaña "Secrets")
+
+Valores sensibles que no deben exponerse:
+
+| Secret                | Descripción                                | Ejemplo                                        |
+| --------------------- | ------------------------------------------ | ---------------------------------------------- |
+| `AWS_ROLE_ARN`        | ARN del rol IAM para OIDC con GitHub       | `arn:aws:iam::123456789012:role/github-deploy` |
+| `S3_BUCKET`           | Nombre del bucket S3                       | `transitia-prod`                               |
+| `CF_DISTRIBUTION_ID`  | ID de la distribución CloudFront           | `E1A2B3C4D5E6F7`                               |
+| `AUTH0_DOMAIN`        | Dominio del tenant Auth0                   | `transitia.auth0.com`                          |
+| `AUTH0_CLIENT_ID`     | Client ID de Auth0                         | —                                              |
+| `AUTH0_CLIENT_SECRET` | Client Secret de Auth0                     | —                                              |
+| `AUTH0_SECRET`        | Secret para firmar cookies (mín. 32 chars) | —                                              |
+| `AUTH0_BASE_URL`      | URL base de la app para callbacks Auth0    | `https://transitia.com`                        |
+| `AUTH0_AUDIENCE`      | Audience del API en Auth0                  | `https://api.transitia.com`                    |
+| `API_BASE_URL`        | URL base del backend de producción         | `https://api.prod.transitia.nodoia.co`         |
+| `NEXT_PUBLIC_APP_URL` | URL pública de la app                      | `https://transitia.app`                        |
+| `GEMINI_API_KEY`      | API key de Google Gemini                   | —                                              |
+
+#### Variables (pestaña "Variables")
+
+Valores no sensibles de configuración:
+
+| Variable                      | Descripción                   | Default                          |
+| ----------------------------- | ----------------------------- | -------------------------------- |
+| `AWS_REGION`                  | Región de AWS                 | `us-east-1`                      |
+| `GEMINI_MODEL`                | Modelo de Gemini              | `gemini-2.5-flash-preview-05-20` |
+| `NEXT_PUBLIC_CONTACT_PHONE`   | Teléfono de contacto          | —                                |
+| `NEXT_PUBLIC_CONTACT_EMAIL`   | Email de contacto             | —                                |
+| `NEXT_PUBLIC_COMPANY_WEBSITE` | Sitio web de la empresa       | —                                |
+| `NEXT_PUBLIC_PYPHOY_URL`      | URL del servicio Pico y Placa | —                                |
+| `NEXT_PUBLIC_SIMIT_URL`       | URL del SIMIT                 | —                                |
+| `NEXT_PUBLIC_SITE_NAME`       | Nombre del sitio              | `TransitIA`                      |
+| `NEXT_PUBLIC_TWITTER_HANDLE`  | Handle de Twitter/X           | `@TransitIA`                     |
+
+### Archivo del workflow
+
+El workflow se encuentra en `.github/workflows/deploy-cloudfront.yml`.
+
 ## 📱 PWA (Progressive Web App)
 
 El proyecto incluye configuración básica para PWA.
 
 - Los iconos de la aplicación se encuentran en `public/`.
 - `next-pwa` se encarga de generar el Service Worker durante el build.
+
+## 🧪 Testing
+
+```bash
+# Ejecutar tests
+npm test
+
+# Ejecutar tests en modo watch
+npm run test:watch
+
+# Ejecutar tests con cobertura
+npm run test:coverage
+
+# Ejecutar tests para CI
+npm run test:ci
+```
+
+Los tests se encuentran en `__tests__/` y `src/services/__tests__/`.
 
 ## 📂 Estructura del Proyecto
 
@@ -394,12 +499,18 @@ Sistema educativo y de consulta sobre normativas de tránsito.
 
 #### **Glosario de Términos**
 
-| Componente          | Archivo                                 | Funcionalidad                           |
-| ------------------- | --------------------------------------- | --------------------------------------- |
-| **Vista Principal** | `glossary-main.jsx`                     | Interfaz principal del glosario         |
-| **Presentación**    | `glossary.jsx`                          | Componente de visualización de términos |
-| **Utilidades**      | `lib/glossary-utils.js`                 | Gestión de términos y búsqueda          |
-| **API Backend**     | `pages/api/hooks/glossaries/listAll.js` | Endpoint para obtener términos          |
+| Componente            | Archivo                          | Funcionalidad                                        |
+| --------------------- | -------------------------------- | ---------------------------------------------------- |
+| **Vista Principal**   | `glossary-main.jsx`              | Interfaz principal del glosario                      |
+| **Presentación**      | `glossary.jsx`                   | Visualización con búsqueda y paginación del servidor |
+| **Utilidades**        | `lib/glossary-utils.js`          | Gestión de términos y búsqueda                       |
+| **Servicio API**      | `src/services/api.ts`            | `getAllGlossaries()` y `searchGlossaryTerms()`       |
+| **Página App Router** | `app/(public)/glossary/page.tsx` | Página pública del glosario                          |
+
+**Endpoints del backend:**
+
+- `GET /glossaries?page=0&size=10` — Listar glosarios paginados
+- `GET /glossaries/search?searchTerm=X&page=0&size=10` — Buscar términos
 
 **Estado de navegación:** `glossary`
 

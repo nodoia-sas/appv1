@@ -24,6 +24,15 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch all history and tags
+
+      - name: Get version from latest tag
+        id: version
+        run: |
+          TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v1.0.0")
+          echo "VERSION=$TAG" >> $GITHUB_OUTPUT
+          echo "Deploying version: $TAG"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -33,6 +42,41 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Create .env.production
+        run: |
+          cat <<EOF > .env.production
+          NEXT_PUBLIC_APP_ENV=production
+          NEXT_PUBLIC_VERSION=${{ steps.version.outputs.VERSION }}
+          NEXT_PUBLIC_DEBUG=false
+          NEXT_PUBLIC_LOG_LEVEL=error
+          NEXT_PUBLIC_ANALYTICS_ENABLED=true
+          NEXT_PUBLIC_SENTRY_ENABLED=true
+          NEXT_PUBLIC_APP_URL=${{ secrets.NEXT_PUBLIC_APP_URL }}
+          API_BASE_URL=${{ secrets.API_BASE_URL }}
+          NEXT_PUBLIC_GLOSSARY_API_URL=${{ secrets.API_BASE_URL }}
+          AUTH0_DOMAIN=${{ secrets.AUTH0_DOMAIN }}
+          AUTH0_CLIENT_ID=${{ secrets.AUTH0_CLIENT_ID }}
+          AUTH0_CLIENT_SECRET=${{ secrets.AUTH0_CLIENT_SECRET }}
+          AUTH0_SECRET=${{ secrets.AUTH0_SECRET }}
+          AUTH0_BASE_URL=${{ secrets.AUTH0_BASE_URL }}
+          AUTH0_AUDIENCE=${{ secrets.AUTH0_AUDIENCE }}
+          GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL=${{ vars.GEMINI_MODEL || 'gemini-2.5-flash-preview-05-20' }}
+          NEXT_PUBLIC_CONTACT_PHONE=${{ vars.NEXT_PUBLIC_CONTACT_PHONE }}
+          NEXT_PUBLIC_CONTACT_EMAIL=${{ vars.NEXT_PUBLIC_CONTACT_EMAIL }}
+          NEXT_PUBLIC_COMPANY_WEBSITE=${{ vars.NEXT_PUBLIC_COMPANY_WEBSITE }}
+          NEXT_PUBLIC_PYPHOY_URL=${{ vars.NEXT_PUBLIC_PYPHOY_URL }}
+          NEXT_PUBLIC_SIMIT_URL=${{ vars.NEXT_PUBLIC_SIMIT_URL }}
+          NEXT_PUBLIC_SITE_NAME=${{ vars.NEXT_PUBLIC_SITE_NAME || 'TransitIA' }}
+          NEXT_PUBLIC_TWITTER_HANDLE=${{ vars.NEXT_PUBLIC_TWITTER_HANDLE || '@TransitIA' }}
+          NEXT_PUBLIC_SECURE_COOKIES=true
+          NEXT_PUBLIC_HTTPS_ONLY=true
+          NEXT_PUBLIC_CACHE_ENABLED=true
+          NEXT_PUBLIC_CDN_ENABLED=true
+          NODE_ENV=production
+          NEXT_PUBLIC_ENVIRONMENT_NAME=production
+          EOF
 
       - name: Build static export
         run: npm run build
@@ -66,3 +110,11 @@ jobs:
             --distribution-id "${{ secrets.CF_DISTRIBUTION_ID }}" \
             --paths "/*" \
             --region "${{ env.AWS_REGION }}"
+
+      - name: Deploy summary
+        run: |
+          echo "### Deploy completado ✅" >> $GITHUB_STEP_SUMMARY
+          echo "- **Versión:** ${{ steps.version.outputs.VERSION }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Rama:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Fecha:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
